@@ -16,6 +16,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import { useContext } from "react";
 import { SaborwebContext } from "../../context/SaborifyProvider";
 import { useApi } from "../../context/ApiProvider";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export default function EditarReceta() {
   const { receta, setReceta, ingredientes } = useContext(SaborwebContext);
@@ -87,10 +88,10 @@ export default function EditarReceta() {
       try {
         const data = await api.obtenerTiposComida();
         setTiposComidaDisponibles(data);
-      } catch (error) {
+        } catch (error) {
         console.error("Error:", error);
         setError(true);
-      setErrorMessage("Could not load meal types. Please try again.");
+      setErrorMessage("No se pudieron cargar los tipos de comida. Intenta de nuevo.");
       } finally {
         setLoading(false);
       }
@@ -102,43 +103,43 @@ export default function EditarReceta() {
   const validarFormulario = () => {
     if (!nombre.trim()) {
       setError(true);
-    setErrorMessage("Recipe name is required");
+    setErrorMessage("El nombre de la receta es obligatorio");
       return false;
     }
 
     if (!tipoCocina.trim()) {
       setError(true);
-    setErrorMessage("Cuisine type is required");
+    setErrorMessage("El tipo de cocina es obligatorio");
       return false;
     }
 
     if (!dificultad) {
       setError(true);
-    setErrorMessage("Difficulty is required");
+    setErrorMessage("La dificultad es obligatoria");
       return false;
     }
 
     if (!tiempoCocinado || isNaN(tiempoCocinado) || tiempoCocinado <= 0) {
       setError(true);
-    setErrorMessage("Cooking time must be a positive number");
+    setErrorMessage("El tiempo de cocinado debe ser un número positivo");
       return false;
     }
 
     if (tiposComidaSeleccionados.length === 0) {
       setError(true);
-    setErrorMessage("Select at least one meal type");
+    setErrorMessage("Selecciona al menos un tipo de comida");
       return false;
     }
 
     if (ingredientesUser.length === 0) {
       setError(true);
-    setErrorMessage("Add at least one ingredient");
+    setErrorMessage("Añade al menos un ingrediente");
       return false;
     }
 
     if (pasos.filter(p => p.trim()).length === 0) {
       setError(true);
-    setErrorMessage("Add at least one step");
+    setErrorMessage("Añade al menos un paso");
       return false;
     }
 
@@ -165,7 +166,7 @@ export default function EditarReceta() {
         } catch (error) {
           console.error("Error al subir imagen:", error);
           setError(true);
-        setErrorMessage("Error uploading image. Please try again.");
+        setErrorMessage("Error subiendo la imagen. Intenta de nuevo.");
           setLoading(false);
           return;
         }
@@ -200,7 +201,7 @@ export default function EditarReceta() {
     } catch (error) {
       console.error("Error al guardar la receta:", error);
       setError(true);
-    setErrorMessage("Error saving changes. Please try again.");
+    setErrorMessage("Error al guardar los cambios. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -300,7 +301,7 @@ export default function EditarReceta() {
         p: 0,
         borderRadius: 3,
         overflow: 'hidden',
-        background: 'linear-gradient(to right, #ff7043, #ffab91)'
+        background: 'linear-gradient(to right, #1D70B8, #1D70B8)'
       }}>
         <Box sx={{
           p: 3,
@@ -340,7 +341,7 @@ export default function EditarReceta() {
             <TextField
               fullWidth
               required
-              label="Cuisine type"
+                label="Nombre de la receta"
               variant="outlined"
   placeholder="E.g.: Italian, Mexican, Homemade..."
               value={tipoCocina}
@@ -357,12 +358,12 @@ export default function EditarReceta() {
                 id="dificultad-select"
                 value={dificultad}
                 onChange={(e) => setDificultad(e.target.value)}
-    label="Difficulty"
+                label="Dificultad"
                 sx={{ borderRadius: 2 }}
               >
-                 <MenuItem value="Easy">Easy</MenuItem>
-    <MenuItem value="Medium">Medium</MenuItem>
-    <MenuItem value="Difficult">Difficult</MenuItem>
+                <MenuItem value="Easy">Fácil</MenuItem>
+                <MenuItem value="Medium">Media</MenuItem>
+                <MenuItem value="Difficult">Difícil</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -371,7 +372,7 @@ export default function EditarReceta() {
             <TextField
               fullWidth
               required
-  label="Cooking time"
+                label="Tiempo de cocinado"
               variant="outlined"
               value={tiempoCocinado}
               onChange={handleChangeTiempoCocinado}
@@ -380,10 +381,10 @@ export default function EditarReceta() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <TimerIcon sx={{ color: '#ff7043' }} />
+                    <TimerIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 ),
-    endAdornment: <InputAdornment position="end">minutes</InputAdornment>
+                  endAdornment: <InputAdornment position="end">minutos</InputAdornment>
               }}
               placeholder="45"
             />
@@ -391,14 +392,14 @@ export default function EditarReceta() {
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth required>
-  <InputLabel id="tipos-comida-label">Meal types</InputLabel>
+              <InputLabel id="tipos-comida-label">Tipos de comida</InputLabel>
               <Select
                 labelId="tipos-comida-label"
                 id="tipos-comida-select"
                 multiple
                 value={tiposComidaSeleccionados}
                 onChange={handleChangeTiposComida}
-    input={<OutlinedInput label="Meal types" />}
+                input={<OutlinedInput label="Tipos de comida" />}
                 renderValue={(selected) => {
                   if (selected.length === 0) {
                     return <Box sx={{ height: '20px' }}></Box>;
@@ -411,8 +412,8 @@ export default function EditarReceta() {
                           label={value}
                           size="small"
                           sx={{
-                            bgcolor: '#fff8f0',
-                            color: '#ff7043',
+                            bgcolor: '#EAF3FB',
+                            color: '#1D70B8',
                             borderColor: '#ffccbc'
                           }}
                         />
@@ -441,7 +442,7 @@ export default function EditarReceta() {
                 displayEmpty
               >
                 {loading ? (
-      <MenuItem disabled>Loading meal types...</MenuItem>
+                    <MenuItem disabled>Cargando tipos de comida...</MenuItem>
                 ) : (
                   tiposComidaDisponibles.map((tipo) => (
                     <MenuItem key={tipo.id} value={tipo.nombre}>
@@ -461,7 +462,7 @@ export default function EditarReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#ff7043',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -492,9 +493,9 @@ export default function EditarReceta() {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-      label="Search ingredient"
+                      label="Buscar ingrediente"
                     size="small"
-      placeholder="Type to search..."
+                    placeholder="Escribe para buscar..."
                     InputProps={{
                       ...params.InputProps,
                       sx: { borderRadius: 2 }
@@ -511,8 +512,8 @@ export default function EditarReceta() {
                 disabled={!ingredienteSeleccionado}
                 sx={{
                   borderRadius: 2,
-                  bgcolor: '#ff7043',
-                  '&:hover': { bgcolor: '#f4511e' },
+                  bgcolor: '#1D70B8',
+                  '&:hover': { bgcolor: '#1D70B8' },
                   '&.Mui-disabled': {
                     bgcolor: '#ffccbc',
                     color: 'rgba(0, 0, 0, 0.26)'
@@ -525,7 +526,7 @@ export default function EditarReceta() {
 
             {ingredientesUser.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: 'italic' }}>
-    No ingredients added. Use the search to add ingredients.
+    No hay ingredientes añadidos. Usa la búsqueda para añadir ingredientes.
               </Typography>
             ) : (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
@@ -535,13 +536,13 @@ export default function EditarReceta() {
                     label={ingrediente.nombre}
                     onDelete={() => handleRemoveIngrediente(index)}
                     sx={{
-                      bgcolor: '#fff8f0',
-                      color: '#ff7043',
+                      bgcolor: '#EAF3FB',
+                      color: '#1D70B8',
                       borderColor: '#ffccbc',
                       '& .MuiChip-deleteIcon': {
-                        color: '#ff7043',
+                        color: '#1D70B8',
                         '&:hover': {
-                          color: '#f4511e'
+                          color: '#1D70B8'
                         }
                       }
                     }}
@@ -552,8 +553,8 @@ export default function EditarReceta() {
 
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
               <Box component="span" sx={{
-                bgcolor: '#ffe0b2',
-                color: '#fb8c00',
+                bgcolor: '#D6E9F8',
+                color: '#1D70B8',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -564,7 +565,7 @@ export default function EditarReceta() {
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>i</Box>
-  Search and add ingredients. If you can't find one, you can type it and click Add.
+  Busca y añade ingredientes. Si no encuentras alguno, puedes escribirlo y hacer clic en Añadir.
             </Typography>
           </CardContent>
         </Card>
@@ -573,7 +574,7 @@ export default function EditarReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#ff7043',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -595,7 +596,7 @@ export default function EditarReceta() {
                   sx={{
                     mr: 1.5,
                     mt: 1,
-                    bgcolor: '#ff7043',
+                    bgcolor: '#1D70B8',
                     color: 'white',
                     fontWeight: 'bold',
                     minWidth: 32
@@ -630,8 +631,8 @@ export default function EditarReceta() {
               variant="text"
               sx={{
                 mt: 1,
-                color: '#ff7043',
-                '&:hover': { bgcolor: 'rgba(255, 112, 67, 0.08)' }
+                color: '#1D70B8',
+                '&:hover': { bgcolor: 'rgba(29, 112, 184, 0.08)' }
               }}
             >
   Add step
@@ -643,7 +644,7 @@ export default function EditarReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#ff7043',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -680,18 +681,18 @@ export default function EditarReceta() {
                     sx={{
                       mb: 2,
                       p: 2,
-                      bgcolor: 'rgba(255, 112, 67, 0.08)',
-                      color: '#ff7043',
-                      '&:hover': { bgcolor: 'rgba(255, 112, 67, 0.16)' }
+                      bgcolor: 'rgba(29, 112, 184, 0.08)',
+                      color: '#1D70B8',
+                      '&:hover': { bgcolor: 'rgba(29, 112, 184, 0.16)' }
                     }}
                   >
                     <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
                   </IconButton>
                   <Typography variant="body1" color="text.secondary" align="center">
-  Click to add a photo of your recipe
+  Haz clic para añadir una foto de tu receta
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} align="center">
-  Formats: JPG, PNG (Max 5 MB)
+  Formatos: JPG, PNG (Máx 5 MB)
                   </Typography>
                 </>
               ) : (
@@ -715,7 +716,7 @@ export default function EditarReceta() {
                       onClick={handleRemoveImagen}
                       sx={{ borderRadius: 2 }}
                     >
-  Delete
+  Eliminar
                     </Button>
                     <Button
                       variant="outlined"
@@ -723,11 +724,11 @@ export default function EditarReceta() {
                       onClick={handleImagenClick}
                       sx={{
                         borderRadius: 2,
-                        borderColor: '#ff7043',
-                        color: '#ff7043',
+                        borderColor: '#1D70B8',
+                        color: '#1D70B8',
                         '&:hover': {
-                          borderColor: '#f4511e',
-                          bgcolor: 'rgba(255, 112, 67, 0.08)'
+                          borderColor: '#1D70B8',
+                          bgcolor: 'rgba(29, 112, 184, 0.08)'
                         }
                       }}
                     >
@@ -740,8 +741,8 @@ export default function EditarReceta() {
 
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
               <Box component="span" sx={{
-                bgcolor: '#ffe0b2',
-                color: '#fb8c00',
+                bgcolor: '#D6E9F8',
+                color: '#1D70B8',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -782,9 +783,9 @@ export default function EditarReceta() {
             disabled={loading}
             sx={{
               borderRadius: 2,
-              bgcolor: '#ff7043',
+              bgcolor: '#1D70B8',
               '&:hover': {
-                bgcolor: '#f4511e'
+                bgcolor: '#1D70B8'
               },
               px: 3
             }}

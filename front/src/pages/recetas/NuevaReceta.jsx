@@ -18,12 +18,14 @@ import { useContext } from "react";
 import { SaborwebContext } from "../../context/SaborifyProvider";
 import { useApi } from "../../context/ApiProvider";
 import imagenPlaceholder from '../../assets/imagenRecetaPlaceholder.png';
+import { useLanguage } from "../../hooks/useLanguage";
 
 export default function NuevReceta() {
   const { ingredientes, setReceta } = useContext(SaborwebContext);
   const api = useApi();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { t } = useLanguage();
 
   const [nombre, setNombre] = useState("");
   const [tipoCocina, setTipoCocina] = useState("");
@@ -58,7 +60,7 @@ export default function NuevReceta() {
     } catch (error) {
       console.error("Error:", error);
       setError(true);
-    setErrorMessage("Could not load meal types. Please try again.");
+    setErrorMessage(t('recipes.errorLoadingMealTypes'));
     } finally {
       setLoading(false);
     }
@@ -73,55 +75,55 @@ export default function NuevReceta() {
   const validarFormulario = () => {
     if (!nombre.trim()) {
       setError(true);
-    setErrorMessage("Recipe name is required");
+    setErrorMessage(t('validation.recipeNameRequired'));
       return false;
     }
 
     if (!tipoCocina.trim()) {
       setError(true);
-    setErrorMessage("Cuisine type is required");
+    setErrorMessage(t('validation.cuisineRequired'));
       return false;
     }
 
     if (!dificultad) {
       setError(true);
-    setErrorMessage("Difficulty is required");
+    setErrorMessage(t('validation.difficultyRequired'));
       return false;
     }
 
     if (!tiempoCocinado || isNaN(tiempoCocinado) || tiempoCocinado <= 0) {
       setError(true);
-    setErrorMessage("Cooking time must be a positive number");
+    setErrorMessage(t('validation.cookingTimeRequired'));
       return false;
     }
 
     if (!porciones || isNaN(porciones) || porciones <= 0) {
       setError(true);
-    setErrorMessage("Number of servings must be a positive number");
+    setErrorMessage(t('validation.servingsRequired'));
       return false;
     }
 
     if (!caloriasPorPorcion || isNaN(caloriasPorPorcion) || caloriasPorPorcion < 0) {
       setError(true);
-    setErrorMessage("Calories per serving must be a positive number or zero");
+    setErrorMessage(t('validation.caloriesRequired'));
       return false;
     }
 
     if (tiposComidaSeleccionados.length === 0) {
       setError(true);
-    setErrorMessage("Select at least one meal type");
+    setErrorMessage(t('recipes.selectMealType'));
       return false;
     }
 
     if (ingredientesUser.length === 0) {
       setError(true);
-    setErrorMessage("Add at least one ingredient");
+    setErrorMessage(t('recipes.addAtLeastOneIngredient'));
       return false;
     }
 
     if (pasos.filter(p => p.trim()).length === 0) {
       setError(true);
-    setErrorMessage("Add at least one step");
+    setErrorMessage(t('recipes.addAtLeastOneStep'));
       return false;
     }
 
@@ -135,14 +137,18 @@ export default function NuevReceta() {
 
     setLoading(true);
     try {
-      let imagenUrl = imagenPlaceholder;
+      let imagenUrl;
 
       if (imagen) {
-        const imagenData = await api.subirImagen(imagen);
-        console.log("Imagen subida", imagenData);
-        if (imagenData && imagenData.url) {
-          imagenUrl = imagenData.url;
-          console.log("URL de la imagen", imagenUrl);
+        try {
+          const imagenData = await api.subirImagen(imagen);
+          console.log("Imagen subida", imagenData);
+          if (imagenData && imagenData.url) {
+            imagenUrl = imagenData.url;
+            console.log("URL de la imagen", imagenUrl);
+          }
+        } catch (error) {
+          console.error("Error al subir imagen:", error);
         }
       }
 
@@ -156,9 +162,12 @@ export default function NuevReceta() {
         tipoComida: tiposComidaSeleccionados,
         ingredientes: ingredientesUser.map(ingrediente => ingrediente.nombre),
         pasos: pasos.filter(p => p.trim()),
-        imagen_url: imagenUrl,
         usuario_id: user.id,
       };
+
+      if (imagenUrl) {
+        nuevaReceta.imagen_url = imagenUrl;
+      }
 
       const data = await api.crearReceta(nuevaReceta);
       console.log("Receta creada", data);
@@ -173,7 +182,7 @@ export default function NuevReceta() {
     } catch (error) {
       console.error("Error al guardar la receta:", error);
       setError(true);
-    setErrorMessage(error.message || "Error saving recipe. Please try again.");
+    setErrorMessage(error.message || t('recipes.errorSavingRecipe'));
     } finally {
       setLoading(false);
     }
@@ -279,7 +288,7 @@ export default function NuevReceta() {
         p: 0,
         borderRadius: 3,
         overflow: 'hidden',
-        background: 'linear-gradient(to right, #0077ff, #00a0ff)'
+        background: 'linear-gradient(to right, #1D70B8, #1D70B8)'
       }}>
         <Box sx={{
           p: 3,
@@ -289,7 +298,7 @@ export default function NuevReceta() {
         }}>
           <RestaurantMenuIcon sx={{ fontSize: 36, mr: 2 }} />
           <Typography variant="h4" fontWeight="bold">
-            Create New Recipe
+            {t('recipes.create')}
           </Typography>
         </Box>
       </Paper>
@@ -307,7 +316,7 @@ export default function NuevReceta() {
             <TextField
               fullWidth
               required
-              label="Recipe name"
+              label="Nombre de la receta"
               variant="outlined"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -319,7 +328,7 @@ export default function NuevReceta() {
             <TextField
               fullWidth
               required
-              label="Cuisine type"
+              label="Tipo de cocina"
               variant="outlined"
               placeholder="Ej: Italiana, Mexicana, Casera..."
               value={tipoCocina}
@@ -330,18 +339,18 @@ export default function NuevReceta() {
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth required>
-              <InputLabel id="dificultad-label">Difficulty</InputLabel>
+              <InputLabel id="dificultad-label">Dificultad</InputLabel>
               <Select
                 labelId="dificultad-label"
                 id="dificultad-select"
                 value={dificultad}
                 onChange={(e) => setDificultad(e.target.value)}
-                label="Difficulty"
+                label="Dificultad"
                 sx={{ borderRadius: 2 }}
               >
-                <MenuItem value="Easy">Easy</MenuItem>
-                <MenuItem value="Medium">Medium</MenuItem>
-                <MenuItem value="Difficult">Difficult</MenuItem>
+                <MenuItem value="Easy">Fácil</MenuItem>
+                <MenuItem value="Medium">Media</MenuItem>
+                <MenuItem value="Difficult">Difícil</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -350,7 +359,7 @@ export default function NuevReceta() {
             <TextField
               fullWidth
               required
-              label="Cooking time"
+              label="Tiempo de cocinado"
               variant="outlined"
               value={tiempoCocinado}
               onChange={handleChangeTiempoCocinado}
@@ -359,10 +368,10 @@ export default function NuevReceta() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <TimerIcon sx={{ color: '#0077ff' }} />
+                    <TimerIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 ),
-                endAdornment: <InputAdornment position="end">minutes</InputAdornment>
+                endAdornment: <InputAdornment position="end">minutos</InputAdornment>
               }}
               placeholder="45"
             />
@@ -370,14 +379,14 @@ export default function NuevReceta() {
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth required>
-              <InputLabel id="tipos-comida-label">Meal types</InputLabel>
+              <InputLabel id="tipos-comida-label">Tipos de comida</InputLabel>
               <Select
                 labelId="tipos-comida-label"
                 id="tipos-comida-select"
                 multiple
                 value={tiposComidaSeleccionados}
                 onChange={handleChangeTiposComida}
-                input={<OutlinedInput label="Meal types" />}
+                input={<OutlinedInput label="Tipos de comida" />}
                 renderValue={(selected) => {
                   if (selected.length === 0) {
                     return <Box sx={{ height: '20px' }}></Box>;
@@ -391,7 +400,7 @@ export default function NuevReceta() {
                           size="small"
                           sx={{
                             bgcolor: '#f0f8ff',
-                            color: '#0077ff',
+                            color: '#1D70B8',
                             borderColor: '#cce5ff'
                           }}
                         />
@@ -420,7 +429,7 @@ export default function NuevReceta() {
                 displayEmpty
               >
                 {loading ? (
-                  <MenuItem disabled>Loading meal types...</MenuItem>
+                  <MenuItem disabled>Cargando tipos de comida...</MenuItem>
                 ) : (
                   tiposComidaDisponibles.map((tipo) => (
                     <MenuItem key={tipo.id} value={tipo.nombre}>
@@ -446,13 +455,13 @@ export default function NuevReceta() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <LocalDiningIcon sx={{ color: '#0077ff' }} />
+                    <LocalDiningIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 ),
                 inputProps: { min: 1 }
               }}
               placeholder="4"
-              helperText="Number of servings this recipe makes"
+              helperText="Número de porciones que rinde esta receta"
             />
           </Grid>
 
@@ -469,14 +478,14 @@ export default function NuevReceta() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <WhatshotIcon sx={{ color: '#0077ff' }} />
+                    <WhatshotIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 ),
                 endAdornment: <InputAdornment position="end">kcal</InputAdornment>,
                 inputProps: { min: 0 }
               }}
               placeholder="350"
-              helperText="Approximate nutritional value per serving"
+              helperText="Valor nutricional aproximado por porción"
             />
           </Grid>
         </Grid>
@@ -487,7 +496,7 @@ export default function NuevReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#0077ff',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -516,11 +525,11 @@ export default function NuevReceta() {
                   </li>
                 )}
                 renderInput={(params) => (
-                  <TextField
+                    <TextField
                     {...params}
-                    label="Search ingredient"
+                    label="Buscar ingrediente"
                     size="small"
-                    placeholder="Type to search..."
+                    placeholder="Escribe para buscar..."
                     InputProps={{
                       ...params.InputProps,
                       sx: { borderRadius: 2 }
@@ -537,8 +546,8 @@ export default function NuevReceta() {
                 disabled={!ingredienteSeleccionado}
                 sx={{
                   borderRadius: 2,
-                  bgcolor: '#0077ff',
-                  '&:hover': { bgcolor: '#005fcc' },
+                  bgcolor: '#1D70B8',
+                  '&:hover': { bgcolor: '#1D70B8' },
                   '&.Mui-disabled': {
                     bgcolor: '#cce5ff',
                     color: 'rgba(0, 0, 0, 0.26)'
@@ -549,9 +558,9 @@ export default function NuevReceta() {
               </Button>
             </Box>
 
-            {ingredientesUser.length === 0 ? (
+                {ingredientesUser.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: 'italic' }}>
-                No ingredients added. Use the search to add ingredients.
+                No hay ingredientes añadidos. Usa la búsqueda para añadir ingredientes.
               </Typography>
             ) : (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
@@ -562,12 +571,12 @@ export default function NuevReceta() {
                     onDelete={() => handleRemoveIngrediente(index)}
                     sx={{
                       bgcolor: '#f0f8ff',
-                      color: '#0077ff',
+                      color: '#1D70B8',
                       borderColor: '#cce5ff',
                       '& .MuiChip-deleteIcon': {
-                        color: '#0077ff',
+                        color: '#1D70B8',
                         '&:hover': {
-                          color: '#005fcc'
+                          color: '#1D70B8'
                         }
                       }
                     }}
@@ -576,10 +585,10 @@ export default function NuevReceta() {
               </Box>
             )}
 
-            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
               <Box component="span" sx={{
                 bgcolor: '#e6f0ff',
-                color: '#0077ff',
+                color: '#1D70B8',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -590,7 +599,7 @@ export default function NuevReceta() {
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>i</Box>
-              Search and add ingredients. If you can't find one, you can type it and click Add.
+              Busca y añade ingredientes. Si no encuentras alguno, puedes escribirlo y hacer clic en Añadir.
             </Typography>
           </CardContent>
         </Card>
@@ -599,7 +608,7 @@ export default function NuevReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#0077ff',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -621,7 +630,7 @@ export default function NuevReceta() {
                   sx={{
                     mr: 1.5,
                     mt: 1,
-                    bgcolor: '#0077ff',
+                    bgcolor: '#1D70B8',
                     color: 'white',
                     fontWeight: 'bold',
                     minWidth: 32
@@ -656,7 +665,7 @@ export default function NuevReceta() {
               variant="text"
               sx={{
                 mt: 1,
-                color: '#0077ff',
+                color: '#1D70B8',
                 '&:hover': { bgcolor: 'rgba(0, 119, 255, 0.08)' }
               }}
             >
@@ -669,7 +678,7 @@ export default function NuevReceta() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#0077ff',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -707,17 +716,17 @@ export default function NuevReceta() {
                       mb: 2,
                       p: 2,
                       bgcolor: 'rgba(0, 119, 255, 0.08)',
-                      color: '#0077ff',
+                      color: '#1D70B8',
                       '&:hover': { bgcolor: 'rgba(0, 119, 255, 0.16)' }
                     }}
                   >
                     <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
                   </IconButton>
                   <Typography variant="body1" color="text.secondary" align="center">
-                    Click to add a photo of your recipe
+                    {t('recipes.clickToAdd')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} align="center">
-                    Formats: JPG, PNG (Máximo 5 MB)
+                    {t('recipes.imageFormats')}
                   </Typography>
                 </>
               ) : (
@@ -749,10 +758,10 @@ export default function NuevReceta() {
                       onClick={handleImagenClick}
                       sx={{
                         borderRadius: 2,
-                        borderColor: '#0077ff',
-                        color: '#0077ff',
+                        borderColor: '#1D70B8',
+                        color: '#1D70B8',
                         '&:hover': {
-                          borderColor: '#005fcc',
+                          borderColor: '#1D70B8',
                           bgcolor: 'rgba(0, 119, 255, 0.08)'
                         }
                       }}
@@ -767,7 +776,7 @@ export default function NuevReceta() {
             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
               <Box component="span" sx={{
                 bgcolor: '#e6f0ff',
-                color: '#0077ff',
+                color: '#1D70B8',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -807,9 +816,9 @@ export default function NuevReceta() {
             startIcon={<SaveIcon />}
             sx={{
               borderRadius: 2,
-              bgcolor: '#0077ff',
+              bgcolor: '#1D70B8',
               '&:hover': {
-                bgcolor: '#005fcc'
+                bgcolor: '#1D70B8'
               },
               px: 3
             }}

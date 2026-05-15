@@ -56,7 +56,7 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
   fontWeight: 700,
-  color: "#ff7043",
+  color: "#1D70B8",
   marginBottom: theme.spacing(2),
   display: "inline-block",
   fontSize: "1.5rem",
@@ -71,7 +71,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
     height: "3px",
     bottom: "-8px",
     left: 0,
-    backgroundColor: "#ff7043",
+    backgroundColor: "#1D70B8",
     borderRadius: "2px",
     [theme.breakpoints.down('sm')]: {
       width: "30px",
@@ -84,7 +84,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const RecipeInfoBox = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  backgroundColor: "#fff8f0",
+  backgroundColor: "#EAF3FB",
   borderRadius: "12px",
   padding: theme.spacing(1.5),
   marginBottom: theme.spacing(1.5),
@@ -238,7 +238,7 @@ export default function Receta() {
     } catch (error) {
       console.error("Error al cargar las reseñas:", error);
       setReseñas([]);
-      setSnackbarMessage("Error loading reviews");
+      setSnackbarMessage("Error cargando reseñas");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
@@ -264,12 +264,12 @@ export default function Receta() {
     if (recetaIndex !== -1) {
       existingFavs.splice(recetaIndex, 1);
       setIsFavorite(false);
-      setSnackbarMessage("Recipe removed from favorites");
+      setSnackbarMessage("Receta eliminada de favoritos");
       setSnackbarSeverity("info");
     } else {
       existingFavs.push({ ...receta });
       setIsFavorite(true);
-      setSnackbarMessage("Recipe added to favorites");
+      setSnackbarMessage("Receta añadida a favoritos");
       setSnackbarSeverity("success");
     }
 
@@ -295,7 +295,7 @@ export default function Receta() {
     if (nuevaReseña === "true" && receta && receta.id && !isAIGenerated) {
       localStorage.removeItem("nuevaReseña");
       loadReseñas();
-      setSnackbarMessage("Review added successfully");
+      setSnackbarMessage("Reseña añadida correctamente");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     }
@@ -380,6 +380,9 @@ export default function Receta() {
               component="img"
               image={receta.imagen || imagenPlaceholder}
               alt={receta.nombre}
+              onError={(e) => {
+                e.currentTarget.src = imagenPlaceholder;
+              }}
               sx={{
                 width: "100%",
                 height: "100%",
@@ -429,8 +432,8 @@ export default function Receta() {
                   }}>
                     <StyledChip
                       label={receta.tipoCocina}
-                      color="warning"
-                      sx={{ backgroundColor: "#ff7043", color: "white" }}
+                      color="primary"
+                      sx={{ backgroundColor: "#1D70B8", color: "white" }}
                     />
                     {getTiposComidaChips(receta.tipoComida).map((tipo, index) => (
                       <StyledChip
@@ -458,7 +461,7 @@ export default function Receta() {
                   elevation={0}
                   sx={{
                     p: 2,
-                    backgroundColor: "#fff8f0",
+                    backgroundColor: "#EAF3FB",
                     borderRadius: "12px",
                     border: "1px dashed #ffcc80"
                   }}
@@ -473,13 +476,13 @@ export default function Receta() {
                         variant="contained"
                         startIcon={<EditIcon />}
                         sx={{
-                          backgroundColor: "#ff7043",
+                          backgroundColor: "#1D70B8",
                           color: "white",
                           borderRadius: "10px",
-                          boxShadow: "0 4px 10px rgba(255, 112, 67, 0.3)",
+                          boxShadow: "0 4px 10px rgba(29, 112, 184, 0.3)",
                           '&:hover': {
-                            backgroundColor: "#f4511e",
-                            boxShadow: "0 6px 12px rgba(255, 112, 67, 0.4)"
+                            backgroundColor: "#1D70B8",
+                            boxShadow: "0 6px 12px rgba(29, 112, 184, 0.4)"
                           }
                         }}
                       >
@@ -496,7 +499,7 @@ export default function Receta() {
                         color: "#d32f2f",
                         borderRadius: "10px",
                         '&:hover': {
-                          backgroundColor: "#ffebee",
+                          backgroundColor: "#EAF3FB",
                           borderColor: "#b71c1c"
                         }
                       }}
@@ -506,7 +509,7 @@ export default function Receta() {
                   </Box>
 
                   <Collapse in={showDeleteConfirm}>
-                    <Box sx={{ mt: 2, p: 2, backgroundColor: "#ffebee", borderRadius: "8px" }}>
+                    <Box sx={{ mt: 2, p: 2, backgroundColor: "#EAF3FB", borderRadius: "8px" }}>
                       <Typography variant="body2" sx={{ mb: 2 }}>
                         Are you sure you want to delete this recipe? This action cannot be undone.
                       </Typography>
@@ -538,7 +541,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <AccessTimeIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -564,7 +567,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <DifficultyIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -590,7 +593,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <RestaurantIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -616,7 +619,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <LocalDiningIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -642,7 +645,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <LocalFireDepartmentIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -668,7 +671,7 @@ export default function Receta() {
               <Grid item xs={6} sm={4} md={2}>
                 <RecipeInfoBox>
                   <StarIcon sx={{
-                    color: "#ff7043",
+                    color: "#1D70B8",
                     mr: { xs: 1, sm: 1.5 },
                     fontSize: { xs: "1.2rem", sm: "1.5rem" }
                   }} />
@@ -711,13 +714,13 @@ export default function Receta() {
               justifyContent: "flex-end",
               mb: { xs: 3, sm: 4 }
             }}>
-              <Tooltip title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+              <Tooltip title={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}>
                 <IconButton
                   onClick={handleFavorite}
                   sx={{
-                    backgroundColor: "#fff8f0",
+                    backgroundColor: "#EAF3FB",
                     size: { xs: "small", sm: "medium" },
-                    '&:hover': { backgroundColor: "#ffe0b2" },
+                    '&:hover': { backgroundColor: "#D6E9F8" },
                     transform: isFavorite ? 'scale(1.1)' : 'scale(1)',
                     transition: 'transform 0.2s ease-in-out'
                   }}
@@ -729,7 +732,7 @@ export default function Receta() {
                     }} />
                   ) : (
                     <FavoriteBorderIcon sx={{
-                      color: "#ff7043",
+                      color: "#1D70B8",
                       fontSize: { xs: "1.2rem", sm: "1.5rem" }
                     }} />
                   )}
@@ -806,7 +809,7 @@ export default function Receta() {
                       >
                         <Avatar
                           sx={{
-                            backgroundColor: "#ff7043",
+                            backgroundColor: "#1D70B8",
                             color: "white",
                             width: { xs: 24, sm: 32 },
                             height: { xs: 24, sm: 32 },
@@ -865,17 +868,17 @@ export default function Receta() {
                         variant="contained"
                         disabled={!isUserLoggedIn()}
                         sx={{
-                          backgroundColor: isUserLoggedIn() ? "#ff7043" : "#e0e0e0",
+                          backgroundColor: isUserLoggedIn() ? "#1D70B8" : "#e0e0e0",
                           color: isUserLoggedIn() ? "white" : "#9e9e9e",
                           borderRadius: "25px",
                           px: { xs: 2, sm: 3 },
                           py: { xs: 1, sm: 1.5 },
                           fontSize: { xs: "0.8rem", sm: "0.875rem" },
-                          boxShadow: isUserLoggedIn() ? "0 4px 12px rgba(255, 112, 67, 0.3)" : "none",
+                          boxShadow: isUserLoggedIn() ? "0 4px 12px rgba(29, 112, 184, 0.3)" : "none",
                           cursor: isUserLoggedIn() ? "pointer" : "not-allowed",
                           '&:hover': {
-                            backgroundColor: isUserLoggedIn() ? "#f4511e" : "#e0e0e0",
-                            boxShadow: isUserLoggedIn() ? "0 6px 16px rgba(255, 112, 67, 0.4)" : "none"
+                            backgroundColor: isUserLoggedIn() ? "#1D70B8" : "#e0e0e0",
+                            boxShadow: isUserLoggedIn() ? "0 6px 16px rgba(29, 112, 184, 0.4)" : "none"
                           },
                           '&:disabled': {
                             backgroundColor: "#e0e0e0",
@@ -943,15 +946,15 @@ export default function Receta() {
             variant="outlined"
             startIcon={<ArrowBackIcon />}
             sx={{
-              borderColor: "#ff7043",
-              color: "#ff7043",
+              borderColor: "#1D70B8",
+              color: "#1D70B8",
               borderRadius: "25px",
               px: { xs: 2, sm: 3 },
               py: { xs: 1, sm: 1.5 },
               fontSize: { xs: "0.8rem", sm: "0.875rem" },
               '&:hover': {
-                backgroundColor: "#fff8f0",
-                borderColor: "#f4511e"
+                backgroundColor: "#EAF3FB",
+                borderColor: "#1D70B8"
               }
             }}
           >

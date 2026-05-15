@@ -46,7 +46,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                     position: 'relative',
                     '&:hover': {
                         transform: 'translateY(-8px)',
-                        boxShadow: '0 12px 20px rgba(255, 112, 67, 0.2)',
+                        boxShadow: '0 12px 20px rgba(29, 112, 184, 0.2)',
                     },
                 }}
             >
@@ -75,7 +75,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                                 variant="contained"
                                 startIcon={<VisibilityIcon />}
                                 sx={{
-                                    backgroundColor: "#0077ff",
+                                    backgroundColor: "#1D70B8",
                                     borderRadius: 2,
                                     px: 3,
                                     py: 1,
@@ -83,13 +83,13 @@ export default function FavRecetaCard({ receta, onRemove }) {
                                     textTransform: "none",
                                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
                                     '&:hover': {
-                                        backgroundColor: "#005fcc",
+                                        backgroundColor: "#1D70B8",
                                         boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
                                     }
                                 }}
                                 onClick={setReceta(receta)}
                             >
-                                View Recipe
+                                Ver receta
                             </Button>
                         </Link>
                         {
@@ -110,7 +110,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                                     textTransform: "none",
                                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
                                     '&:hover': {
-                                        backgroundColor: "#ffebee",
+                                        backgroundColor: "#EAF3FB",
                                         boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
                                     }
                                 }}
@@ -127,8 +127,8 @@ export default function FavRecetaCard({ receta, onRemove }) {
                     image={receta.imagen || imagenPlaceholder}
                     alt={receta.nombre}
                     onError={(e) => {
-                        e.target.src = "/api/placeholder/400/320";
-                        e.target.alt = "Image not available";
+                        e.currentTarget.src = imagenPlaceholder;
+                        e.currentTarget.alt = "Imagen no disponible";
                     }}
                 />
 
@@ -137,7 +137,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                         variant="h6"
                         gutterBottom
                         sx={{
-                            color: '#0077ff',
+                            color: '#1D70B8',
                             fontWeight: 'bold'
                         }}
                     >
@@ -146,23 +146,23 @@ export default function FavRecetaCard({ receta, onRemove }) {
 
                     <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1 }} />
+                            <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Cuisine type: {receta.tipoCocina || 'Not specified'}
+                                Tipo de cocina: {receta.tipoCocina || 'No especificado'}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-                            <CategoryIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1, mt: 0.5 }} />
+                            <CategoryIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1, mt: 0.5 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Meal type: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : (receta.tipoComida || 'Not specified')}
+                                Tipo de comida: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : (receta.tipoComida || 'No especificado')}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <LocalDiningIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1 }} />
+                            <LocalDiningIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Servings: {receta.porciones || 'Not specified'}
+                                Porciones: {receta.porciones || 'No especificado'}
                             </Typography>
                         </Box>
                     </Box>
@@ -175,8 +175,8 @@ export default function FavRecetaCard({ receta, onRemove }) {
                             label={receta.dificultad || 'N/A'}
                             size="small"
                             sx={{
-                                bgcolor: '#fff8f0',
-                                color: '#0077ff',
+                                bgcolor: '#EAF3FB',
+                                color: '#1D70B8',
                                 border: '1px solid #e6f0ff',
                             }}
                         />
@@ -185,8 +185,8 @@ export default function FavRecetaCard({ receta, onRemove }) {
                             label={receta.tiempoCocinado ? `${receta.tiempoCocinado} min` : '< 10 min'}
                             size="small"
                             sx={{
-                                bgcolor: '#fff8f0',
-                                color: '#0077ff',
+                                bgcolor: '#EAF3FB',
+                                color: '#1D70B8',
                                 border: '1px solid #e6f0ff',
                             }}
                         />
@@ -200,9 +200,9 @@ export default function FavRecetaCard({ receta, onRemove }) {
                         flexDirection: 'column'
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <FavoriteIcon sx={{ fontSize: '1rem', color: '#0077ff', mr: 1 }} />
+                            <FavoriteIcon sx={{ fontSize: '1rem', color: '#1D70B8', mr: 1 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Favorite
+                                Favorita
                             </Typography>
                         </Box>
 
@@ -214,7 +214,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                             size="small"
                             sx={{
                                 '& .MuiRating-iconFilled': {
-                                    color: '#0077ff',
+                                    color: '#1D70B8',
                                 }
                             }}
                         />
@@ -223,7 +223,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                             color="text.secondary"
                             sx={{ mt: 0.5 }}
                         >
-                            {receta.valoracion ? `${Number(receta.valoracion).toFixed(1)}/5` : 'No ratings'}
+                            {receta.valoracion ? `${Number(receta.valoracion).toFixed(1)}/5` : 'Sin valoraciones'}
                         </Typography>
                     </Box>
                 </CardContent>

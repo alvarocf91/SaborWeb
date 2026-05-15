@@ -96,7 +96,7 @@ class RecetasApiController extends Controller
         $receta->update([
             'nombre' => $datos['nombre'] ?? $receta->nombre,
             'dificultad' => $datos['dificultad'] ?? $receta->dificultad,
-            'imagen' => $datos['imagen'] ?? $receta->imagen,
+            'imagen_url' => $datos['imagen_url'] ?? $receta->imagen_url,
             'tiempoCocinado' => $datos['tiempoCocinado'] ?? $receta->tiempoCocinado,
             'tipoComida' => $datos['tipoComida'] ?? $receta->tipoComida
         ]);
@@ -241,7 +241,9 @@ class RecetasApiController extends Controller
 
                 $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
 
-                $urlImagen = asset('storage/' . $rutaImagen);
+                // Generar URL completa y correcta (sin duplicar /public/)
+                $baseUrl = config('app.url');
+                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
 
                 return response()->json([
                     'mensaje' => 'Imagen subida correctamente',

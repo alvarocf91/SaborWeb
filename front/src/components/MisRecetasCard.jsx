@@ -32,130 +32,32 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
+            className="card-grid-item"
             style={{ width: '100%' }}
         >
             <Card
                 elevation={3}
+                className="card-smooth card-hoverable"
                 sx={{
                     height: '100%',
-                    width: '300px',
                     display: 'flex',
                     flexDirection: 'column',
                     borderRadius: 3,
                     overflow: 'hidden',
-                    transition: 'all 0.3s ease-in-out',
-                    position: 'relative',
-                    '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: '0 12px 20px rgba(255, 112, 67, 0.2)',
-                    },
+                    position: 'relative'
                 }}
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: 0,
-                        transition: 'opacity 0.3s ease',
-                        zIndex: 10,
-                        '&:hover': {
-                            opacity: 1,
-                        },
-                    }}
-                >
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '220px' }}>
-                        <Link to={`/recipe-detail`} style={{ textDecoration: 'none', width: '100%' }}>
-                            <Button
-                                variant="contained"
-                                startIcon={<VisibilityIcon />}
-                                fullWidth
-                                sx={{
-                                    backgroundColor: "#0077ff",
-                                    borderRadius: 2,
-                                    px: 3,
-                                    py: 1,
-                                    fontWeight: 'bold',
-                                    textTransform: "none",
-                                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                                    '&:hover': {
-                                        backgroundColor: "#005fcc",
-                                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
-                                    }
-                                }}
-                                onClick={setReceta(receta)}
-                            >
-                                View Recipe
-                            </Button>
-                        </Link>
-
-                        <Button
-                            variant="contained"
-                            startIcon={<EditIcon />}
-                            fullWidth
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit(receta);
-                            }}
-                            sx={{
-                                backgroundColor: "#2196f3",
-                                borderRadius: 2,
-                                px: 3,
-                                py: 1,
-                                fontWeight: 'bold',
-                                textTransform: "none",
-                                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                                '&:hover': {
-                                    backgroundColor: "#1976d2",
-                                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
-                                }
-                            }}
-                        >
-                            Edit Recipe
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            startIcon={<DeleteIcon />}
-                            fullWidth
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onRemove(receta.id);
-                            }}
-                            sx={{
-                                backgroundColor: "white",
-                                color: "#f44336",
-                                borderRadius: 2,
-                                px: 3,
-                                py: 1,
-                                fontWeight: 'bold',
-                                textTransform: "none",
-                                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                                '&:hover': {
-                                    backgroundColor: "#ffebee",
-                                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
-                                }
-                            }}
-                        >
-                            Delete
-                        </Button>
-                    </Box>
-                </Box>
+                <Box className="media-overlay" />
 
                 <CardMedia
                     component="img"
                     height="180"
                     image={receta.imagen || imagenPlaceholder}
                     alt={receta.nombre}
+                    sx={{ objectFit: 'cover' }}
                     onError={(e) => {
-                        e.target.src = "/api/placeholder/400/320";
-                        e.target.alt = "Imagen no disponible";
+                        e.currentTarget.src = imagenPlaceholder;
+                        e.currentTarget.alt = "Imagen no disponible";
                     }}
                 />
 
@@ -164,7 +66,7 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
                         variant="h6"
                         gutterBottom
                         sx={{
-                            color: '#0077ff',
+                            color: '#1D70B8',
                             fontWeight: 'bold'
                         }}
                     >
@@ -173,23 +75,23 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
 
                     <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1 }} />
+                            <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Cuisine type: {receta.tipoCocina || 'Not specified'}
+                                Tipo de cocina: {receta.tipoCocina || 'No especificado'}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-                            <CategoryIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1, mt: 0.5 }} />
+                            <CategoryIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1, mt: 0.5 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Meal type: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : (receta.tipoComida || 'Not specified')}
+                                Tipo de comida: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : (receta.tipoComida || 'No especificado')}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <LocalDiningIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1 }} />
+                            <LocalDiningIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                             <Typography variant="body2" color="text.secondary">
-                                Servings: {receta.porciones || 'Not specified'}
+                                Porciones: {receta.porciones || 'No especificado'}
                             </Typography>
                         </Box>
                     </Box>
@@ -202,8 +104,8 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
                             label={receta.dificultad || 'N/A'}
                             size="small"
                             sx={{
-                                bgcolor: '#fff8f0',
-                                color: '#0077ff',
+                                bgcolor: '#EAF3FB',
+                                color: '#1D70B8',
                                 border: '1px solid #e6f0ff',
                             }}
                         />
@@ -212,8 +114,8 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
                             label={receta.tiempoCocinado ? `${receta.tiempoCocinado} min` : '< 10 min'}
                             size="small"
                             sx={{
-                                bgcolor: '#fff8f0',
-                                color: '#0077ff',
+                                bgcolor: '#EAF3FB',
+                                color: '#1D70B8',
                                 border: '1px solid #e6f0ff',
                             }}
                         />
@@ -234,7 +136,7 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
                             size="small"
                             sx={{
                                 '& .MuiRating-iconFilled': {
-                                    color: '#0077ff',
+                                    color: '#1D70B8',
                                 }
                             }}
                         />
@@ -243,10 +145,46 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
                             color="text.secondary"
                             sx={{ mt: 0.5 }}
                         >
-                            {receta.valoracion ? `${Number(receta.valoracion).toFixed(1)}/5` : 'No ratings'}
+                            {receta.valoracion ? `${Number(receta.valoracion).toFixed(1)}/5` : 'Sin valoraciones'}
                         </Typography>
                     </Box>
                 </CardContent>
+
+                {/* Action buttons fixed at bottom on hover for larger screens */}
+                <Box sx={{ p: 2, display: { xs: 'none', sm: 'flex' }, gap: 1, justifyContent: 'space-between' }}>
+                    <Link to={`/recipe-detail`} style={{ textDecoration: 'none', width: '48%' }}>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            startIcon={<VisibilityIcon />}
+                            sx={{
+                                background: 'linear-gradient(90deg, rgba(29,112,184,1) 0%, rgba(29,112,184,0.95) 100%)',
+                                color: '#fff',
+                                boxShadow: '0 6px 18px rgba(29,112,184,0.18)',
+                                '&:hover': { boxShadow: '0 10px 24px rgba(29,112,184,0.2)' }
+                            }}
+                            onClick={() => setReceta(receta)}
+                        >Ver</Button>
+                    </Link>
+
+                    <Box sx={{ width: '48%', display: 'flex', gap: 1 }}>
+                        <Button
+                            variant="outlined"
+                            startIcon={<EditIcon />}
+                            fullWidth
+                            onClick={(e) => { e.stopPropagation(); onEdit(receta); }}
+                            sx={{ borderColor: 'rgba(29,112,184,0.12)', color: '#1D70B8' }}
+                        >Editar</Button>
+                        <Button
+                            variant="outlined"
+                            startIcon={<DeleteIcon />}
+                            fullWidth
+                            onClick={(e) => { e.stopPropagation(); onRemove(receta.id); }}
+                            sx={{ borderColor: 'rgba(244,67,54,0.12)', color: '#f44336' }}
+                        >Eliminar</Button>
+                    </Box>
+                </Box>
+
             </Card>
         </motion.div>
     );

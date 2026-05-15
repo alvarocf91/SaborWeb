@@ -57,7 +57,7 @@ export default function FavoritesRecipes() {
                     component="h1"
                     gutterBottom
                     sx={{
-                        color: '#ff7043',
+                        color: '#1D70B8',
                         fontWeight: 'bold',
                         position: 'relative',
                         display: 'inline-block',
@@ -68,12 +68,12 @@ export default function FavoritesRecipes() {
                             height: '4px',
                             bottom: '-10px',
                             left: '20%',
-                            backgroundColor: '#ff7043',
+                            backgroundColor: '#1D70B8',
                             borderRadius: '2px'
                         }
                     }}
                 >
-                    Favorites Recipes
+                        Recetas Favoritas
                 </Typography>
                 <Typography
                     variant="body1"
@@ -85,7 +85,7 @@ export default function FavoritesRecipes() {
                         fontSize: '1.1rem'
                     }}
                 >
-        Find here all the recipes you have saved as favorites
+        Aquí encontrarás todas las recetas que has guardado como favoritas
                 </Typography>
             </Box>
 
@@ -100,12 +100,12 @@ export default function FavoritesRecipes() {
                     }}
                 >
                     <FavoriteBorderIcon sx={{ fontSize: 60, color: "#bdbdbd", mb: 2 }} />
-                    <Typography variant="h6" gutterBottom>
-            You have no favorite recipes
+                        <Typography variant="h6" gutterBottom>
+                    No tienes recetas favoritas
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-            Add recipes to your favorites to see them here.
-                    </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                    Añade recetas a tus favoritas para verlas aquí.
+                        </Typography>
                 </Paper>
             ) : (
                 <Grid container spacing={4} justifyContent="center">

@@ -263,7 +263,7 @@ export default function MiPerfil() {
         p: 0,
         borderRadius: isMobile ? 2 : 3,
         overflow: 'hidden',
-        background: 'linear-gradient(to right, #ff7043, #ffab91)'
+        background: 'linear-gradient(to right, #1D70B8, #1D70B8)'
       }}>
         <Box sx={{
           p: isMobile ? 2 : 3,
@@ -311,7 +311,7 @@ export default function MiPerfil() {
                 startAdornment: (
                   <InputAdornment position="start">
                     <PersonIcon sx={{
-                      color: '#ff7043',
+                      color: '#1D70B8',
                       fontSize: isMobile ? 20 : 24
                     }} />
                   </InputAdornment>
@@ -334,7 +334,7 @@ export default function MiPerfil() {
                 startAdornment: (
                   <InputAdornment position="start">
                     <AccountCircleIcon sx={{
-                      color: '#ff7043',
+                      color: '#1D70B8',
                       fontSize: isMobile ? 20 : 24
                     }} />
                   </InputAdornment>
@@ -358,7 +358,7 @@ export default function MiPerfil() {
                 startAdornment: (
                   <InputAdornment position="start">
                     <EmailIcon sx={{
-                      color: '#ff7043',
+                      color: '#1D70B8',
                       fontSize: isMobile ? 20 : 24
                     }} />
                   </InputAdornment>
@@ -390,7 +390,7 @@ export default function MiPerfil() {
                 sx={{ display: 'flex', alignItems: 'center' }}
               >
                 <Box component="span" sx={{
-                  bgcolor: '#ff7043',
+                  bgcolor: '#1D70B8',
                   color: 'white',
                   borderRadius: '50%',
                   width: isMobile ? 28 : 32,
@@ -418,14 +418,14 @@ export default function MiPerfil() {
                     size={isMobile ? "small" : "medium"}
                     sx={{
                       borderRadius: 2,
-                      bgcolor: cambiarPassword ? '#ff7043' : 'transparent',
-                      borderColor: isGoogleUser ? '#bdbdbd' : '#ff7043',
-                      color: isGoogleUser ? '#bdbdbd' : (cambiarPassword ? 'white' : '#ff7043'),
+                      bgcolor: cambiarPassword ? '#1D70B8' : 'transparent',
+                      borderColor: isGoogleUser ? '#bdbdbd' : '#1D70B8',
+                      color: isGoogleUser ? '#bdbdbd' : (cambiarPassword ? 'white' : '#1D70B8'),
                       fontSize: isMobile ? '0.75rem' : '0.875rem',
                       minWidth: isMobile ? 'auto' : '64px',
                       '&:hover': {
-                        bgcolor: cambiarPassword ? '#f4511e' : 'rgba(255, 112, 67, 0.08)',
-                        borderColor: isGoogleUser ? '#bdbdbd' : '#f4511e'
+                        bgcolor: cambiarPassword ? '#1D70B8' : 'rgba(29, 112, 184, 0.08)',
+                        borderColor: isGoogleUser ? '#bdbdbd' : '#1D70B8'
                       }
                     }}
                   >
@@ -439,14 +439,14 @@ export default function MiPerfil() {
               <Box sx={{
                 mt: 2,
                 p: isMobile ? 1.5 : 2,
-                bgcolor: 'rgba(255, 112, 67, 0.55)',
+                bgcolor: 'rgba(29, 112, 184, 0.55)',
                 borderRadius: 2,
                 display: 'flex',
                 alignItems: 'flex-start',
                 flexDirection: isMobile ? 'column' : 'row'
               }}>
                 <GoogleIcon sx={{
-                  color: '#ff7043',
+                  color: '#1D70B8',
                   mr: isMobile ? 0 : 1.5,
                   mb: isMobile ? 1 : 0,
                   mt: isMobile ? 0 : 0.3
@@ -568,8 +568,8 @@ export default function MiPerfil() {
                   }}
                 >
                   <Box component="span" sx={{
-                    bgcolor: '#ffe0b2',
-                    color: '#fb8c00',
+                    bgcolor: '#D6E9F8',
+                    color: '#1D70B8',
                     borderRadius: '50%',
                     width: isMobile ? 18 : 20,
                     height: isMobile ? 18 : 20,
@@ -625,11 +625,11 @@ export default function MiPerfil() {
             fullWidth={isMobile}
             sx={{
               borderRadius: 2,
-              bgcolor: '#ff7043',
+              bgcolor: '#1D70B8',
               order: isMobile ? 1 : 2,
               px: isMobile ? 2 : 3,
               '&:hover': {
-                bgcolor: '#f4511e'
+                bgcolor: '#1D70B8'
               }
             }}
           >
@@ -657,7 +657,7 @@ export default function MiPerfil() {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <Box sx={{
-              bgcolor: '#ff7043',
+              bgcolor: '#1D70B8',
               color: 'white',
               borderRadius: '50%',
               width: isMobile ? 32 : 36,
@@ -679,13 +679,13 @@ export default function MiPerfil() {
             size={isMobile ? "small" : "medium"}
             sx={{
               borderRadius: 2,
-              borderColor: '#ff7043',
-              color: '#ff7043',
+              borderColor: '#1D70B8',
+              color: '#1D70B8',
               fontSize: isMobile ? '0.75rem' : '0.875rem',
               alignSelf: isMobile ? 'flex-start' : 'auto',
               '&:hover': {
-                borderColor: '#f4511e',
-                bgcolor: 'rgba(255, 112, 67, 0.08)'
+                borderColor: '#1D70B8',
+                bgcolor: 'rgba(29, 112, 184, 0.08)'
               }
             }}
           >
@@ -725,14 +725,14 @@ export default function MiPerfil() {
               sx={{
                 mt: 2,
                 borderRadius: 2,
-                bgcolor: '#ff7043',
+                bgcolor: '#1D70B8',
                 fontSize: isMobile ? '0.75rem' : '0.875rem',
                 '&:hover': {
-                  bgcolor: '#f4511e'
+                  bgcolor: '#1D70B8'
                 }
               }}
             >
-  Create my first recipe
+  Crear mi primera receta
             </Button>
           </Box>
         )}
@@ -757,7 +757,7 @@ export default function MiPerfil() {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <Box sx={{
-              bgcolor: '#ff7043',
+              bgcolor: '#1D70B8',
               color: 'white',
               borderRadius: '50%',
               width: isMobile ? 32 : 36,
@@ -769,7 +769,7 @@ export default function MiPerfil() {
             }}>
               <FavoriteIcon fontSize={isMobile ? "small" : "medium"} />
             </Box>
-  Favorite Recipes
+  Recetas Favoritas
           </Typography>
 
           <Button
@@ -779,23 +779,23 @@ export default function MiPerfil() {
             size={isMobile ? "small" : "medium"}
             sx={{
               borderRadius: 2,
-              borderColor: '#ff7043',
-              color: '#ff7043',
+              borderColor: '#1D70B8',
+              color: '#1D70B8',
               fontSize: isMobile ? '0.75rem' : '0.875rem',
               alignSelf: isMobile ? 'flex-start' : 'auto',
               '&:hover': {
-                borderColor: '#f4511e',
-                bgcolor: 'rgba(255, 112, 67, 0.08)'
+                borderColor: '#1D70B8',
+                bgcolor: 'rgba(29, 112, 184, 0.08)'
               }
             }}
           >
-  View all
+  Ver todas
           </Button>
         </Box>
 
         {loadingFavoritas ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress sx={{ color: '#ff7043' }} size={isMobile ? 32 : 40} />
+            <CircularProgress sx={{ color: '#1D70B8' }} size={isMobile ? 32 : 40} />
           </Box>
         ) : recetasFavoritas.length > 0 ? (
           <Box>
@@ -816,7 +816,7 @@ export default function MiPerfil() {
               color="text.secondary"
               sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}
             >
-  You don't have any favorite recipes yet
+  Aún no tienes recetas favoritas
             </Typography>
             <Button
               variant="contained"
@@ -825,14 +825,14 @@ export default function MiPerfil() {
               sx={{
                 mt: 2,
                 borderRadius: 2,
-                bgcolor: '#ff7043',
+                bgcolor: '#1D70B8',
                 fontSize: isMobile ? '0.75rem' : '0.875rem',
                 '&:hover': {
-                  bgcolor: '#f4511e'
+                  bgcolor: '#1D70B8'
                 }
               }}
             >
-  Explore recipes
+  Explorar recetas
             </Button>
           </Box>
         )}

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use Google\Client as GoogleClient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -68,55 +67,6 @@ class UserApiController extends Controller
             'user' => $user,
             'token' => $token
         ], 201);
-    }
-
-
-    public function googleRegister(Request $request)
-    {
-        $request->validate([
-            'token' => 'required|string',
-        ]);
-
-        try {
-            $googleClient = new GoogleClient();
-            $googleClient->setClientId("601935688943-ktb1sb3nfn3r05k7gnnk7d6ifjajtp2s.apps.googleusercontent.com");
-
-            $payload = $googleClient->verifyIdToken($request->token);
-
-            if ($payload) {
-                $googleId = $payload['sub'];
-                $name = $payload['name'];
-                $email = $payload['email'];
-
-                $user = User::where('google_id', $googleId)
-                    ->orWhere('email', $email)
-                    ->first();
-
-                if (!$user) {
-                    $user = User::create([
-                        'name' => $name,
-                        'email' => $email,
-                        'userName' => explode('@', $email)[0],
-                        'google_id' => $googleId,
-                        'password' => Hash::make(uniqid()),
-                        'role' => 'user'
-                    ]);
-                }
-
-                $user->tokens()->delete();
-                $token = $user->createToken('auth-token')->plainTextToken;
-
-                return response()->json([
-                    'message' => 'Autenticación con Google exitosa',
-                    'user' => $user,
-                    'token' => $token
-                ]);
-            } else {
-                return response()->json(['message' => 'Token de Google no válido'], 401);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al procesar el registro con Google', 'error' => $e->getMessage()], 500);
-        }
     }
 
     public function actualizar(Request $request)

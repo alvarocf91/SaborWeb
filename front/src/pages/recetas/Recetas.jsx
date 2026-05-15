@@ -20,8 +20,6 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TimerOffIcon from "@mui/icons-material/TimerOff";
 import TuneIcon from "@mui/icons-material/Tune";
 import NoFoodIcon from "@mui/icons-material/NoFood";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import RecetaCard from "../../components/RecetaCard";
 import Spinner from "../../components/Spinner";
 
@@ -45,7 +43,6 @@ export default function Recetas() {
 
     const user = JSON.parse(localStorage.getItem("user"));
     const puedeCrearReceta = user && (user.role === "user" || user.role === "admin");
-    const puedeUsarIA = !!user;
 
     useEffect(() => {
         cargaRecetas();
@@ -129,99 +126,6 @@ export default function Recetas() {
         fetchRecetasConApi(obtenerRecetasMenosTiempo);
     };
 
-    const renderAIButton = () => {
-        if (puedeUsarIA) {
-            return (
-                <Link to="/ai-recipe-search" style={{ textDecoration: "none" }}>
-                    <Button
-                        startIcon={<SmartToyIcon />}
-                        endIcon={<AutoAwesomeIcon />}
-                        variant="contained"
-                        size="large"
-                        sx={{
-                            textTransform: "none",
-                            borderRadius: 3,
-                            px: 4,
-                            py: 1.5,
-                            fontSize: "1.1rem",
-                            fontWeight: "bold",
-                            background: "linear-gradient(45deg, #6200ea 30%, #9c27b0 90%)",
-                            color: "#ffffff",
-                            boxShadow: "0 8px 25px rgba(98, 0, 234, 0.3)",
-                            position: "relative",
-                            overflow: "hidden",
-                            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                            "&:hover": {
-                                background: "linear-gradient(45deg, #3700b3 30%, #7b1fa2 90%)",
-                                boxShadow: "0 12px 35px rgba(98, 0, 234, 0.4)",
-                                transform: "translateY(-2px)",
-                            },
-                            "&:before": {
-                                content: '""',
-                                position: "absolute",
-                                top: 0,
-                                left: "-100%",
-                                width: "100%",
-                                height: "100%",
-                                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
-                                transition: "left 0.5s",
-                            },
-                            "&:hover:before": {
-                                left: "100%",
-                            },
-                            "& .MuiButton-startIcon": {
-                                marginRight: "8px",
-                            },
-                            "& .MuiButton-endIcon": {
-                                marginLeft: "8px",
-                                animation: "sparkle 2s ease-in-out infinite",
-                            },
-                            "@keyframes sparkle": {
-                                "0%, 100%": { 
-                                    transform: "scale(1) rotate(0deg)",
-                                    opacity: 1 
-                                },
-                                "50%": { 
-                                    transform: "scale(1.2) rotate(180deg)",
-                                    opacity: 0.8 
-                                },
-                            },
-                        }}
-                    >
-                        AI Recipe Generator
-                    </Button>
-                </Link>
-            );
-        } else {
-            return (
-                <Button
-                    startIcon={<SmartToyIcon />}
-                    endIcon={<AutoAwesomeIcon />}
-                    variant="contained"
-                    size="large"
-                    disabled
-                    sx={{
-                        textTransform: "none",
-                        borderRadius: 3,
-                        px: 4,
-                        py: 1.5,
-                        fontSize: "1.1rem",
-                        fontWeight: "bold",
-                        backgroundColor: "#e0e0e0",
-                        color: "#9e9e9e",
-                        "&.Mui-disabled": {
-                            backgroundColor: "#e0e0e0",
-                            color: "#9e9e9e",
-                        },
-                    }}
-                    title="Inicia sesión para usar esta función"
-                >
-                    AI Recipe Generator
-                </Button>
-            );
-        }
-    };
-
     const renderErrorMessage = () => {
         if (error) {
             return (
@@ -229,7 +133,7 @@ export default function Recetas() {
                     sx={{
                         textAlign: "center",
                         py: 4,
-                        backgroundColor: "#ffebee",
+                        backgroundColor: "#EAF3FB",
                         borderRadius: 2,
                         mb: 2
                     }}
@@ -258,7 +162,7 @@ export default function Recetas() {
                     component="h1"
                     gutterBottom
                     sx={{
-                        color: '#ff7043',
+                        color: '#1D70B8',
                         fontWeight: 'bold',
                         position: 'relative',
                         display: 'inline-block',
@@ -269,7 +173,7 @@ export default function Recetas() {
                             height: '4px',
                             bottom: '-10px',
                             left: '20%',
-                            backgroundColor: '#ff7043',
+                            backgroundColor: '#1D70B8',
                             borderRadius: '2px'
                         }
                     }}
@@ -290,47 +194,13 @@ export default function Recetas() {
                 </Typography>
             </Box>
 
-            {/* AI Button destacado en su propia sección */}
-            <Paper
-                elevation={6}
-                sx={{
-                    p: 4,
-                    mb: 4,
-                    borderRadius: 4,
-                    background: "linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%)",
-                    border: "2px solid #e1bee7",
-                    textAlign: "center",
-                }}
-            >
-                <Box mb={2}>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            color: "#6200ea",
-                            fontWeight: "bold",
-                            mb: 1,
-                        }}
-                    >
-                        🤖 New! AI Recipe Generator
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mb: 3 }}
-                    >
-                        Tell us what ingredients you have and our AI will create personalized recipes for you
-                    </Typography>
-                </Box>
-                {renderAIButton()}
-            </Paper>
-
             <Paper
                 elevation={3}
                 sx={{
                     p: 3,
                     mb: 4,
                     borderRadius: 3,
-                    backgroundColor: "#fff7f0",
+                    backgroundColor: "#EAF3FB",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 }}
             >
@@ -338,15 +208,15 @@ export default function Recetas() {
                     <Button
                         startIcon={<RestartAltIcon />}
                         variant="contained"
-                        color="warning"
+                        color="primary"
                         onClick={handleResetFilters}
                         disabled={loading}
                         sx={{
                             textTransform: "none",
                             fontWeight: 500,
                             borderRadius: 2,
-                            backgroundColor: "#ff7043",
-                            "&:hover": { backgroundColor: "#e64a19" },
+                            backgroundColor: "#1D70B8",
+                            "&:hover": { backgroundColor: "#1D70B8" },
                         }}
                     >
                         All
@@ -360,12 +230,12 @@ export default function Recetas() {
                         sx={{
                             textTransform: "none",
                             borderRadius: 2,
-                            color: "#ff7043",
-                            borderColor: "#ff7043",
+                            color: "#1D70B8",
+                            borderColor: "#1D70B8",
                             "&:hover": {
-                                backgroundColor: "#fff0e6",
-                                borderColor: "#e64a19",
-                                color: "#e64a19",
+                                backgroundColor: "#EAF3FB",
+                                borderColor: "#1D70B8",
+                                color: "#1D70B8",
                             },
                         }}
                     >
@@ -380,12 +250,12 @@ export default function Recetas() {
                         sx={{
                             textTransform: "none",
                             borderRadius: 2,
-                            color: "#ff7043",
-                            borderColor: "#ff7043",
+                            color: "#1D70B8",
+                            borderColor: "#1D70B8",
                             "&:hover": {
-                                backgroundColor: "#fff0e6",
-                                borderColor: "#e64a19",
-                                color: "#e64a19",
+                                backgroundColor: "#EAF3FB",
+                                borderColor: "#1D70B8",
+                                color: "#1D70B8",
                             },
                         }}
                     >
@@ -476,11 +346,11 @@ export default function Recetas() {
                             textTransform: "none",
                             borderRadius: "30px",
                             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
-                            backgroundColor: "#ff7043",
+                            backgroundColor: "#1D70B8",
                             color: "#fff",
                             transition: "all 0.3s ease-in-out",
                             "&:hover": {
-                                backgroundColor: "#e64a19",
+                                backgroundColor: "#1D70B8",
                                 transform: "scale(1.05)",
                             },
                         }}

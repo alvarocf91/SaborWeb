@@ -1,3 +1,5 @@
+// LanguageSwitcher removed to force Spanish across the site
+import { useLanguage } from "../hooks/useLanguage";
 import { useState, useEffect, useContext, useRef } from "react";
 import { SaborwebContext } from "../context/SaborifyProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -47,6 +49,7 @@ export default function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { recetas, ingredientes, setReceta, setIngrediente, setAlergenoSeleccionado } = useContext(SaborwebContext);
+  const { t } = useLanguage();
 
   const [placeholder, setPlaceholder] = useState("Buscar recetas o ingredientes");
   const [query, setQuery] = useState("");
@@ -72,11 +75,11 @@ export default function Header() {
 
   useEffect(() => {
     if (location.pathname.includes("/all-ingredients") || location.pathname.includes("/ingredient-detail")) {
-      setPlaceholder("Search ingredients...");
+      setPlaceholder(t('header.searchIngredients'));
     } else if (location.pathname.includes("/all-recipes") || location.pathname.includes("/recipe-detail")) {
-      setPlaceholder("Search recipes...");
+      setPlaceholder(t('header.searchRecipes'));
     } else {
-      setPlaceholder("Search recipes or ingredients...");
+      setPlaceholder(t('header.searchPlaceholder'));
     }
   }, [location.pathname]);
 
@@ -220,7 +223,7 @@ export default function Header() {
                     sx={{ 
                       fontSize: "1rem", 
                       fontWeight: "600", 
-                      color: isActive(item.path) ? "#005fcc" : "#666",
+                      color: isActive(item.path) ? "#1D70B8" : "#666",
                       textTransform: "none", 
                       borderRadius: 2,
                       px: 2,
@@ -235,7 +238,7 @@ export default function Header() {
                         position: 'absolute',
                         width: '40%',
                         height: '3px',
-                        backgroundColor: '#005fcc',
+                        backgroundColor: '#1D70B8',
                         borderRadius: '3px',
                         bottom: '6px',
                         left: '30%'
@@ -270,7 +273,7 @@ export default function Header() {
                       }
                     }}
                   >
-                    <SearchIcon sx={{ color: "#0077ff" }} />
+                    <SearchIcon sx={{ color: "#1D70B8" }} />
                     <InputBase
                       placeholder={placeholder}
                       sx={{ ml: 1.5, flex: 1, fontSize: "0.95rem" }}
@@ -336,6 +339,8 @@ export default function Header() {
                 </Box>
               )}
 
+              {/* LanguageSwitcher removed - site forced to Spanish */}
+
               {user ? (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Button
@@ -349,13 +354,13 @@ export default function Header() {
                       px: 1,
                       borderRadius: 2,
                       '&:hover': {
-                        backgroundColor: "rgba(255, 112, 67, 0.08)"
+                        backgroundColor: "rgba(29, 112, 184, 0.08)"
                       }
                     }}
                   >
                     <Avatar 
                       sx={{ 
-                        bgcolor: "#0077ff",
+                        bgcolor: "#1D70B8",
                         width: 38,
                         height: 38,
                         fontSize: "1rem",
@@ -418,7 +423,7 @@ export default function Header() {
                           }
                         }}
                       >
-                        <ListItemIcon sx={{ color: "#0077ff", minWidth: "32px" }}>
+                        <ListItemIcon sx={{ color: "#1D70B8", minWidth: "32px" }}>
                           {item.icon}
                         </ListItemIcon>
                         <ListItemText 
@@ -442,7 +447,7 @@ export default function Header() {
                         }
                       }}
                     >
-                      <ListItemIcon sx={{ color: "#0077ff", minWidth: "32px" }}>
+                      <ListItemIcon sx={{ color: "#1D70B8", minWidth: "32px" }}>
                         <LogoutIcon />
                       </ListItemIcon>
                       <ListItemText 
@@ -463,7 +468,7 @@ export default function Header() {
                     variant="contained"
                     startIcon={<LoginIcon />}
                     sx={{
-                      background: "linear-gradient(45deg, #0077ff 30%, #00a0ff 90%)",
+                      background: "linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)",
                       color: "white",
                       fontWeight: "600",
                       py: 1,
@@ -472,32 +477,25 @@ export default function Header() {
                       textTransform: "none",
                       boxShadow: "0 3px 12px rgba(0, 119, 255, 0.3)",
                       "&:hover": {
-                        background: "linear-gradient(45deg, #005fcc 30%, #0077ff 90%)",
+                        background: "linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)",
                         boxShadow: "0 5px 15px rgba(0, 119, 255, 0.4)",
                       },
                       transition: "all 0.3s ease"
                     }}
                   >
-                    Iniciar Sesión
+                    {t('header.login')}
                   </Button>
                 </Link>
               )}
-            </Box>
-          )}
-
-          {isMobile && (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              {mostrarBuscador && (
-                <IconButton 
-                  size="large" 
-                  onClick={toggleSearch}
-                  sx={{ 
-                    color: showSearch ? "#005fcc" : "#666"
-                  }}
-                >
-                  {showSearch ? <CloseIcon /> : <SearchIcon />}
-                </IconButton>
-              )}
+              
+              <IconButton
+                size="large"
+                edge="end"
+                onClick={() => setShowSearch((prev) => !prev)}
+                sx={{ color: "#666" }}
+              >
+                {showSearch ? <CloseIcon /> : <SearchIcon />}
+              </IconButton>
               
               <IconButton
                 size="large"
@@ -528,7 +526,7 @@ export default function Header() {
                     border: "1px solid #eeeeee"
                   }}
                 >
-                  <SearchIcon sx={{ color: "#0077ff", ml: 1 }} />
+                  <SearchIcon sx={{ color: "#1D70B8", ml: 1 }} />
                   <InputBase
                     placeholder={placeholder}
                     sx={{ ml: 1, flex: 1 }}
@@ -595,7 +593,7 @@ export default function Header() {
         }}
       >
         <Box sx={{ pt: 3, pb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#0077ff" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1D70B8" }}>
             Menú
           </Typography>
           <IconButton onClick={() => setMenuOpen(false)}>
@@ -609,7 +607,7 @@ export default function Header() {
           <Box sx={{ mb: 3, display: "flex", alignItems: "center", p: 1.5, backgroundColor: "rgba(0, 119, 255, 0.08)", borderRadius: 2 }}>
             <Avatar 
               sx={{ 
-                bgcolor: "#0077ff",
+                bgcolor: "#1D70B8",
                 width: 40,
                 height: 40,
                 fontSize: "1.1rem"
@@ -643,7 +641,7 @@ export default function Header() {
                 }}
               >
                 <Box sx={{ 
-                  color: isActive(item.path) ? "#005fcc" : "#666",
+                  color: isActive(item.path) ? "#1D70B8" : "#666",
                   mr: 2
                 }}>
                   {item.icon}
@@ -653,7 +651,7 @@ export default function Header() {
                   primaryTypographyProps={{
                     style: {
                       fontWeight: isActive(item.path) ? 600 : 500,
-                      color: isActive(item.path) ? "#005fcc" : "#444"
+                      color: isActive(item.path) ? "#1D70B8" : "#444"
                     }
                   }}
                 />
@@ -680,7 +678,7 @@ export default function Header() {
                     }}
                   >
                     <Box sx={{ 
-                      color: isActive(item.path) ? "#005fcc" : "#666",
+                      color: isActive(item.path) ? "#1D70B8" : "#666",
                       mr: 2
                     }}>
                       {item.icon}
@@ -690,7 +688,7 @@ export default function Header() {
                       primaryTypographyProps={{
                         style: {
                           fontWeight: isActive(item.path) ? 600 : 500,
-                          color: isActive(item.path) ? "#005fcc" : "#444"
+                          color: isActive(item.path) ? "#1D70B8" : "#444"
                         }
                       }}
                     />
@@ -710,14 +708,14 @@ export default function Header() {
               startIcon={<LogoutIcon />}
               onClick={handleLogout}
               sx={{
-                color: "#0077ff",
-                borderColor: "#0077ff",
+                color: "#1D70B8",
+                borderColor: "#1D70B8",
                 textTransform: "none",
                 borderRadius: 8,
                 p: 1.5,
                 fontWeight: 600,
                 "&:hover": {
-                  borderColor: "#005fcc",
+                  borderColor: "#1D70B8",
                   backgroundColor: "rgba(0, 119, 255, 0.04)"
                 }
               }}
@@ -733,7 +731,7 @@ export default function Header() {
               startIcon={<LoginIcon />}
               onClick={() => setMenuOpen(false)}
               sx={{
-                background: "linear-gradient(45deg, #0077ff 30%, #00a0ff 90%)",
+                background: "linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)",
                 color: "white",
                 textTransform: "none",
                 borderRadius: 8,
@@ -741,7 +739,7 @@ export default function Header() {
                 fontWeight: 600,
                 boxShadow: "0 4px 10px rgba(0, 119, 255, 0.3)",
                 "&:hover": {
-                  background: "linear-gradient(45deg, #005fcc 30%, #0077ff 90%)",
+                  background: "linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)",
                 }
               }}
             >

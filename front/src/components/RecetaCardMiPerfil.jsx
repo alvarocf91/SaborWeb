@@ -29,7 +29,7 @@ export default function RecetaCardMiPerfil({ receta, handleVerReceta }) {
                     component="img"
                     src={receta.imagen || imagenPlaceholder}
                     alt={receta.nombre}
-                    onError={(e) => { e.target.src = '/placeholder-food.jpg' }}
+                    onError={(e) => { e.currentTarget.src = imagenPlaceholder; }}
                     sx={{
                         width: '100%',
                         height: '100%',
@@ -56,7 +56,7 @@ export default function RecetaCardMiPerfil({ receta, handleVerReceta }) {
                             readOnly
                             precision={0.5}
                             size="small"
-                            sx={{ color: '#0077ff' }}
+                            sx={{ color: '#1D70B8' }}
                         />
                         <Typography variant="body2" sx={{ ml: 1, color: '#666' }}>
                             {receta.valoracion || '0'}/5
@@ -83,15 +83,15 @@ export default function RecetaCardMiPerfil({ receta, handleVerReceta }) {
                         onClick={() => handleVerReceta(receta)}
                         sx={{
                             borderRadius: 4,
-                            bgcolor: '#0077ff',
+                            bgcolor: '#1D70B8',
                             fontSize: '0.75rem',
                             '&:hover': {
-                                bgcolor: '#005fcc'
+                                bgcolor: '#1D70B8'
                             },
                             textTransform: 'none'
                         }}
                     >
-                        View Recipe
+                        Ver receta
                     </Button>
                 </Box>
             </Box>

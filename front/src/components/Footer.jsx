@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, IconButton, Container, Grid, Divider, useMediaQuery, useTheme } from "@mui/material";
-import { Facebook, Twitter, Instagram, LinkedIn, KeyboardArrowUp as ArrowUpIcon } from "@mui/icons-material";
+import { Facebook, Twitter, Instagram, KeyboardArrowUp as ArrowUpIcon } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logo/LogoSaborweb.png";
+import { useLanguage } from "../hooks/useLanguage";
 
 export default function Footer() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const checkScrollTop = () => {
@@ -45,7 +47,7 @@ export default function Footer() {
               <img src={Logo} alt="LogoSaborweb" style={{ width: isMobile ? "180px" : "220px" }} />
             </Link>
             <Typography variant="body2" sx={{ mt: 2, color: "#666", maxWidth: "90%" }}>
-              Your culinary destination to discover flavors, recipes, and ingredients that will transform your cooking experience.
+              {t('footer.copyright')}
             </Typography>
             
             <Box sx={{ display: "flex", gap: 1, mt: 3 }}>
@@ -54,11 +56,11 @@ export default function Footer() {
                 target="_blank"
                 sx={{ 
                   color: "#fff", 
-                  backgroundColor: "#0077ff",
+                  backgroundColor: "#1D70B8",
                   width: 36,
                   height: 36,
                   '&:hover': {
-                    backgroundColor: "#005fcc",
+                    backgroundColor: "#1D70B8",
                     transform: "translateY(-3px)",
                     boxShadow: "0 4px 8px rgba(0, 119, 255, 0.4)",
                   },
@@ -73,13 +75,13 @@ export default function Footer() {
                 target="_blank"
                 sx={{ 
                   color: "#fff", 
-                  backgroundColor: "#0077ff",
+                  backgroundColor: "#1D70B8",
                   width: 36,
                   height: 36,
                   '&:hover': {
-                    backgroundColor: "#005fcc",
+                    backgroundColor: "#1D70B8",
                     transform: "translateY(-3px)",
-                    boxShadow: "0 4px 8px rgba(255, 112, 67, 0.4)",
+                    boxShadow: "0 4px 8px rgba(29, 112, 184, 0.4)",
                   },
                   transition: "all 0.3s ease"
                 }}
@@ -92,11 +94,11 @@ export default function Footer() {
                 target="_blank"
                 sx={{ 
                   color: "#fff", 
-                  backgroundColor: "#0077ff",
+                  backgroundColor: "#1D70B8",
                   width: 36,
                   height: 36,
                   '&:hover': {
-                    backgroundColor: "#005fcc",
+                    backgroundColor: "#1D70B8",
                     transform: "translateY(-3px)",
                     boxShadow: "0 4px 8px rgba(0, 119, 255, 0.4)",
                   },
@@ -106,24 +108,7 @@ export default function Footer() {
                 <Instagram fontSize="small" />
               </IconButton>
               
-              <IconButton 
-                href="https://linkedin.com" 
-                target="_blank"
-                sx={{ 
-                  color: "#fff", 
-                  backgroundColor: "#0077ff",
-                  width: 36,
-                  height: 36,
-                  '&:hover': {
-                    backgroundColor: "#005fcc",
-                    transform: "translateY(-3px)",
-                    boxShadow: "0 4px 8px rgba(0, 119, 255, 0.4)",
-                  },
-                  transition: "all 0.3s ease"
-                }}
-              >
-                <LinkedIn fontSize="small" />
-              </IconButton>
+              {/* LinkedIn removed per request */}
             </Box>
           </Grid>
           
@@ -141,14 +126,14 @@ export default function Footer() {
                   position: "absolute",
                   width: "40px",
                   height: "3px",
-                  backgroundColor: "#0077ff",
+                  backgroundColor: "#1D70B8",
                   bottom: "-8px",
                   left: "0",
                   borderRadius: "3px"
                 }
               }}
             >
-              Sections
+              {t('footer.about')}
             </Typography>
             
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
@@ -165,12 +150,12 @@ export default function Footer() {
                 className="footer-link"
                 sx={{
                   '&:hover': {
-                    color: "#005fcc",
+                    color: "#1D70B8",
                     transform: "translateX(4px)"
                   }
                 }}
               >
-                Recipes
+                {t('recipes.allRecipes')}
               </Link>
               
               <Link 
@@ -186,12 +171,12 @@ export default function Footer() {
                 className="footer-link"
                 sx={{
                   '&:hover': {
-                    color: "#005fcc",
+                    color: "#1D70B8",
                     transform: "translateX(4px)"
                   }
                 }}
               >
-                Ingredients
+                {t('ingredients.allIngredients')}
               </Link>
               
               <Link 
@@ -207,12 +192,12 @@ export default function Footer() {
                 className="footer-link"
                 sx={{
                   '&:hover': {
-                    color: "#005fcc",
+                    color: "#1D70B8",
                     transform: "translateX(4px)"
                   }
                 }}
               >
-                Contact
+                {t('footer.contact')}
               </Link>
             </Box>
           </Grid>
@@ -237,7 +222,7 @@ export default function Footer() {
               textAlign: { xs: "center", md: "left" } 
             }}
           >
-            © {new Date().getFullYear()} Saborweb. All rights reserved.
+            © {new Date().getFullYear()} Saborweb. {t('footer.copyright')}
           </Typography>
           
           <Box 
@@ -255,9 +240,9 @@ export default function Footer() {
                 fontSize: "0.85rem",
                 transition: "color 0.2s"
               }}
-              sx={{ '&:hover': { color: "#0077ff" } }}
+              sx={{ '&:hover': { color: "#1D70B8" } }}
             >
-              Privacy
+              {t('footer.privacy')}
             </Link>
             
             <Link 
@@ -268,9 +253,9 @@ export default function Footer() {
                 fontSize: "0.85rem",
                 transition: "color 0.2s"
               }}
-              sx={{ '&:hover': { color: "#0077ff" } }}
+              sx={{ '&:hover': { color: "#1D70B8" } }}
             >
-              Terms
+              Términos
             </Link>
             
             <Link 
@@ -281,7 +266,7 @@ export default function Footer() {
                 fontSize: "0.85rem",
                 transition: "color 0.2s"
               }}
-              sx={{ '&:hover': { color: "#0077ff" } }}
+              sx={{ '&:hover': { color: "#1D70B8" } }}
             >
               Cookies
             </Link>
@@ -296,13 +281,13 @@ export default function Footer() {
             position: 'absolute',
             right: 20,
             top: -25,
-            backgroundColor: '#0077ff',
+            backgroundColor: '#1D70B8',
             color: '#fff',
             width: 50,
             height: 50,
             boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
             '&:hover': {
-              backgroundColor: '#005fcc',
+              backgroundColor: '#1D70B8',
             },
             transition: 'all 0.3s ease'
           }}

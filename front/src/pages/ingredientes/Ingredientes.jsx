@@ -77,7 +77,7 @@ export default function Ingredientes() {
           component="h1"
           gutterBottom
             sx={{
-            color: '#0077ff',
+            color: '#1D70B8',
             fontWeight: 'bold',
             position: 'relative',
             display: 'inline-block',
@@ -89,7 +89,7 @@ export default function Ingredientes() {
               height: '4px',
               bottom: '-10px',
               left: '20%',
-              backgroundColor: '#0077ff',
+              backgroundColor: '#1D70B8',
               borderRadius: '2px'
             }
           }}
@@ -144,10 +144,10 @@ export default function Ingredientes() {
             >
               <Box
                 sx={{
-                  backgroundColor: '#0077ff',
+                  backgroundColor: '#1D70B8',
                   py: { xs: 1.2, sm: 1.5 },
                   px: 2,
-                  borderBottom: '4px solid #005fcc'
+                  borderBottom: '4px solid #1D70B8'
                 }}
               >
                 <Typography
@@ -184,7 +184,7 @@ export default function Ingredientes() {
                         pl: 1
                       }}
                     >
-                      <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#0077ff', mr: 1 }} />
+                      <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                       <Typography
                         variant="body2"
                         sx={{
@@ -226,7 +226,7 @@ export default function Ingredientes() {
                   onClick={() => handleSelectAlergeno(ingredienteAlergeno)}
                   startIcon={<SearchIcon />}
                     sx={{
-                    backgroundColor: "#0077ff",
+                    backgroundColor: "#1D70B8",
                     borderRadius: 2,
                     px: { xs: 2.5, sm: 3 },
                     py: { xs: 0.8, sm: 1 },
@@ -235,7 +235,7 @@ export default function Ingredientes() {
                     fontSize: { xs: '0.85rem', sm: '0.875rem' },
                     boxShadow: '0 4px 10px rgba(0, 119, 255, 0.3)',
                     '&:hover': {
-                      backgroundColor: "#005fcc",
+                      backgroundColor: "#1D70B8",
                       boxShadow: '0 6px 12px rgba(0, 119, 255, 0.4)',
                     }
                   }}
@@ -266,7 +266,7 @@ export default function Ingredientes() {
       >
         <DialogTitle
           sx={{
-            backgroundColor: "#0077ff",
+            backgroundColor: "#1D70B8",
             color: "white",
             fontWeight: 'bold',
             py: { xs: 2, sm: 2.5 },
@@ -358,7 +358,7 @@ export default function Ingredientes() {
           <Typography
             variant="h6"
             sx={{
-                color: "#0077ff",
+                color: "#1D70B8",
               fontWeight: 'bold',
               mb: 2,
               display: 'flex',
@@ -380,7 +380,7 @@ export default function Ingredientes() {
                     onClick={() => handleIngredientSelect(ingrediente)}
                   >
                     <Chip
-                      avatar={<Avatar sx={{ bgcolor: '#0077ff' }}>{ingrediente.nombre.charAt(0).toUpperCase()}</Avatar>}
+                      avatar={<Avatar sx={{ bgcolor: '#1D70B8' }}>{ingrediente.nombre.charAt(0).toUpperCase()}</Avatar>}
                       label={ingrediente.nombre}
                       clickable
                       sx={{
@@ -438,15 +438,15 @@ export default function Ingredientes() {
             variant="outlined"
             onClick={handleClose}
             sx={{
-              color: "#0077ff",
-              borderColor: "#0077ff",
+              color: "#1D70B8",
+              borderColor: "#1D70B8",
               fontWeight: 'bold',
               textTransform: 'none',
               borderRadius: 2,
               fontSize: { xs: '0.85rem', sm: '0.875rem' },
               px: { xs: 2, sm: 2.5 },
               '&:hover': {
-                borderColor: "#005fcc",
+                borderColor: "#1D70B8",
                 backgroundColor: 'rgba(0, 119, 255, 0.04)'
               }
             }}

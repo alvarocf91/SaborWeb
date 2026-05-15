@@ -28,7 +28,7 @@ class CrearRecetaRequest extends FormRequest
             'tipoComida' => 'required|array',
             'tiempoCocinado' => 'required|numeric',
             'dificultad' => 'required|string',
-            'imagen_url' => 'string',
+            'imagen_url' => 'nullable|string',
             'pasos' => 'required|array',
             'usuario_id' => 'exists:users,id',
             'porciones' => 'required|numeric',

@@ -98,7 +98,7 @@ export default function Ingrediente() {
           component="h1"
           gutterBottom
           sx={{
-            color: '#0077ff',
+            color: '#1D70B8',
             fontWeight: 'bold',
             position: 'relative',
             display: 'inline-block',
@@ -112,7 +112,7 @@ export default function Ingrediente() {
               height: { xs: '3px', sm: '4px' },
               bottom: { xs: '-8px', sm: '-10px' },
               left: { xs: '10%', sm: '15%', md: '20%' },
-              backgroundColor: '#0077ff',
+              backgroundColor: '#1D70B8',
               borderRadius: '2px'
             }
           }}
@@ -177,7 +177,7 @@ export default function Ingrediente() {
             <Typography
               variant="h5"
               sx={{
-                color: '#0077ff',
+                color: '#1D70B8',
                 fontWeight: 'bold',
                 mb: 2,
                 fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.8rem' }
@@ -186,7 +186,7 @@ export default function Ingrediente() {
               Oops! 🍳
             </Typography>
 
-            <Divider sx={{ my: 2, backgroundColor: 'rgba(255,112,67,0.3)' }} />
+            <Divider sx={{ my: 2, backgroundColor: 'rgba(29,112,184,0.3)' }} />
 
             <Typography
               variant="body1"
@@ -223,7 +223,7 @@ export default function Ingrediente() {
               <Typography
                 variant={isMobile ? "h6" : isTablet ? "h5" : "h4"}
                 sx={{
-                  color: "#0077ff",
+                  color: "#1D70B8",
                   fontWeight: 'bold',
                   mb: { xs: 3, sm: 3.5, md: 4 },
                   fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem', lg: '2rem' },
@@ -239,7 +239,7 @@ export default function Ingrediente() {
                     bottom: { xs: '-6px', sm: '-8px' },
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    backgroundColor: '#0077ff',
+                    backgroundColor: '#1D70B8',
                     borderRadius: '2px'
                   }
                 }}
@@ -320,7 +320,7 @@ export default function Ingrediente() {
               <Typography
                 variant={isMobile ? "h6" : isTablet ? "h5" : "h4"}
                 sx={{
-                  color: "#0077ff",
+                  color: "#1D70B8",
                   fontWeight: 'bold',
                   mb: { xs: 3, sm: 3.5, md: 4 },
                   fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem', lg: '2rem' },
@@ -336,7 +336,7 @@ export default function Ingrediente() {
                     bottom: { xs: '-6px', sm: '-8px' },
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    backgroundColor: '#0077ff',
+                    backgroundColor: '#1D70B8',
                     borderRadius: '2px'
                   }
                 }}
@@ -383,15 +383,15 @@ export default function Ingrediente() {
             variant="outlined"
             startIcon={<ArrowBackIcon />}
             sx={{
-              borderColor: "#0077ff",
-              color: "#0077ff",
+              borderColor: "#1D70B8",
+              color: "#1D70B8",
               borderRadius: "25px",
               px: { xs: 2, sm: 3 },
               py: { xs: 1, sm: 1.5 },
               fontSize: { xs: "0.8rem", sm: "0.875rem" },
               '&:hover': {
                 backgroundColor: "#f0f8ff",
-                borderColor: "#0077ff"
+                borderColor: "#1D70B8"
               }
             }}
           >

@@ -102,21 +102,6 @@ export const ApiProvider = ({ children }) => {
         }
     }, []);
 
-    const registroConGoogle = useCallback(async (googleData) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/googleRegister`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(googleData),
-            });
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error al registrar con Google');
-        }
-    }, []);
-
     const cerrarSesion = useCallback(async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/logout`, {
@@ -263,8 +248,14 @@ export const ApiProvider = ({ children }) => {
             const formData = new FormData();
             formData.append('imagen', imagenFile);
 
+            const token = localStorage.getItem('token');
+            const headers = token ? {
+                'Authorization': `Bearer ${token}`,
+            } : {};
+
             const response = await fetch(`${API_BASE_URL}/subirImagen`, {
                 method: 'POST',
+                headers: headers,
                 body: formData,
             });
             return await handleApiResponse(response);
@@ -273,63 +264,6 @@ export const ApiProvider = ({ children }) => {
         }
     }, []);
 
-
-    const buscarRecetasPorIngredientes = useCallback(async (data) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/buscar-recetas-ingredientes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error al buscar recetas por ingredientes');
-        }
-    }, []);
-
-    const obtenerIngredientesPopulares = useCallback(async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/ingredientes-populares`);
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error al obtener ingredientes populares');
-        }
-    }, []);
-
-    const sugerirIngrediente = useCallback(async (data) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/sugerir-ingrediente`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error al obtener sugerencias de ingredientes');
-        }
-    }, []);
-
-    const debugRecetas = useCallback(async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/debug-recetas`);
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error en debug de recetas');
-        }
-    }, []);
-
-    const debugGemini = useCallback(async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/debug-gemini`);
-            return await handleApiResponse(response);
-        } catch (error) {
-            handleApiError(error, 'Error en debug de Gemini');
-        }
-    }, []);
 
 
     const obtenerIngredientes = useCallback(async () => {
@@ -454,7 +388,6 @@ export const ApiProvider = ({ children }) => {
 
         iniciarSesion,
         registrarUsuario,
-        registroConGoogle,
         cerrarSesion,
 
         obtenerRecetas,
@@ -471,12 +404,6 @@ export const ApiProvider = ({ children }) => {
         obtenerRecetasPorUsuario,
 
         subirImagen,
-
-        buscarRecetasPorIngredientes,
-        obtenerIngredientesPopulares,
-        sugerirIngrediente,
-        debugRecetas,
-        debugGemini,
 
         obtenerIngredientes,
         obtenerRecetasDeIngrediente,

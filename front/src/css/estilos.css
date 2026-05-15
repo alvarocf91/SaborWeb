@@ -1,3 +1,72 @@
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html, body, #root {
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+}
+
+/* Design tokens */
+:root{
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --shadow-soft: 0 8px 20px rgba(15,35,60,0.06);
+  --shadow-hover: 0 12px 30px rgba(15,35,60,0.09);
+  --container-max: 1200px;
+}
+
+body{
+  background: linear-gradient(180deg, #f7fbff 0%, #ffffff 60%);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container{
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.card-smooth{
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.card-smooth:hover{
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Responsive card width helpers */
+.card-grid-item{
+  width: 100%;
+}
+@media(min-width:720px){
+  .card-grid-item{ width: 320px; }
+}
+
+/* Polished image overlay */
+.media-overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.28) 80%);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+.card-hoverable:hover .media-overlay{ opacity: 1; }
+
 @media (max-width: 768px) {
   .tarjeta-info {
     margin-top: 3em;

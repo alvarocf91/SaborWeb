@@ -32,7 +32,7 @@ const StyledFeatureCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(2),
   boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  background: "linear-gradient(145deg, #ffffff, #fff8f0)",
+  background: "linear-gradient(145deg, #ffffff, #EAF3FB)",
   display: "flex",
   flexDirection: "column",
   cursor: "pointer",
@@ -45,7 +45,7 @@ const StyledFeatureCard = styled(Card)(({ theme }) => ({
   "&:hover": {
     transform: "translateY(-8px)",
     boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
-    background: "linear-gradient(145deg, #fff6e5, #ffead8)",
+    background: "linear-gradient(145deg, #f5faff, #eaf3fb)",
   },
 }));
 
@@ -53,7 +53,7 @@ const StyledStatsCard = styled(Card)(({ theme }) => ({
   borderRadius: 20,
   padding: theme.spacing(3),
   height: "100%",
-  background: "linear-gradient(135deg, #ff7043 0%, #ff5722 100%)",
+  background: "linear-gradient(135deg, #1D70B8 0%, #1D70B8 100%)",
   color: "white",
   display: "flex",
   flexDirection: "column",
@@ -77,14 +77,14 @@ const StyledStatsCard = styled(Card)(({ theme }) => ({
   },
   "&:hover": {
     transform: "translateY(-5px) scale(1.02)",
-    boxShadow: "0 15px 30px rgba(255, 112, 67, 0.3)",
+    boxShadow: "0 15px 30px rgba(29, 112, 184, 0.3)",
   },
 }));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
   display: "inline-block",
-  color: "#ff7043",
+  color: "#1D70B8",
   fontWeight: 700,
   marginBottom: theme.spacing(3),
   textAlign: "center",
@@ -103,7 +103,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
     width: "40px",
     height: "3px",
     borderRadius: "2px",
-    background: "#ff7043",
+    background: "#1D70B8",
     bottom: "-8px",
     left: "50%",
     transform: "translateX(-50%)",
@@ -176,7 +176,7 @@ export default function HomePage() {
         transform: 'translateY(-50%)',
         zIndex: 2,
         cursor: 'pointer',
-        color: '#ff7043',
+        color: '#1D70B8',
         bgcolor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '50%',
         width: { xs: 40, sm: 44, md: 48 },
@@ -186,13 +186,13 @@ export default function HomePage() {
         justifyContent: 'center',
         boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         transition: 'all 0.3s ease',
-        border: '2px solid rgba(255, 112, 67, 0.1)',
+        border: '2px solid rgba(29, 112, 184, 0.12)',
         '&:hover': {
           bgcolor: 'white',
           boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
-          color: '#ff5722',
+          color: '#1D70B8',
           transform: 'translateY(-50%) scale(1.1)',
-          borderColor: 'rgba(255, 112, 67, 0.3)',
+          borderColor: 'rgba(29, 112, 184, 0.3)',
         }
       }}
     >
@@ -210,7 +210,7 @@ export default function HomePage() {
         transform: 'translateY(-50%)',
         zIndex: 2,
         cursor: 'pointer',
-        color: '#ff7043',
+        color: '#1D70B8',
         bgcolor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '50%',
         width: { xs: 40, sm: 44, md: 48 },
@@ -220,13 +220,13 @@ export default function HomePage() {
         justifyContent: 'center',
         boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         transition: 'all 0.3s ease',
-        border: '2px solid rgba(255, 112, 67, 0.1)',
+        border: '2px solid rgba(29, 112, 184, 0.12)',
         '&:hover': {
           bgcolor: 'white',
           boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
-          color: '#ff5722',
+          color: '#1D70B8',
           transform: 'translateY(-50%) scale(1.1)',
-          borderColor: 'rgba(255, 112, 67, 0.3)',
+          borderColor: 'rgba(29, 112, 184, 0.3)',
         }
       }}
     >
@@ -302,7 +302,7 @@ export default function HomePage() {
       bottom: { xs: -40, sm: -45, md: -50 },
       "& li button:before": {
         fontSize: { xs: 12, sm: 14, md: 16 },
-        color: "#ff7043",
+        color: "#1D70B8",
         opacity: 0.5,
       },
       "& li.slick-active button:before": {
@@ -362,7 +362,7 @@ export default function HomePage() {
             left: "20%",
             width: "60%",
             height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(255, 112, 67, 0.5), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(29, 112, 184, 0.45), transparent)",
           }
         }}
       >
@@ -371,7 +371,7 @@ export default function HomePage() {
           component="h1"
           sx={{
             fontWeight: 800,
-            color: "#ff7043",
+            color: "#1D70B8",
             mb: { xs: 1.5, sm: 2, md: 2.5 },
             fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem", lg: "3rem" },
             lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
@@ -412,7 +412,7 @@ export default function HomePage() {
                 display: "flex",
                 alignItems: "center",
                 mb: { xs: 1.5, sm: 2 },
-                color: "#ff7043",
+                color: "#1D70B8",
                 flexDirection: { xs: "column", sm: "row" },
                 textAlign: { xs: "center", sm: "left" }
               }}
@@ -447,12 +447,12 @@ export default function HomePage() {
                 label="Explore recipes"
                 size={isXsScreen ? "small" : "medium"}
                 sx={{
-                  bgcolor: "rgba(255, 112, 67, 0.1)",
-                  color: "#ff7043",
+                  bgcolor: "rgba(29, 112, 184, 0.12)",
+                  color: "#1D70B8",
                   fontWeight: 600,
                   fontSize: { xs: "0.75rem", sm: "0.8125rem" },
                   '&:hover': {
-                    bgcolor: "rgba(255, 112, 67, 0.2)",
+                    bgcolor: "rgba(29, 112, 184, 0.22)",
                   }
                 }}
               />
@@ -467,7 +467,7 @@ export default function HomePage() {
                 display: "flex",
                 alignItems: "center",
                 mb: { xs: 1.5, sm: 2 },
-                color: "#ff7043",
+                color: "#1D70B8",
                 flexDirection: { xs: "column", sm: "row" },
                 textAlign: { xs: "center", sm: "left" }
               }}
@@ -502,12 +502,12 @@ export default function HomePage() {
                 label="View ingredients"
                 size={isXsScreen ? "small" : "medium"}
                 sx={{
-                  bgcolor: "rgba(255, 112, 67, 0.1)",
-                  color: "#ff7043",
+                  bgcolor: "rgba(29, 112, 184, 0.12)",
+                  color: "#1D70B8",
                   fontWeight: 600,
                   fontSize: { xs: "0.75rem", sm: "0.8125rem" },
                   '&:hover': {
-                    bgcolor: "rgba(255, 112, 67, 0.2)",
+                    bgcolor: "rgba(29, 112, 184, 0.22)",
                   }
                 }}
               />
@@ -634,15 +634,15 @@ export default function HomePage() {
           p: { xs: 3, sm: 4, md: 5 },
           mx: { xs: 1, sm: 0 },
           borderRadius: { xs: 3, sm: 4 },
-          background: "linear-gradient(145deg, #fff3e0, #fff8f0)",
-          boxShadow: "0 6px 20px rgba(255, 112, 67, 0.08)",
+          background: "linear-gradient(145deg, #fff3e0, #EAF3FB)",
+          boxShadow: "0 6px 20px rgba(29, 112, 184, 0.1)",
         }}
       >
         <Typography
           variant="h5"
           sx={{
             fontWeight: 700,
-            color: "#ff7043",
+            color: "#1D70B8",
             mb: { xs: 1.5, sm: 2 },
             fontSize: { xs: "1.25rem", sm: "1.4rem", md: "1.5rem" }
           }}

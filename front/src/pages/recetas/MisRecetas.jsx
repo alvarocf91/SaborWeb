@@ -137,7 +137,7 @@ export default function MisRecetas() {
                     component="h1"
                     gutterBottom
                     sx={{
-                        color: '#0077ff',
+                        color: '#1D70B8',
                         fontWeight: 'bold',
                         position: 'relative',
                         display: 'inline-block',
@@ -148,7 +148,7 @@ export default function MisRecetas() {
                             height: '4px',
                             bottom: '-10px',
                             left: '20%',
-                            backgroundColor: '#0077ff',
+                            backgroundColor: '#1D70B8',
                             borderRadius: '2px'
                         }
                     }}

@@ -10,12 +10,9 @@ import {
   InputAdornment,
   IconButton,
   Paper,
-  useTheme,
-  useMediaQuery,
   Alert,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useApi } from "../../context/ApiProvider";
@@ -42,19 +39,19 @@ const StyledTextField = styled(TextField)(() => ({
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     transition: "all 0.3s ease",
       "& fieldset": {
-      borderColor: "rgba(0, 119, 255, 0.12)",
+      borderColor: "rgba(29, 112, 184, 0.2)",
     },
     "&:hover fieldset": {
-      borderColor: "rgba(0, 119, 255, 0.18)",
+      borderColor: "rgba(29, 112, 184, 0.4)",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#0077ff",
+      borderColor: "#1D70B8",
     },
   },
   "& .MuiInputLabel-root": {
     color: "rgba(0, 0, 0, 0.6)",
     "&.Mui-focused": {
-      color: "#ff7043",
+      color: "#1D70B8",
     },
   },
 }));
@@ -65,12 +62,12 @@ const StyledButton = styled(Button)(() => ({
   fontSize: "1.05rem",
   padding: "12px 0",
   borderRadius: "12px",
-  boxShadow: "0 6px 12px rgba(0, 119, 255, 0.14)",
-  background: "linear-gradient(135deg, #0077ff, #00a0ff)",
+  boxShadow: "0 6px 12px rgba(29, 112, 184, 0.2)",
+  background: "linear-gradient(135deg, #1D70B8, #1D70B8)",
   transition: "all 0.3s ease",
   "&:hover": {
-    boxShadow: "0 8px 16px rgba(0, 119, 255, 0.18)",
-    background: "linear-gradient(135deg, #005fcc, #0077ff)",
+    boxShadow: "0 8px 16px rgba(29, 112, 184, 0.3)",
+    background: "linear-gradient(135deg, #1D70B8, #1D70B8)",
     transform: "translateY(-2px)",
   },
 }));
@@ -80,7 +77,7 @@ const DecorativeShape = styled(Paper)(() => ({
   width: "120px",
   height: "120px",
   borderRadius: "50%",
-  background: "linear-gradient(135deg, rgba(255, 112, 67, 0.1), rgba(255, 152, 0, 0.1))",
+  background: "linear-gradient(135deg, rgba(29, 112, 184, 0.12), rgba(29, 112, 184, 0.04))",
   zIndex: 0,
 }));
 
@@ -95,10 +92,7 @@ export default function Registro() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const { registrarUsuario, registroConGoogle } = useApi();
+  const { registrarUsuario } = useApi();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -141,30 +135,6 @@ export default function Registro() {
     }
   }
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const data = await registroConGoogle({
-        token: credentialResponse.credential,
-      });
-
-      localStorage.setItem("token", data.token.split("|")[1]);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "/";
-    } catch (error) {
-      setError(error.message || "Error registering with Google");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleFailure = (error) => {
-    setError("Could not sign in with Google");
-    console.error("Google Registration Failed:", error);
-  };
-
   return (
     <Container
       maxWidth="sm"
@@ -185,7 +155,7 @@ export default function Registro() {
           sx={{
             height: "8px",
             width: "100%",
-            background: "linear-gradient(90deg, #ff7043, #ff9800)",
+            background: "linear-gradient(90deg, #1D70B8, #1D70B8)",
             borderTopLeftRadius: "16px",
             borderTopRightRadius: "16px",
           }}
@@ -198,7 +168,7 @@ export default function Registro() {
               component="h1"
               sx={{
                 fontWeight: 700,
-                color: "#ff5722",
+                color: "#1D70B8",
                 mb: 1.5,
                 letterSpacing: "-0.5px",
               }}
@@ -333,31 +303,7 @@ export default function Registro() {
               }}
             />
 
-            <Box sx={{ position: "relative", mb: 3, mt: 1.5 }}>
-              <Divider sx={{ my: 2.5 }}>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    px: 2,
-                    color: "text.secondary",
-                    fontWeight: 500
-                  }}
-                >
-                  Or sign up with
-                </Typography>
-              </Divider>
-
-              <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={handleGoogleFailure}
-                  width={isMobile ? "100%" : "220px"}
-                  theme="outline"
-                  shape="pill"
-                  useOneTap
-                />
-              </Box>
-            </Box>
+            <Divider sx={{ my: 3 }} />
 
             <StyledButton
               fullWidth
@@ -374,7 +320,7 @@ export default function Registro() {
             <Link
               to="/login"
               style={{
-                color: "#0077ff",
+                color: "#1D70B8",
                 textDecoration: "none",
                 fontWeight: "bold",
               }}

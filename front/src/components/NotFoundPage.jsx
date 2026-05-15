@@ -21,7 +21,7 @@ export default function NotFoundPage() {
                     sx={{
                         fontSize: { xs: '5rem', md: '8rem' },
                         fontWeight: 800,
-                        color: '#ff7043',
+                        color: '#1D70B8',
                         mb: 2,
                         textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                     }}
@@ -37,7 +37,7 @@ export default function NotFoundPage() {
                         color: '#444'
                     }}
                 >
-                    Page not found!
+                    ¡Página no encontrada!
                 </Typography>
 
                 <Typography
@@ -49,8 +49,8 @@ export default function NotFoundPage() {
                         mb: 5
                     }}
                 >
-                    Sorry, the page you are looking for does not exist or has been moved.
-                    You may have typed the address incorrectly or the page may have been deleted.
+                    Lo sentimos, la página que buscas no existe o ha sido movida.
+                    Puede que hayas escrito mal la dirección o que la página haya sido eliminada.
                 </Typography>
 
                 <Box
@@ -79,7 +79,7 @@ export default function NotFoundPage() {
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
                             fontSize: '140px',
-                            color: '#ff9800',
+                            color: '#1D70B8',
                             opacity: 0.8
                         }}
                     >
@@ -94,22 +94,22 @@ export default function NotFoundPage() {
                         variant="contained"
                         startIcon={<HomeIcon />}
                         sx={{
-                            background: 'linear-gradient(45deg, #ff7043 30%, #ff9800 90%)',
+                            background: 'linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)',
                             color: 'white',
                             fontWeight: 600,
                             py: 1.2,
                             px: 3,
                             borderRadius: '30px',
                             textTransform: 'none',
-                            boxShadow: '0 3px 12px rgba(255, 112, 67, 0.3)',
+                            boxShadow: '0 3px 12px rgba(29, 112, 184, 0.3)',
                             '&:hover': {
-                                background: 'linear-gradient(45deg, #ff5722 30%, #ff7043 90%)',
-                                boxShadow: '0 5px 15px rgba(255, 112, 67, 0.4)'
+                                background: 'linear-gradient(45deg, #1D70B8 30%, #1D70B8 90%)',
+                                boxShadow: '0 5px 15px rgba(29, 112, 184, 0.4)'
                             },
                             transition: 'all 0.3s ease'
                         }}
                     >
-                        Back to Home
+                        Volver al inicio
                     </Button>
 
                     <Button
@@ -117,20 +117,20 @@ export default function NotFoundPage() {
                         to="/all-recipes"
                         variant="outlined"
                         sx={{
-                            color: '#ff7043',
-                            borderColor: '#ff7043',
+                            color: '#1D70B8',
+                            borderColor: '#1D70B8',
                             fontWeight: 600,
                             py: 1.2,
                             px: 3,
                             borderRadius: '30px',
                             textTransform: 'none',
                             '&:hover': {
-                                borderColor: '#ff5722',
-                                backgroundColor: 'rgba(255, 112, 67, 0.04)'
+                                borderColor: '#1D70B8',
+                                backgroundColor: 'rgba(29, 112, 184, 0.04)'
                             }
                         }}
                     >
-                        Explore recipes
+                        Explorar recetas
                     </Button>
                 </Box>
             </Box>

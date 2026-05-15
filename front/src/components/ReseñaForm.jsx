@@ -112,7 +112,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                 p: 3,
                 display: 'flex',
                 alignItems: 'center',
-                background: 'linear-gradient(to right, #ff7043, #ffab91)',
+                background: 'linear-gradient(to right, #1D70B8, #1D70B8)',
                 color: 'white'
             }}>
                 <StarIcon sx={{ fontSize: 36, mr: 2 }} />
@@ -145,7 +145,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                 alignItems: 'center'
                             }}>
                                 <Box component="span" sx={{
-                                    bgcolor: '#ff7043',
+                                    bgcolor: '#1D70B8',
                                     color: 'white',
                                     borderRadius: '50%',
                                     width: 32,
@@ -173,17 +173,17 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                 sx={{
                                     fontSize: '2.5rem',
                                     '& .MuiRating-iconFilled': {
-                                        color: '#ff7043',
+                                        color: '#1D70B8',
                                     },
                                     '& .MuiRating-iconHover': {
-                                        color: '#f4511e',
+                                        color: '#1D70B8',
                                     },
                                 }}
                             />
 
                             <Typography variant="body2" sx={{
                                 mt: 1,
-                                color: puntuacion === 0 ? 'text.secondary' : '#ff7043',
+                                color: puntuacion === 0 ? 'text.secondary' : '#1D70B8',
                                 fontStyle: 'italic',
                                 fontWeight: puntuacion === 0 ? 'normal' : 'medium'
                             }}>
@@ -200,7 +200,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                 alignItems: 'center'
                             }}>
                                 <Box component="span" sx={{
-                                    bgcolor: '#ff7043',
+                                    bgcolor: '#1D70B8',
                                     color: 'white',
                                     borderRadius: '50%',
                                     width: 32,
@@ -234,7 +234,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                     sx: { borderRadius: 2 },
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <CommentIcon sx={{ color: '#ff7043' }} />
+                                            <CommentIcon sx={{ color: '#1D70B8' }} />
                                         </InputAdornment>
                                     )
                                 }}
@@ -247,8 +247,8 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                 color: 'text.secondary'
                             }}>
                                 <Box component="span" sx={{
-                                    bgcolor: '#ffe0b2',
-                                    color: '#fb8c00',
+                                    bgcolor: '#D6E9F8',
+                                    color: '#1D70B8',
                                     borderRadius: '50%',
                                     width: 20,
                                     height: 20,
@@ -271,9 +271,9 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                 startIcon={loading ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
                                 sx={{
                                     borderRadius: 2,
-                                    bgcolor: '#ff7043',
+                                    bgcolor: '#1D70B8',
                                     '&:hover': {
-                                        bgcolor: '#f4511e'
+                                        bgcolor: '#1D70B8'
                                     },
                                     '&:disabled': {
                                         bgcolor: '#bdbdbd'

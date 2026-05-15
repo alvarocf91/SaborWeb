@@ -94,7 +94,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: '#0077ff', mr: 2 }}>
+                <Avatar sx={{ bgcolor: '#1D70B8', mr: 2 }}>
                   <PersonIcon />
                 </Avatar>
                 <Box>
@@ -118,7 +118,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
                   sx={{
                     color: "#d32f2f",
                     '&:hover': {
-                      backgroundColor: "#ffebee"
+                      backgroundColor: "#EAF3FB"
                     },
                     '&:disabled': {
                       color: "#bdbdbd"

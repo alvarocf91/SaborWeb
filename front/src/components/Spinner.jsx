@@ -38,7 +38,7 @@ export default function Spinner() {
                         height: '100%',
                         borderRadius: '50%',
                         backgroundColor: '#fff3e0',
-                        border: '3px dashed #ffab91',
+                        border: '3px dashed #1D70B8',
                         animation: 'plateSpin 3s linear infinite',
                         display: 'flex',
                         alignItems: 'center',
@@ -55,7 +55,7 @@ export default function Spinner() {
                                 transformOrigin: '50px 50px',
                             }}
                         >
-                            <Icon sx={{ color: '#ff7043', fontSize: 28 }} />
+                            <Icon sx={{ color: '#1D70B8', fontSize: 28 }} />
                         </Box>
                     ))}
                 </Box>

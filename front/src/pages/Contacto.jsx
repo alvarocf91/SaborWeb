@@ -28,38 +28,38 @@ export default function Contacto() {
   const validarFormulario = () => {
     if (!nombre.trim()) {
       setError(true);
-      setMensajeError("First name is required");
+      setMensajeError("El nombre es obligatorio");
       return false;
     }
 
     if (!apellido.trim()) {
       setError(true);
-      setMensajeError("Last name is required");
+      setMensajeError("El apellido es obligatorio");
       return false;
     }
 
     if (!email.trim()) {
       setError(true);
-      setMensajeError("Email is required");
+      setMensajeError("El correo electrónico es obligatorio");
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError(true);
-      setMensajeError("Please enter a valid email address");
+      setMensajeError("Introduce una dirección de correo válida");
       return false;
     }
 
     if (!mensaje.trim()) {
       setError(true);
-      setMensajeError("Message is required");
+      setMensajeError("El mensaje es obligatorio");
       return false;
     }
 
     if (mensaje.trim().length < 10) {
       setError(true);
-      setMensajeError("Message must be at least 10 characters long");
+      setMensajeError("El mensaje debe tener al menos 10 caracteres");
       return false;
     }
 
@@ -102,7 +102,7 @@ export default function Contacto() {
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
       setError(true);
-      setMensajeError("Error sending message. Please try again.");
+      setMensajeError("Error al enviar el mensaje. Intenta de nuevo.");
     } finally {
       setEnviando(false);
     }
@@ -123,7 +123,7 @@ export default function Contacto() {
         p: 0,
         borderRadius: 3,
         overflow: 'hidden',
-        background: 'linear-gradient(to right, #0077ff, #00a0ff)'
+        background: 'linear-gradient(to right, #1D70B8, #1D70B8)'
       }}>
         <Box sx={{
           p: 3,
@@ -133,7 +133,7 @@ export default function Contacto() {
         }}>
           <ContactMailIcon sx={{ fontSize: 36, mr: 2 }} />
           <Typography variant="h4" fontWeight="bold">
-            Contact Us
+            Contacto
           </Typography>
         </Box>
       </Paper>
@@ -147,7 +147,7 @@ export default function Contacto() {
         zIndex: 1
       }}>
         <Typography variant="h6" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>
-          We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          Nos encantaría saber de ti. Envíanos un mensaje y responderemos lo antes posible.
         </Typography>
 
         <Grid container spacing={3}>
@@ -155,7 +155,7 @@ export default function Contacto() {
             <TextField
               fullWidth
               required
-              label="First Name"
+              label="Nombre"
               variant="outlined"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -163,7 +163,7 @@ export default function Contacto() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PersonIcon sx={{ color: '#0077ff' }} />
+                    <PersonIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 )
               }}
@@ -174,7 +174,7 @@ export default function Contacto() {
             <TextField
               fullWidth
               required
-              label="Last Name"
+              label="Apellido"
               variant="outlined"
               value={apellido}
               onChange={(e) => setApellido(e.target.value)}
@@ -182,7 +182,7 @@ export default function Contacto() {
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PersonIcon sx={{ color: '#0077ff' }} />
+                    <PersonIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 )
               }}
@@ -192,40 +192,40 @@ export default function Contacto() {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Phone Number"
+              label="Teléfono"
               variant="outlined"
               value={telefono}
               onChange={manejarCambioTelefono}
-              placeholder="+1 (555) 123-4567"
+              placeholder="+34 600 000 000"
               InputProps={{
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PhoneIcon sx={{ color: '#0077ff' }} />
+                    <PhoneIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 )
               }}
-              helperText="Optional - Include if you'd like us to call you"
+              helperText="Opcional - Incluye si quieres que te llamemos"
             />
           </Grid>
 
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Company/Organization"
+              label="Empresa/Organización"
               variant="outlined"
               value={empresa}
               onChange={(e) => setEmpresa(e.target.value)}
-              placeholder="Your company name"
+              placeholder="Nombre de tu empresa"
               InputProps={{
                 sx: { borderRadius: 2 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <BusinessIcon sx={{ color: '#0077ff' }} />
+                    <BusinessIcon sx={{ color: '#1D70B8' }} />
                   </InputAdornment>
                 )
               }}
-              helperText="Optional"
+              helperText="Opcional"
             />
           </Grid>
         </Grid>
@@ -236,7 +236,7 @@ export default function Contacto() {
           <CardContent>
             <Typography variant="h6" fontWeight="medium" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
               <Box component="span" sx={{
-                bgcolor: '#0077ff',
+                bgcolor: '#1D70B8',
                 color: 'white',
                 borderRadius: '50%',
                 width: 32,
@@ -249,19 +249,19 @@ export default function Contacto() {
               }}>
                 <MessageIcon fontSize="small" />
               </Box>
-              Your Message
+              Tu Mensaje
             </Typography>
 
             <TextField
               fullWidth
               required
-              label="Message"
+              label="Mensaje"
               variant="outlined"
               multiline
               rows={6}
               value={mensaje}
               onChange={(e) => setMensaje(e.target.value)}
-              placeholder="Please provide details about your inquiry. The more information you share, the better we can assist you."
+              placeholder="Por favor proporciona detalles sobre tu consulta. Cuanta más información compartas, mejor podremos ayudarte."
               InputProps={{
                 sx: { borderRadius: 2 }
               }}
@@ -277,7 +277,7 @@ export default function Contacto() {
             }}>
               <Box component="span" sx={{
                 bgcolor: '#e6f0ff',
-                color: '#0077ff',
+                color: '#1D70B8',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -288,7 +288,7 @@ export default function Contacto() {
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>i</Box>
-              We typically respond within 24 hours during business days.
+              Normalmente respondemos dentro de 24 horas en días laborables.
             </Typography>
           </CardContent>
         </Card>
@@ -306,8 +306,8 @@ export default function Contacto() {
                 bgcolor: 'rgba(0,0,0,0.04)'
               }
             }}
-          >
-            Back
+            >
+            Atrás
           </Button>
 
           <Button
@@ -317,14 +317,14 @@ export default function Contacto() {
             startIcon={<SendIcon />}
             sx={{
               borderRadius: 2,
-              bgcolor: '#0077ff',
+              bgcolor: '#1D70B8',
               '&:hover': {
-                bgcolor: '#005fcc'
+                bgcolor: '#1D70B8'
               },
               px: 3
             }}
           >
-            {enviando ? 'Sending...' : 'Send Message'}
+            {enviando ? 'Enviando...' : 'Enviar mensaje'}
           </Button>
         </Box>
       </Paper>
@@ -351,7 +351,7 @@ export default function Contacto() {
             }}>
               <SendIcon fontSize="small" />
             </Box>
-            Message sent successfully! We'll get back to you soon.
+            Mensaje enviado con éxito. Te responderemos pronto.
           </Box>
         </Alert>
       </Snackbar>
