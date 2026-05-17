@@ -34,7 +34,7 @@ import StarIcon from '@mui/icons-material/Star';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { SaborwebContext } from "../../context/SaborifyProvider";
-import { useApi } from "../../context/ApiProvider";
+import { useApi, API_BASE_URL } from "../../context/ApiProvider";
 import { Link } from "react-router-dom";
 import ReseñaCard from "../../components/ReseñaCard";
 import Spinner from "../../components/Spinner";
@@ -138,6 +138,21 @@ export default function Receta() {
   };
 
   const isAIGenerated = receta?.IA === true;
+
+  const buildAbsolute = (raw) => {
+    if (!raw || typeof raw !== 'string') return null;
+    const origin = API_BASE_URL.split('/public')[0];
+    const normalized = raw.trim();
+
+    if (normalized.startsWith('http://')) return normalized.replace('http://', 'https://');
+    if (normalized.startsWith('https://')) return normalized;
+    if (normalized.startsWith('/storage/')) return `${origin}${normalized}`;
+    if (normalized.startsWith('storage/')) return `${origin}/${normalized}`;
+    if (normalized.startsWith('/recetas/')) return `${origin}/storage${normalized}`;
+    if (normalized.startsWith('recetas/')) return `${origin}/storage/${normalized}`;
+    if (normalized.startsWith('/')) return `${origin}${normalized}`;
+    return `${origin}/${normalized}`;
+  };
 
   useEffect(() => {
     if (user && user.id && receta && receta.usuario_id) {
@@ -378,7 +393,7 @@ export default function Receta() {
           >
             <CardMedia
               component="img"
-              image={receta.imagen || imagenPlaceholder}
+              image={buildAbsolute(receta.imagen || receta.imagen_url || receta.imagenUrl) || imagenPlaceholder}
               alt={receta.nombre}
               onError={(e) => {
                 e.currentTarget.src = imagenPlaceholder;
