@@ -15,7 +15,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import TimerIcon from "@mui/icons-material/Timer";
 import { useContext } from "react";
 import { SaborwebContext } from "../../context/SaborifyProvider";
-import { useApi } from "../../context/ApiProvider";
+import { useApi, API_BASE_URL } from "../../context/ApiProvider";
 import { useLanguage } from "../../hooks/useLanguage";
 
 export default function EditarReceta() {
@@ -40,7 +40,20 @@ export default function EditarReceta() {
   const [ingredienteSeleccionado, setIngredienteSeleccionado] = useState(null);
   const [pasos, setPasos] = useState(receta?.pasos?.map(p => p.nombrePaso || p) || [""]);
   const [imagen, setImagen] = useState(null);
-  const [imagenPreview, setImagenPreview] = useState(receta?.imagen_url || null);
+  const buildAbsolute = (raw) => {
+    if (!raw || typeof raw !== 'string') return null;
+    const origin = API_BASE_URL.split('/public')[0];
+    if (raw.startsWith('http://')) return raw.replace('http://', 'https://');
+    if (raw.startsWith('https://')) return raw;
+    if (raw.startsWith('/storage/')) return `${origin}${raw}`;
+    if (raw.startsWith('storage/')) return `${origin}/${raw}`;
+    if (raw.startsWith('/recetas/')) return `${origin}/storage${raw}`;
+    if (raw.startsWith('recetas/')) return `${origin}/storage/${raw}`;
+    if (raw.startsWith('/')) return `${origin}${raw}`;
+    return `${origin}/${raw}`;
+  };
+
+  const [imagenPreview, setImagenPreview] = useState(buildAbsolute(receta?.imagen_url) || buildAbsolute(receta?.imagen) || null);
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState(false);
@@ -159,9 +172,48 @@ export default function EditarReceta() {
         try {
           const imagenData = await api.subirImagen(imagen);
           console.log("Imagen subida", imagenData);
-          if (imagenData && imagenData.url) {
-            imagenUrl = imagenData.url;
+          const extractImageUrl = (obj) => {
+            if (!obj) return null;
+            const candidates = [
+              obj.url,
+              obj.path,
+              obj.ruta,
+              obj.nombre,
+              obj.data && obj.data.url,
+              obj.data && obj.data.path,
+              obj.data && obj.data.ruta,
+              obj.data && obj.data.nombre,
+            ];
+
+            for (const c of candidates) {
+              if (typeof c === 'string' && c.length > 5) return c;
+            }
+
+            const queue = [obj];
+            while (queue.length) {
+              const current = queue.shift();
+              if (!current || typeof current !== 'object') continue;
+              for (const key of Object.keys(current)) {
+                const val = current[key];
+                if (typeof val === 'string') {
+                  const lower = val.toLowerCase();
+                  if (lower.includes('/storage') || lower.startsWith('http') || lower.match(/\.(png|jpe?g|gif|webp)$/)) {
+                    return val;
+                  }
+                } else if (typeof val === 'object') {
+                  queue.push(val);
+                }
+              }
+            }
+            return null;
+          };
+
+          const candidate = extractImageUrl(imagenData);
+          if (candidate) {
+            imagenUrl = candidate;
             console.log("URL de la imagen", imagenUrl);
+          } else {
+            throw new Error('Respuesta de imagen invalida');
           }
         } catch (error) {
           console.error("Error al subir imagen:", error);
@@ -268,6 +320,18 @@ export default function EditarReceta() {
   const handleImagenChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedFormats.includes(file.type)) {
+        setError(true);
+        setErrorMessage('Formato de imagen no valido. Usa PNG, JPG, GIF o WEBP.');
+        return;
+      }
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setError(true);
+        setErrorMessage('La imagen supera 5MB.');
+        return;
+      }
       setImagen(file);
 
       const reader = new FileReader();

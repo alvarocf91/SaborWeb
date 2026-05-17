@@ -2,7 +2,7 @@ import { createContext, useContext, useCallback } from 'react';
 
 const ApiContext = createContext();
 
-const API_BASE_URL = 'https://saulal25.iesmontenaranco.com:8000/public/api';
+export const API_BASE_URL = 'https://saulal25.iesmontenaranco.com:8000/public/api';
 
 export const useApi = () => {
     const context = useContext(ApiContext);
@@ -245,6 +245,18 @@ export const ApiProvider = ({ children }) => {
 
     const subirImagen = useCallback(async (imagenFile) => {
         try {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(imagenFile.type)) {
+                throw new Error(`Invalid image format. Allowed formats: PNG, JPG, GIF, WEBP`);
+            }
+
+            // Validate file size (max 5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (imagenFile.size > maxSize) {
+                throw new Error('Image file is too large. Maximum size is 5MB');
+            }
+
             const formData = new FormData();
             formData.append('imagen', imagenFile);
 
@@ -258,9 +270,18 @@ export const ApiProvider = ({ children }) => {
                 headers: headers,
                 body: formData,
             });
-            return await handleApiResponse(response);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Error uploading image: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Image uploaded successfully:', data);
+            return data;
         } catch (error) {
-            handleApiError(error, 'Error al subir la imagen');
+            console.error('Image upload error:', error);
+            handleApiError(error, 'Error uploading image');
         }
     }, []);
 

@@ -27,33 +27,51 @@ import RecetaCard from "../../components/RecetaCard";
 import PropTypes from "prop-types";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
-  borderRadius: 16,
+  borderRadius: 24,
   height: "100%",
-  padding: theme.spacing(2),
-  boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  background: "linear-gradient(145deg, #ffffff, #EAF3FB)",
+  padding: theme.spacing(3),
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+  transition: "all 0.4s cubic-bezier(0.23, 1, 0.320, 1)",
+  background: "linear-gradient(135deg, #ffffff 0%, #f9fcff 100%)",
   display: "flex",
   flexDirection: "column",
   cursor: "pointer",
+  border: "1px solid rgba(29, 112, 184, 0.08)",
+  position: "relative",
+  overflow: "hidden",
   [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(3),
-  },
-  [theme.breakpoints.up('md')]: {
     padding: theme.spacing(4),
   },
+  [theme.breakpoints.up('md')]: {
+    padding: theme.spacing(4.5),
+  },
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "4px",
+    background: "linear-gradient(90deg, #1D70B8, #00a0ff, transparent)",
+    opacity: 0,
+    transition: "opacity 0.4s ease",
+  },
   "&:hover": {
-    transform: "translateY(-8px)",
-    boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
-    background: "linear-gradient(145deg, #f5faff, #eaf3fb)",
+    transform: "translateY(-12px)",
+    boxShadow: "0 20px 40px rgba(29, 112, 184, 0.15), 0 0 60px rgba(29, 112, 184, 0.08)",
+    background: "linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%)",
+    border: "1px solid rgba(29, 112, 184, 0.15)",
+    "&::before": {
+      opacity: 1,
+    }
   },
 }));
 
 const StyledStatsCard = styled(Card)(({ theme }) => ({
-  borderRadius: 20,
-  padding: theme.spacing(3),
+  borderRadius: 24,
+  padding: theme.spacing(3.5),
   height: "100%",
-  background: "linear-gradient(135deg, #1D70B8 0%, #1D70B8 100%)",
+  background: "linear-gradient(135deg, #1D70B8 0%, #0059b3 50%, #1D70B8 100%)",
   color: "white",
   display: "flex",
   flexDirection: "column",
@@ -61,23 +79,32 @@ const StyledStatsCard = styled(Card)(({ theme }) => ({
   textAlign: "center",
   position: "relative",
   overflow: "hidden",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  transition: "all 0.4s cubic-bezier(0.23, 1, 0.320, 1)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
   [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(4.5),
   },
-  "&:before": {
+  "&::before": {
     content: '""',
     position: "absolute",
     top: "-50%",
     right: "-50%",
     width: "100%",
     height: "100%",
-    background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)",
     borderRadius: "50%",
   },
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    inset: 0,
+    background: "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 100%)",
+    pointerEvents: "none",
+  },
   "&:hover": {
-    transform: "translateY(-5px) scale(1.02)",
-    boxShadow: "0 15px 30px rgba(29, 112, 184, 0.3)",
+    transform: "translateY(-8px) scale(1.03)",
+    boxShadow: "0 20px 50px rgba(29, 112, 184, 0.35), 0 0 80px rgba(29, 112, 184, 0.2)",
+    background: "linear-gradient(135deg, #1D70B8 0%, #005fcc 50%, #0059b3 100%)",
   },
 }));
 
@@ -85,36 +112,38 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   position: "relative",
   display: "inline-block",
   color: "#1D70B8",
-  fontWeight: 700,
+  fontWeight: 800,
   marginBottom: theme.spacing(3),
   textAlign: "center",
-  fontSize: "1.75rem",
+  fontSize: "1.85rem",
+  letterSpacing: "-0.5px",
   [theme.breakpoints.up('sm')]: {
-    fontSize: "2rem",
+    fontSize: "2.15rem",
     marginBottom: theme.spacing(4),
   },
   [theme.breakpoints.up('md')]: {
-    fontSize: "2.25rem",
+    fontSize: "2.5rem",
     marginBottom: theme.spacing(5),
   },
   "&:after": {
     content: '""',
     position: "absolute",
-    width: "40px",
-    height: "3px",
+    width: "50px",
+    height: "4px",
     borderRadius: "2px",
-    background: "#1D70B8",
-    bottom: "-8px",
+    background: "linear-gradient(90deg, #1D70B8, #00a0ff)",
+    bottom: "-12px",
     left: "50%",
     transform: "translateX(-50%)",
     [theme.breakpoints.up('sm')]: {
-      width: "50px",
-      height: "4px",
-      bottom: "-10px",
+      width: "70px",
+      height: "5px",
+      bottom: "-14px",
     },
     [theme.breakpoints.up('md')]: {
-      width: "60px",
-      bottom: "-12px",
+      width: "90px",
+      height: "6px",
+      bottom: "-16px",
     },
   },
 }));
@@ -349,50 +378,90 @@ export default function HomePage() {
 
   return (
     <ResponsiveContainer maxWidth="xl">
+      {/* Hero Section - Premium Welcome */}
       <Box
         sx={{
-          textAlign: "center",
-          mb: { xs: 6, sm: 7, md: 8 },
-          px: { xs: 1, sm: 2 },
           position: "relative",
-          "&:after": {
+          mb: { xs: 8, sm: 10, md: 12 },
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 5, sm: 6, md: 8 },
+          borderRadius: { xs: 4, sm: 6 },
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #ffffff 0%, #f0f8ff 50%, #e6f0ff 100%)",
+          boxShadow: "0 10px 40px rgba(29, 112, 184, 0.12), inset 0 1px 0 rgba(255,255,255,0.6)",
+          border: "1px solid rgba(29, 112, 184, 0.15)",
+          "&::before": {
             content: '""',
             position: "absolute",
-            bottom: { xs: -15, sm: -18, md: -20 },
-            left: "20%",
-            width: "60%",
+            top: 0,
+            right: 0,
+            width: "400px",
+            height: "400px",
+            background: "radial-gradient(circle, rgba(29, 112, 184, 0.05) 0%, transparent 70%)",
+            borderRadius: "50%",
+            transform: "translate(100px, -100px)",
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: -50,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "80%",
             height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(29, 112, 184, 0.45), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(29, 112, 184, 0.3), transparent)",
           }
         }}
       >
-        <Typography
-          variant="h1"
-          component="h1"
-          sx={{
-            fontWeight: 800,
-            color: "#1D70B8",
-            mb: { xs: 1.5, sm: 2, md: 2.5 },
-            fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem", lg: "3rem" },
-            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
-          }}
-        >
-          Welcome to Saborweb!
-        </Typography>
+        <Box sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              color: "#1D70B8",
+              fontWeight: 600,
+              fontSize: { xs: "0.875rem", sm: "0.95rem", md: "1rem" },
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              mb: { xs: 2, sm: 2.5, md: 3 },
+              opacity: 0.85
+            }}
+          >
+            Welcome to Saborweb
+          </Typography>
+          
+          <Typography
+            variant="h1"
+            component="h1"
+            sx={{
+              fontWeight: 800,
+              color: "#1D70B8",
+              mb: { xs: 2, sm: 2.5, md: 3 },
+              fontSize: { xs: "2rem", sm: "2.75rem", md: "3.25rem", lg: "3.5rem" },
+              lineHeight: { xs: 1.1, sm: 1.15, md: 1.2 },
+              background: "linear-gradient(135deg, #1D70B8 0%, #005fcc 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent"
+            }}
+          >
+            Discover Culinary Excellence
+          </Typography>
 
-        <Typography
-          variant="h6"
-          sx={{
-            color: "text.secondary",
-            maxWidth: { xs: "100%", sm: "600px", md: "800px" },
-            mx: "auto",
-            lineHeight: { xs: 1.4, sm: 1.5, md: 1.6 },
-            fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem", lg: "1.25rem" },
-            px: { xs: 1, sm: 0 }
-          }}
-        >
-          Discover delicious recipes, cooking tips, and much more on your new favorite culinary platform.
-        </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#555",
+              maxWidth: { xs: "100%", sm: "650px", md: "900px" },
+              mx: "auto",
+              lineHeight: { xs: 1.5, sm: 1.6, md: 1.7 },
+              fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.25rem", lg: "1.35rem" },
+              fontWeight: 400,
+              px: { xs: 1, sm: 0 }
+            }}
+          >
+            Explore thousands of exquisite recipes, master culinary techniques, and join a vibrant community of food enthusiasts who celebrate the art of cooking.
+          </Typography>
+        </Box>
       </Box>
 
       <Box
@@ -629,40 +698,67 @@ export default function HomePage() {
 
       <Box
         sx={{
-          mt: { xs: 6, sm: 8, md: 10 },
+          mt: { xs: 8, sm: 10, md: 12 },
+          mx: { xs: 1, sm: 2, md: 0 },
+          px: { xs: 3, sm: 4, md: 6 },
+          py: { xs: 5, sm: 6, md: 7 },
+          borderRadius: { xs: 4, sm: 6 },
           textAlign: "center",
-          p: { xs: 3, sm: 4, md: 5 },
-          mx: { xs: 1, sm: 0 },
-          borderRadius: { xs: 3, sm: 4 },
-          background: "linear-gradient(145deg, #fff3e0, #EAF3FB)",
-          boxShadow: "0 6px 20px rgba(29, 112, 184, 0.1)",
+          position: "relative",
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #ffffff 0%, #f0f8ff 50%, #e6f0ff 100%)",
+          border: "1px solid rgba(29, 112, 184, 0.1)",
+          boxShadow: "0 8px 32px rgba(29, 112, 184, 0.1), inset 0 1px 0 rgba(255,255,255,0.5)",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: -100,
+            right: -100,
+            width: 300,
+            height: 300,
+            background: "radial-gradient(circle, rgba(29, 112, 184, 0.08) 0%, transparent 70%)",
+            borderRadius: "50%",
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: -50,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "90%",
+            height: "1px",
+            background: "linear-gradient(90deg, transparent, rgba(29, 112, 184, 0.25), transparent)",
+          }
         }}
       >
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 700,
-            color: "#1D70B8",
-            mb: { xs: 1.5, sm: 2 },
-            fontSize: { xs: "1.25rem", sm: "1.4rem", md: "1.5rem" }
-          }}
-        >
-          Ready to explore the culinary world?
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            mb: { xs: 2, sm: 3 },
-            color: "text.secondary",
-            maxWidth: { xs: "100%", sm: "600px", md: "700px" },
-            mx: "auto",
-            fontSize: { xs: "0.9rem", sm: "1rem" },
-            lineHeight: { xs: 1.5, sm: 1.6 },
-            px: { xs: 1, sm: 0 }
-          }}
-        >
-          Discover thousands of recipes, cooking tips, and culinary tricks that will make your meals exceptional.
-        </Typography>
+        <Box sx={{ position: "relative", zIndex: 1 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              color: "#1D70B8",
+              mb: { xs: 2, sm: 2.5, md: 3 },
+              fontSize: { xs: "1.75rem", sm: "2rem", md: "2.35rem" },
+              lineHeight: 1.2
+            }}
+          >
+            Ready to Transform Your Kitchen?
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: { xs: 3, sm: 4 },
+              color: "#666",
+              maxWidth: { xs: "100%", sm: "650px", md: "800px" },
+              mx: "auto",
+              fontSize: { xs: "0.95rem", sm: "1.05rem", md: "1.15rem" },
+              lineHeight: { xs: 1.6, sm: 1.7 },
+              px: { xs: 1, sm: 0 }
+            }}
+          >
+            Dive into thousands of meticulously curated recipes, learn from expert techniques, and become part of a passionate culinary community. Your next masterpiece awaits.
+          </Typography>
+        </Box>
       </Box>
     </ResponsiveContainer>
   );

@@ -14,6 +14,7 @@ export const SaborwebProvider = ({ children }) => {
 
   const [recetas, setRecetas] = useState([]);
   const [receta, setReceta] = useState({});
+  const [loading, setLoading] = useState(true);
   const [ingredientes, setIngredientes] = useState([]);
   const [ingrediente, setIngrediente] = useState({});
   const [ingredientesAlergenos, setIngredientesAlergenos] = useState([]);
@@ -87,12 +88,24 @@ export const SaborwebProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    cargaRecetas();
-    cargaIngredientes();
-    cargaAlergenos();
-    cargaIngredientesAlergenos();
-    cargaRecetasMejorValoradas();
-    cargaDificultades();
+    const init = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([
+          cargaRecetas(),
+          cargaIngredientes(),
+          cargaAlergenos(),
+          cargaIngredientesAlergenos(),
+          cargaRecetasMejorValoradas(),
+          cargaDificultades()
+        ]);
+      } catch (e) {
+        console.error('Error inicializando datos:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
   }, []);
 
   useEffect(() => {

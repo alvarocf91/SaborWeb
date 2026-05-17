@@ -48,7 +48,7 @@ export default function Header() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { recetas, ingredientes, setReceta, setIngrediente, setAlergenoSeleccionado } = useContext(SaborwebContext);
+  const { recetas, ingredientes, setReceta, setIngrediente, setAlergenoSeleccionado, loading } = useContext(SaborwebContext);
   const { t } = useLanguage();
 
   const [placeholder, setPlaceholder] = useState("Buscar recetas o ingredientes");
@@ -206,7 +206,9 @@ export default function Header() {
         <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={Logo} alt="LogoSaborweb" style={{ width: isMobile ? "160px" : "200px" }} />
+              {!loading && (
+                <img src={Logo} alt="LogoSaborweb" style={{ width: isMobile ? "160px" : "200px" }} />
+              )}
             </Link>
           </Box>
 
@@ -255,7 +257,7 @@ export default function Header() {
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {mostrarBuscador && (
-                <Box sx={{ position: "relative", minWidth: "260px" }}>
+                <Box sx={{ position: "relative", minWidth: "340px" }}>
                   <Paper
                     elevation={0}
                     sx={{
@@ -268,7 +270,7 @@ export default function Header() {
                       border: "1px solid #eeeeee",
                       transition: "all 0.3s ease",
                       '&:focus-within': {
-                        boxShadow: "0 0 0 2px rgba(0, 119, 255, 0.2)",
+                        boxShadow: "0 0 0 2px rgba(0, 119, 255, 0.12)",
                         backgroundColor: "#ffffff"
                       }
                     }}
@@ -283,7 +285,7 @@ export default function Header() {
                     {query && (
                       <IconButton 
                         size="small" 
-                        onClick={() => setQuery('')}
+                        onClick={() => { setQuery(''); setFilteredResults([]); }}
                         sx={{ p: 0.5 }}
                       >
                         <CloseIcon fontSize="small" />
@@ -298,7 +300,7 @@ export default function Header() {
                         position: "absolute", 
                         width: "100%", 
                         mt: 0.5, 
-                        maxHeight: "350px", 
+                        maxHeight: "380px", 
                         overflowY: "auto", 
                         zIndex: 10,
                         borderRadius: 2
@@ -317,7 +319,7 @@ export default function Header() {
                                 py: 1.25,
                                 px: 2,
                                 '&:hover': {
-                                  backgroundColor: "rgba(0, 119, 255, 0.08)"
+                                  backgroundColor: "rgba(0, 119, 255, 0.06)"
                                 }
                               }}
                             >
@@ -338,8 +340,6 @@ export default function Header() {
                   )}
                 </Box>
               )}
-
-              {/* LanguageSwitcher removed - site forced to Spanish */}
 
               {user ? (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -487,16 +487,6 @@ export default function Header() {
                   </Button>
                 </Link>
               )}
-              
-              <IconButton
-                size="large"
-                edge="end"
-                onClick={() => setShowSearch((prev) => !prev)}
-                sx={{ color: "#666" }}
-              >
-                {showSearch ? <CloseIcon /> : <SearchIcon />}
-              </IconButton>
-              
               <IconButton
                 size="large"
                 edge="end"
@@ -509,7 +499,7 @@ export default function Header() {
           )}
 
           {isMobile && (
-            <Collapse in={showSearch} sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 1100 }}>
+            <Collapse in={showSearch} sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 1100, backgroundColor: '#fff' }}>
               <Box sx={{ 
                 backgroundColor: "#fff", 
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -520,16 +510,17 @@ export default function Header() {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    borderRadius: "8px",
-                    p: 1,
+                    borderRadius: "12px",
+                    p: 1.2,
                     backgroundColor: "#f5f5f5",
-                    border: "1px solid #eeeeee"
+                    border: "1.5px solid #1D70B8",
+                    transition: "all 0.3s ease"
                   }}
                 >
                   <SearchIcon sx={{ color: "#1D70B8", ml: 1 }} />
                   <InputBase
                     placeholder={placeholder}
-                    sx={{ ml: 1, flex: 1 }}
+                    sx={{ ml: 1.5, flex: 1, fontSize: "0.95rem", fontWeight: 500 }}
                     value={query}
                     onChange={handleSearch}
                     autoFocus
@@ -547,15 +538,17 @@ export default function Header() {
 
                 {filteredResults.length > 0 && (
                   <Paper 
-                    elevation={0}
+                    elevation={2}
                     sx={{ 
-                      width: "100%", 
+                      width: "calc(100% - 16px)",
                       mt: 1,
-                      maxHeight: "250px", 
-                      overflowY: "auto"
+                      maxHeight: "300px", 
+                      overflowY: "auto",
+                      borderRadius: 2,
+                      mx: 1
                     }}
                   >
-                    <List dense>
+                    <List dense sx={{ py: 0 }}>
                       {filteredResults.map((item) => (
                         <ListItem key={item.id} disablePadding>
                           <ListItemButton 
@@ -564,13 +557,33 @@ export default function Header() {
                                 ? handleSelectRecipe(item)
                                 : handleSelectIngredient(item);
                             }}
+                            sx={{
+                              py: 1.25,
+                              px: 2,
+                              '&:hover': {
+                                backgroundColor: "rgba(0, 119, 255, 0.08)"
+                              }
+                            }}
                           >
-                            <ListItemText primary={item.nombre} />
+                            <ListItemText 
+                              primary={item.nombre}
+                              primaryTypographyProps={{
+                                style: {
+                                  fontWeight: 500,
+                                  fontSize: '0.95rem'
+                                }
+                              }}
+                            />
                           </ListItemButton>
                         </ListItem>
                       ))}
                     </List>
                   </Paper>
+                )}
+                {query && filteredResults.length === 0 && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: 'center', py: 2 }}>
+                    No results found
+                  </Typography>
                 )}
               </Box>
             </Collapse>

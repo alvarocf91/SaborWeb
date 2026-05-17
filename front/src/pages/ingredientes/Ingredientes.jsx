@@ -70,48 +70,78 @@ export default function Ingredientes() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: { xs: 4, sm: 6 }, mb: { xs: 6, sm: 8 }, px: { xs: 2, sm: 3 } }}>
-      <Box mb={{ xs: 4, sm: 6 }} textAlign="center">
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
+    <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 }, px: { xs: 2, sm: 3 } }}>
+      {/* Hero Section */}
+      <Box 
+        mb={{ xs: 6, sm: 8, md: 10 }}
+        sx={{
+          textAlign: "center",
+          position: "relative",
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 5, sm: 6, md: 7 },
+          borderRadius: { xs: 4, sm: 6 },
+          background: "linear-gradient(135deg, #ffffff 0%, #f9fcff 50%, #f0f8ff 100%)",
+          border: "1px solid rgba(29, 112, 184, 0.08)",
+          boxShadow: "0 4px 20px rgba(29, 112, 184, 0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: -50,
+            right: -50,
+            width: 300,
+            height: 300,
+            background: "radial-gradient(circle, rgba(29, 112, 184, 0.05) 0%, transparent 70%)",
+            borderRadius: "50%",
+          }
+        }}
+      >
+        <Box sx={{ position: "relative", zIndex: 1 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
             sx={{
-            color: '#1D70B8',
-            fontWeight: 'bold',
-            position: 'relative',
-            display: 'inline-block',
-            fontSize: { xs: '1.8rem', sm: '2.125rem' },
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              width: '60%',
-              height: '4px',
-              bottom: '-10px',
-              left: '20%',
-              backgroundColor: '#1D70B8',
-              borderRadius: '2px'
-            }
-          }}
-        >
-          Ingredients & Allergens
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{
-            maxWidth: '700px',
-            mx: 'auto',
-            mt: 3,
-            fontSize: { xs: '1rem', sm: '1.1rem' },
-            px: { xs: 1, sm: 0 }
-          }}
-        >
-          Explore our selection of ingredients organized by allergens. Select any category to see more details.
-        </Typography>
+              color: '#1D70B8',
+              fontWeight: 800,
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '2.85rem' },
+              mb: { xs: 2, sm: 2.5, md: 3 },
+              position: 'relative',
+              display: 'inline-block',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                width: '80px',
+                height: '5px',
+                bottom: '-14px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'linear-gradient(90deg, #1D70B8, #00a0ff)',
+                borderRadius: '3px'
+              }
+            }}
+          >
+            Ingredients & Allergens
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{
+              maxWidth: '800px',
+              mx: 'auto',
+              mt: 4,
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+              lineHeight: 1.7,
+              px: { xs: 1, sm: 0 }
+            }}
+          >
+            Explore our comprehensive ingredient database organized by allergen categories. Discover safe choices tailored to your dietary needs and preferences.
+          </Typography>
+        </Box>
       </Box>
 
-      <Grid container spacing={3} justifyContent="center">
+      {/* Allergen Cards Grid */}
+      <Grid container spacing={{ xs: 2.5, sm: 3, md: 3.5 }} justifyContent="center">
         {ingredientesAlergenos.map((ingredienteAlergeno, index) => (
           <Grid
             item
@@ -125,29 +155,48 @@ export default function Ingredientes() {
             }}
           >
             <Card
-              elevation={3}
+              elevation={0}
               sx={{
                 height: "100%",
-                width: { xs: '100%', sm: '350px' },
-                maxWidth: '350px',
+                width: { xs: '100%', sm: '380px' },
+                maxWidth: '380px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                borderRadius: 3,
+                borderRadius: 4,
                 overflow: 'hidden',
-                transition: 'all 0.3s ease-in-out',
+                border: '1px solid rgba(29, 112, 184, 0.08)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)',
+                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.320, 1)',
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #1D70B8, #00a0ff)',
+                  opacity: 0,
+                  transition: 'opacity 0.4s ease',
+                },
                 '&:hover': {
-                  transform: { xs: 'none', sm: 'translateY(-8px)' },
-                  boxShadow: '0 12px 20px rgba(0, 119, 255, 0.2)',
+                  transform: 'translateY(-12px)',
+                  boxShadow: '0 20px 40px rgba(29, 112, 184, 0.15), 0 0 60px rgba(29, 112, 184, 0.08)',
+                  border: '1px solid rgba(29, 112, 184, 0.15)',
+                  '&::before': {
+                    opacity: 1,
+                  }
                 },
               }}
             >
               <Box
                 sx={{
-                  backgroundColor: '#1D70B8',
-                  py: { xs: 1.2, sm: 1.5 },
-                  px: 2,
-                  borderBottom: '4px solid #1D70B8'
+                  backgroundColor: 'linear-gradient(135deg, #1D70B8 0%, #0059b3 100%)',
+                  background: 'linear-gradient(135deg, #1D70B8 0%, #0059b3 100%)',
+                  py: { xs: 2, sm: 2.2 },
+                  px: 2.5,
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                 }}
               >
                 <Typography
@@ -155,15 +204,16 @@ export default function Ingredientes() {
                   align="center"
                   sx={{
                     color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: { xs: '1.1rem', sm: '1.25rem' }
+                    fontWeight: 800,
+                    fontSize: { xs: '1.15rem', sm: '1.3rem' },
+                    letterSpacing: '-0.3px'
                   }}
                 >
                   {ingredienteAlergeno.alergeno}
                 </Typography>
               </Box>
 
-              <CardContent sx={{ flexGrow: 1, pt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 2 } }}>
+              <CardContent sx={{ flexGrow: 1, pt: { xs: 2.5, sm: 3 }, px: { xs: 2.5, sm: 2.5 } }}>
                 <Box
                   component="ul"
                   sx={{
@@ -173,24 +223,27 @@ export default function Ingredientes() {
                     mb: 2
                   }}
                 >
-                  {ingredienteAlergeno.ingredientes.slice(0, 4).map((ingrediente) => (
+                  {ingredienteAlergeno.ingredientes.slice(0, 4).map((ingrediente, idx) => (
                     <Box
                       component="li"
                       key={ingrediente.id}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        mb: { xs: 1.2, sm: 1.5 },
-                        pl: 1
+                        mb: { xs: 1.3, sm: 1.6 },
+                        pl: 0,
+                        opacity: idx === 0 ? 1 : idx === 1 ? 0.95 : 0.9,
+                        transition: 'all 0.3s ease'
                       }}
                     >
-                      <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
+                      <RestaurantIcon sx={{ fontSize: '1rem', color: '#1D70B8', mr: 1.5, flexShrink: 0 }} />
                       <Typography
                         variant="body2"
                         sx={{
-                          color: 'text.primary',
+                          color: '#333',
                           fontWeight: 500,
-                          fontSize: { xs: '0.85rem', sm: '0.875rem' }
+                          fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                          letterSpacing: '-0.2px'
                         }}
                       >
                         {ingrediente.nombre}
@@ -209,7 +262,7 @@ export default function Ingredientes() {
                         fontSize: { xs: '0.8rem', sm: '0.875rem' }
                       }}
                     >
-                      And {ingredienteAlergeno.ingredientes.length - 4} more...
+                      +{ingredienteAlergeno.ingredientes.length - 4} more
                     </Typography>
                   )}
                 </Box>
@@ -218,25 +271,30 @@ export default function Ingredientes() {
               <Box
                 display="flex"
                 justifyContent="center"
-                p={{ xs: 1.5, sm: 2 }}
-                sx={{ backgroundColor: '#f0f8ff' }}
+                p={{ xs: 2, sm: 2.2 }}
+                sx={{ 
+                  backgroundColor: '#f9fcff',
+                  borderTop: '1px solid rgba(29, 112, 184, 0.08)'
+                }}
               >
                 <Button
                   variant="contained"
                   onClick={() => handleSelectAlergeno(ingredienteAlergeno)}
                   startIcon={<SearchIcon />}
-                    sx={{
+                  sx={{
                     backgroundColor: "#1D70B8",
-                    borderRadius: 2,
-                    px: { xs: 2.5, sm: 3 },
-                    py: { xs: 0.8, sm: 1 },
-                    fontWeight: 'bold',
+                    borderRadius: 2.5,
+                    px: { xs: 3, sm: 3.5 },
+                    py: { xs: 0.9, sm: 1 },
+                    fontWeight: 700,
                     textTransform: "none",
-                    fontSize: { xs: '0.85rem', sm: '0.875rem' },
-                    boxShadow: '0 4px 10px rgba(0, 119, 255, 0.3)',
+                    fontSize: { xs: '0.88rem', sm: '0.9rem' },
+                    boxShadow: '0 4px 12px rgba(29, 112, 184, 0.3)',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      backgroundColor: "#1D70B8",
-                      boxShadow: '0 6px 12px rgba(0, 119, 255, 0.4)',
+                      backgroundColor: "#0059b3",
+                      boxShadow: '0 8px 20px rgba(29, 112, 184, 0.4)',
+                      transform: 'translateY(-2px)'
                     }
                   }}
                 >
@@ -257,23 +315,27 @@ export default function Ingredientes() {
         fullScreen={{ xs: true, sm: false }}
         PaperProps={{
           sx: {
-            borderRadius: { xs: 0, sm: 2 },
+            borderRadius: { xs: 0, sm: 3 },
             overflow: 'hidden',
             m: { xs: 0, sm: 2 },
-            maxHeight: { xs: '100vh', sm: '90vh' }
+            maxHeight: { xs: '100vh', sm: '90vh' },
+            boxShadow: '0 20px 60px rgba(29, 112, 184, 0.25)',
+            border: '1px solid rgba(29, 112, 184, 0.1)'
           }
         }}
       >
         <DialogTitle
           sx={{
-            backgroundColor: "#1D70B8",
+            background: 'linear-gradient(135deg, #1D70B8 0%, #0059b3 100%)',
             color: "white",
-            fontWeight: 'bold',
-            py: { xs: 2, sm: 2.5 },
-            px: { xs: 2, sm: 3 },
+            fontWeight: 800,
+            py: { xs: 2.5, sm: 3 },
+            px: { xs: 2.5, sm: 3.5 },
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            fontSize: { xs: '1.15rem', sm: '1.35rem' },
+            letterSpacing: '-0.3px'
           }}
         >
           <Box
@@ -285,11 +347,12 @@ export default function Ingredientes() {
               mr: 1
             }}
           >
-            <ErrorOutlineIcon sx={{ mr: { xs: 1, sm: 1.5 }, flexShrink: 0 }} />
+            <ErrorOutlineIcon sx={{ mr: { xs: 1.5, sm: 2 }, flexShrink: 0, fontSize: '1.4rem' }} />
             <Typography
               variant="h6"
               sx={{
-                fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                fontSize: 'inherit',
+                fontWeight: 'inherit',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
@@ -304,7 +367,13 @@ export default function Ingredientes() {
             onClick={handleClose}
             aria-label="cerrar"
             sx={{
-              flexShrink: 0
+              flexShrink: 0,
+              ml: 1,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                transform: 'rotate(90deg)'
+              }
             }}
           >
             <CloseIcon />
@@ -313,9 +382,9 @@ export default function Ingredientes() {
 
         <DialogContent
           sx={{
-            py: { xs: 2, sm: 3 },
-            px: { xs: 2, sm: 3 },
-            backgroundColor: "#f0f8ff",
+            py: { xs: 2.5, sm: 3.5 },
+            px: { xs: 2.5, sm: 3.5 },
+            backgroundColor: "#f9fcff",
             overflow: 'auto'
           }}
         >
@@ -328,50 +397,46 @@ export default function Ingredientes() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon color="action" />
+                  <SearchIcon sx={{ color: '#1D70B8', fontSize: '1.2rem' }} />
                 </InputAdornment>
               ),
               sx: {
-                mt: { xs: 2, sm: 3 },
-                borderRadius: 2,
+                mt: { xs: 2.5, sm: 3 },
+                borderRadius: 2.5,
                 backgroundColor: '#fff',
+                border: '1.5px solid rgba(29, 112, 184, 0.3)',
+                fontWeight: 500,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: '#1D70B8',
+                  backgroundColor: '#f0f8ff',
+                },
+                '&.Mui-focused': {
+                  borderColor: '#1D70B8',
+                  boxShadow: '0 0 0 3px rgba(29, 112, 184, 0.1)'
+                }
               }
             }}
-            sx={{ mb: { xs: 2, sm: 3 } }}
+            sx={{ mb: { xs: 2.5, sm: 3.5 } }}
           />
 
           <Typography
             variant="body2"
             sx={{
-              mb: 2,
-              color: "text.secondary",
+              mb: 2.5,
+              color: "#666",
               display: 'flex',
               alignItems: 'center',
-              fontSize: { xs: '0.85rem', sm: '0.875rem' }
+              fontSize: { xs: '0.9rem', sm: '0.95rem' },
+              fontWeight: 500
             }}
           >
-            Click on an ingredient to see its associated recipes.
-          </Typography>
-
-          <Divider sx={{ mb: { xs: 2, sm: 3 } }} />
-
-          <Typography
-            variant="h6"
-            sx={{
-                color: "#1D70B8",
-              fontWeight: 'bold',
-              mb: 2,
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: { xs: '1.1rem', sm: '1.25rem' }
-            }}
-          >
-            <RestaurantIcon sx={{ mr: 1 }} />
-            Ingredients:
+            <RestaurantIcon sx={{ mr: 1, color: '#1D70B8' }} />
+            Ingredients ({filteredIngredientes.length})
           </Typography>
 
           {filteredIngredientes?.length > 0 ? (
-            <Grid container spacing={{ xs: 1, sm: 1.5 }}>
+            <Grid container spacing={{ xs: 1.5, sm: 2 }}>
               {filteredIngredientes.map((ingrediente) => (
                 <Grid item xs={12} sm={6} md={4} key={ingrediente.id}>
                   <Link
@@ -380,23 +445,28 @@ export default function Ingredientes() {
                     onClick={() => handleIngredientSelect(ingrediente)}
                   >
                     <Chip
-                      avatar={<Avatar sx={{ bgcolor: '#1D70B8' }}>{ingrediente.nombre.charAt(0).toUpperCase()}</Avatar>}
+                      avatar={<Avatar sx={{ bgcolor: '#1D70B8', fontWeight: 700 }}>{ingrediente.nombre.charAt(0).toUpperCase()}</Avatar>}
                       label={ingrediente.nombre}
                       clickable
                       sx={{
                         width: '100%',
                         justifyContent: 'flex-start',
-                        py: { xs: 2, sm: 2.5 },
+                        py: { xs: 2.5, sm: 3 },
                         backgroundColor: '#fff',
-                        border: '1px solid #e6f0ff',
+                        border: '1.5px solid rgba(29, 112, 184, 0.12)',
+                        fontWeight: 600,
+                        transition: 'all 0.3s cubic-bezier(0.23, 1, 0.320, 1)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                         '&:hover': {
-                          backgroundColor: '#e6f7ff',
+                          backgroundColor: '#f0f8ff',
+                          borderColor: '#1D70B8',
+                          boxShadow: '0 4px 16px rgba(29, 112, 184, 0.15)',
+                          transform: 'translateY(-2px)'
                         },
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                         '& .MuiChip-label': {
-                          fontSize: { xs: '0.85rem', sm: '0.9rem' },
-                          fontWeight: 500,
+                          fontSize: { xs: '0.88rem', sm: '0.95rem' },
+                          fontWeight: 600,
+                          letterSpacing: '-0.2px'
                         }
                       }}
                     />
@@ -408,16 +478,19 @@ export default function Ingredientes() {
             <Box
               sx={{
                 textAlign: 'center',
-                py: { xs: 3, sm: 4 },
-                backgroundColor: 'rgba(255,255,255,0.5)',
-                borderRadius: 2
+                py: { xs: 4, sm: 5 },
+                backgroundColor: '#fff',
+                borderRadius: 3,
+                border: '2px dashed rgba(29, 112, 184, 0.2)'
               }}
             >
+              <SearchIcon sx={{ fontSize: '2.5rem', color: '#ccc', mb: 1 }} />
               <Typography
                 variant="body1"
                 color="text.secondary"
                 sx={{
-                  fontSize: { xs: '0.9rem', sm: '1rem' }
+                  fontSize: { xs: '0.95rem', sm: '1rem' },
+                  fontWeight: 500
                 }}
               >
                 No ingredients found for this search.
@@ -430,8 +503,9 @@ export default function Ingredientes() {
           sx={{
             justifyContent: 'flex-end',
             backgroundColor: "#f0f8ff",
-            py: { xs: 1.5, sm: 2 },
-            px: { xs: 2, sm: 3 }
+            py: { xs: 2, sm: 2.5 },
+            px: { xs: 2.5, sm: 3.5 },
+            borderTop: '1px solid rgba(29, 112, 184, 0.1)'
           }}
         >
           <Button
@@ -440,14 +514,19 @@ export default function Ingredientes() {
             sx={{
               color: "#1D70B8",
               borderColor: "#1D70B8",
-              fontWeight: 'bold',
+              fontWeight: 700,
               textTransform: 'none',
-              borderRadius: 2,
-              fontSize: { xs: '0.85rem', sm: '0.875rem' },
-              px: { xs: 2, sm: 2.5 },
+              borderRadius: 2.5,
+              fontSize: { xs: '0.9rem', sm: '0.95rem' },
+              px: { xs: 2.5, sm: 3 },
+              py: { xs: 0.8, sm: 0.9 },
+              border: '1.5px solid #1D70B8',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                borderColor: "#1D70B8",
-                backgroundColor: 'rgba(0, 119, 255, 0.04)'
+                borderColor: "#0059b3",
+                color: "#0059b3",
+                backgroundColor: 'rgba(29, 112, 184, 0.04)',
+                boxShadow: '0 4px 12px rgba(29, 112, 184, 0.15)'
               }
             }}
           >

@@ -155,53 +155,85 @@ export default function Recetas() {
     };
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, p: 3, position: "relative" }}>
-            <Box mb={6} textAlign="center">
-                <Typography
-                    variant="h4"
-                    component="h1"
-                    gutterBottom
-                    sx={{
-                        color: '#1D70B8',
-                        fontWeight: 'bold',
-                        position: 'relative',
-                        display: 'inline-block',
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            width: '60%',
-                            height: '4px',
-                            bottom: '-10px',
-                            left: '20%',
-                            backgroundColor: '#1D70B8',
-                            borderRadius: '2px'
-                        }
-                    }}
-                >
-                    Explore all recipes from our community
-                </Typography>
-                <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{
-                        maxWidth: '700px',
-                        mx: 'auto',
-                        mt: 3,
-                        fontSize: '1.1rem'
-                    }}
-                >
-                    Find here all the recipes created by Saborweb users. You can filter by difficulty, preparation time, and allergens. Discover new delights to cook!
-                </Typography>
+        <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+            {/* Hero Section */}
+            <Box 
+                mb={{ xs: 6, sm: 8, md: 10 }}
+                sx={{
+                    textAlign: "center",
+                    position: "relative",
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 4, sm: 5, md: 6 },
+                    borderRadius: { xs: 4, sm: 6 },
+                    background: "linear-gradient(135deg, #ffffff 0%, #f9fcff 50%, #f0f8ff 100%)",
+                    border: "1px solid rgba(29, 112, 184, 0.08)",
+                    boxShadow: "0 4px 20px rgba(29, 112, 184, 0.06)",
+                    overflow: "hidden",
+                    "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        top: -50,
+                        right: -50,
+                        width: 300,
+                        height: 300,
+                        background: "radial-gradient(circle, rgba(29, 112, 184, 0.05) 0%, transparent 70%)",
+                    }
+                }}
+            >
+                <Box sx={{ position: "relative", zIndex: 1 }}>
+                    <Typography
+                        variant="h4"
+                        component="h1"
+                        gutterBottom
+                        sx={{
+                            color: '#1D70B8',
+                            fontWeight: 800,
+                            position: 'relative',
+                            display: 'inline-block',
+                            fontSize: { xs: '2rem', sm: '2.5rem', md: '2.75rem' },
+                            mb: { xs: 2, sm: 2.5, md: 3 },
+                            '&::after': {
+                                content: '""',
+                                position: 'absolute',
+                                width: '70px',
+                                height: '5px',
+                                bottom: '-12px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                backgroundColor: '#1D70B8',
+                                borderRadius: '3px',
+                                background: 'linear-gradient(90deg, #1D70B8, #00a0ff)'
+                            }
+                        }}
+                    >
+                        Explore Culinary Creations
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        sx={{
+                            maxWidth: '750px',
+                            mx: 'auto',
+                            mt: 4,
+                            fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+                            lineHeight: 1.7
+                        }}
+                    >
+                        Discover a curated collection of recipes from our community. Filter by difficulty, preparation time, and dietary preferences to find your perfect dish.
+                    </Typography>
+                </Box>
             </Box>
 
+            {/* Advanced Filters Section */}
             <Paper
-                elevation={3}
+                elevation={0}
                 sx={{
-                    p: 3,
-                    mb: 4,
-                    borderRadius: 3,
-                    backgroundColor: "#EAF3FB",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    p: { xs: 3, sm: 4, md: 5 },
+                    mb: 5,
+                    borderRadius: 4,
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(29, 112, 184, 0.08)",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)",
                 }}
             >
                 <Box display="flex" alignItems="center" justifyContent="center" gap={2} flexWrap="wrap">
@@ -213,10 +245,19 @@ export default function Recetas() {
                         disabled={loading}
                         sx={{
                             textTransform: "none",
-                            fontWeight: 500,
-                            borderRadius: 2,
+                            fontWeight: 600,
+                            borderRadius: 2.5,
                             backgroundColor: "#1D70B8",
-                            "&:hover": { backgroundColor: "#1D70B8" },
+                            px: 2.5,
+                            py: 1.2,
+                            fontSize: '0.9rem',
+                            boxShadow: "0 4px 12px rgba(29, 112, 184, 0.3)",
+                            transition: "all 0.3s ease",
+                            "&:hover": { 
+                                backgroundColor: "#0059b3",
+                                boxShadow: "0 6px 20px rgba(29, 112, 184, 0.4)",
+                                transform: "translateY(-2px)"
+                            },
                         }}
                     >
                         All
@@ -229,13 +270,20 @@ export default function Recetas() {
                         disabled={loading}
                         sx={{
                             textTransform: "none",
-                            borderRadius: 2,
+                            fontWeight: 600,
+                            borderRadius: 2.5,
                             color: "#1D70B8",
                             borderColor: "#1D70B8",
+                            px: 2.5,
+                            py: 1.2,
+                            fontSize: '0.9rem',
+                            border: "1.5px solid #1D70B8",
+                            transition: "all 0.3s ease",
                             "&:hover": {
-                                backgroundColor: "#EAF3FB",
-                                borderColor: "#1D70B8",
-                                color: "#1D70B8",
+                                backgroundColor: "rgba(29, 112, 184, 0.08)",
+                                borderColor: "#0059b3",
+                                color: "#0059b3",
+                                boxShadow: "0 4px 12px rgba(29, 112, 184, 0.15)",
                             },
                         }}
                     >
@@ -249,21 +297,28 @@ export default function Recetas() {
                         disabled={loading}
                         sx={{
                             textTransform: "none",
-                            borderRadius: 2,
+                            fontWeight: 600,
+                            borderRadius: 2.5,
                             color: "#1D70B8",
                             borderColor: "#1D70B8",
+                            px: 2.5,
+                            py: 1.2,
+                            fontSize: '0.9rem',
+                            border: "1.5px solid #1D70B8",
+                            transition: "all 0.3s ease",
                             "&:hover": {
-                                backgroundColor: "#EAF3FB",
-                                borderColor: "#1D70B8",
-                                color: "#1D70B8",
+                                backgroundColor: "rgba(29, 112, 184, 0.08)",
+                                borderColor: "#0059b3",
+                                color: "#0059b3",
+                                boxShadow: "0 4px 12px rgba(29, 112, 184, 0.15)",
                             },
                         }}
                     >
                         Less Time
                     </Button>
 
-                    <FormControl size="small" sx={{ minWidth: 160 }}>
-                        <InputLabel>
+                    <FormControl size="small" sx={{ minWidth: 180 }}>
+                        <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
                             <Box display="flex" alignItems="center">
                                 <TuneIcon sx={{ fontSize: 18, mr: 1 }} /> Difficulty
                             </Box>
@@ -274,8 +329,18 @@ export default function Recetas() {
                             onChange={handleDificultadChange}
                             disabled={loading}
                             sx={{
-                                backgroundColor: "#ffffff",
-                                borderRadius: 2,
+                                backgroundColor: "#f9fcff",
+                                borderRadius: 2.5,
+                                border: "1.5px solid rgba(29, 112, 184, 0.3)",
+                                fontWeight: 500,
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                    borderColor: "#1D70B8",
+                                    backgroundColor: "#ffffff",
+                                },
+                                "&.Mui-focused": {
+                                    borderColor: "#1D70B8",
+                                }
                             }}
                         >
                             {dificultades.map((dificultad) => (
@@ -286,8 +351,8 @@ export default function Recetas() {
                         </Select>
                     </FormControl>
 
-                    <FormControl size="small" sx={{ minWidth: 160 }} id="alergenos-select">
-                        <InputLabel>
+                    <FormControl size="small" sx={{ minWidth: 180 }} id="alergenos-select">
+                        <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
                             <Box display="flex" alignItems="center">
                                 <NoFoodIcon sx={{ fontSize: 18, mr: 1 }} /> Without allergens
                             </Box>
@@ -298,8 +363,18 @@ export default function Recetas() {
                             onChange={handleAlergenoChange}
                             disabled={loading}
                             sx={{
-                                backgroundColor: "#ffffff",
-                                borderRadius: 2,
+                                backgroundColor: "#f9fcff",
+                                borderRadius: 2.5,
+                                border: "1.5px solid rgba(29, 112, 184, 0.3)",
+                                fontWeight: 500,
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                    borderColor: "#1D70B8",
+                                    backgroundColor: "#ffffff",
+                                },
+                                "&.Mui-focused": {
+                                    borderColor: "#1D70B8",
+                                }
                             }}
                         >
                             {alergenos.map((alergeno) => (
@@ -345,13 +420,15 @@ export default function Recetas() {
                             fontWeight: "bold",
                             textTransform: "none",
                             borderRadius: "30px",
-                            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
+                            boxShadow: "0px 8px 24px rgba(29, 112, 184, 0.35)",
                             backgroundColor: "#1D70B8",
                             color: "#fff",
-                            transition: "all 0.3s ease-in-out",
+                            transition: "all 0.3s cubic-bezier(0.23, 1, 0.320, 1)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
                             "&:hover": {
-                                backgroundColor: "#1D70B8",
-                                transform: "scale(1.05)",
+                                backgroundColor: "#0059b3",
+                                transform: "scale(1.08) translateY(-3px)",
+                                boxShadow: "0px 12px 32px rgba(29, 112, 184, 0.45)",
                             },
                         }}
                     >

@@ -29,6 +29,7 @@ class CrearRecetaRequest extends FormRequest
             'tiempoCocinado' => 'required|numeric',
             'dificultad' => 'required|string',
             'imagen_url' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'pasos' => 'required|array',
             'usuario_id' => 'exists:users,id',
             'porciones' => 'required|numeric',

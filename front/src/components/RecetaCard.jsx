@@ -18,9 +18,10 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import CategoryIcon from "@mui/icons-material/Category";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import PropTypes from 'prop-types';
 import { SaborwebContext } from "../context/SaborifyProvider";
+import { API_BASE_URL } from '../context/ApiProvider';
 
 import imagenPlaceholder1 from '../assets/imagenRecetaPlaceholder.png';
 import imagenPlaceholder2 from '../assets/imagenRecetaPlaceholder2.jpg';
@@ -38,6 +39,7 @@ export default function RecetaCard({ receta }) {
     const { setReceta } = useContext(SaborwebContext);
     const [imagenCargada, setImagenCargada] = useState(false);
     const [imagenFallo, setImagenFallo] = useState(false);
+    const [imageIndex, setImageIndex] = useState(0);
 
     const getRandomPlaceholder = useMemo(() => {
         const seed = receta.id.toString();
@@ -52,8 +54,69 @@ export default function RecetaCard({ receta }) {
         return placeholderImages[index];
     }, [receta.id]);
 
-    // Determinar qué imagen mostrar
-    const imagenAMostrar = (receta.imagen && !imagenFallo) ? receta.imagen : getRandomPlaceholder;
+    // Determinar qué imagen mostrar (manejar rutas relativas devueltas por el backend)
+    const rawImage = receta.imagen || receta.imagen_url || receta.imagenUrl || null;
+    const imageCandidates = useMemo(() => {
+        if (!rawImage || typeof rawImage !== 'string') return [];
+        const origin = API_BASE_URL.split('/public')[0];
+        const normalized = rawImage.trim();
+        const candidates = new Set();
+        const add = (value) => {
+            if (value && typeof value === 'string') candidates.add(value);
+        };
+
+        add(normalized);
+
+        // Upgrade http to https when possible
+        if (normalized.startsWith('http://')) {
+            add(normalized.replace('http://', 'https://'));
+        }
+
+        // Handle protocol-relative URLs
+        if (normalized.startsWith('//')) {
+            add(`https:${normalized}`);
+        }
+
+        // Normalize public/storage paths
+        if (normalized.includes('/public/storage/')) {
+            add(normalized.replace('/public/storage/', '/storage/'));
+        }
+
+        // Build absolute paths for common relative formats
+        if (normalized.startsWith('/storage/')) {
+            add(`${origin}${normalized}`);
+        }
+        if (normalized.startsWith('storage/')) {
+            add(`${origin}/${normalized}`);
+        }
+        if (normalized.startsWith('/recetas/')) {
+            add(`${origin}/storage${normalized}`);
+        }
+        if (normalized.startsWith('recetas/')) {
+            add(`${origin}/storage/${normalized}`);
+        }
+        if (normalized.startsWith('/')) {
+            add(`${origin}${normalized}`);
+        }
+        if (!normalized.startsWith('http')) {
+            add(`${origin}/${normalized}`);
+        }
+
+        return Array.from(candidates);
+    }, [rawImage]);
+
+    useEffect(() => {
+        setImageIndex(0);
+        setImagenFallo(false);
+        setImagenCargada(false);
+    }, [rawImage]);
+
+    useEffect(() => {
+        setImagenCargada(false);
+    }, [imageIndex]);
+
+    const shouldUsePlaceholder = imageCandidates.length === 0 || imagenFallo;
+    const imagenAMostrar = shouldUsePlaceholder ? getRandomPlaceholder : imageCandidates[imageIndex];
 
     const handleImagenCargada = () => {
         setImagenCargada(true);
@@ -61,6 +124,10 @@ export default function RecetaCard({ receta }) {
     };
 
     const handleImagenError = () => {
+        if (imageCandidates.length > 0 && imageIndex < imageCandidates.length - 1) {
+            setImageIndex(prev => prev + 1);
+            return;
+        }
         setImagenFallo(true);
         setImagenCargada(true);
     };
@@ -146,7 +213,9 @@ export default function RecetaCard({ receta }) {
                         onError={handleImagenError}
                         sx={{
                             objectFit: 'cover',
-                            backgroundColor: '#f5f5f5'
+                            backgroundColor: '#f5f5f5',
+                            opacity: imagenCargada ? 1 : 0,
+                            transition: 'opacity 0.25s ease'
                         }}
                     />
 

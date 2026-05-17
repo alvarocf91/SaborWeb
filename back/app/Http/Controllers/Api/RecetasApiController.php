@@ -73,6 +73,22 @@ class RecetasApiController extends Controller
 
         $receta->load(['ingredientes', 'pasos', 'tipoComida']);
 
+        // If an image file was sent along with the create request, store it and update receta
+        try {
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
+                $baseUrl = config('app.url');
+                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
+                $receta->imagen_url = $urlImagen;
+                $receta->save();
+            }
+        } catch (\Exception $e) {
+            // don't break the response for non-critical image save failures
+            \Log::warning('Failed to store image during receta creation: ' . $e->getMessage());
+        }
+
         return new RecetaResource($receta);
     }
 
@@ -156,6 +172,21 @@ class RecetasApiController extends Controller
         }
 
         $receta->load(['ingredientes', 'pasos', 'tipoComida']);
+
+        // Optional image update via multipart file
+        try {
+            if ($request->hasFile('imagen')) {
+                $imagen = $request->file('imagen');
+                $nombreImagen = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
+                $baseUrl = config('app.url');
+                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
+                $receta->imagen_url = $urlImagen;
+                $receta->save();
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to store image during receta update: ' . $e->getMessage());
+        }
 
         return new RecetaResource($receta);
     }
@@ -247,7 +278,8 @@ class RecetasApiController extends Controller
 
                 return response()->json([
                     'mensaje' => 'Imagen subida correctamente',
-                    'url' => $urlImagen
+                    'url' => $urlImagen,
+                    'data' => [ 'url' => $urlImagen ]
                 ], 200);
             }
 

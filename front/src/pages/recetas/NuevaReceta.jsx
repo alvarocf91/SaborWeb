@@ -21,7 +21,7 @@ import imagenPlaceholder from '../../assets/imagenRecetaPlaceholder.png';
 import { useLanguage } from "../../hooks/useLanguage";
 
 export default function NuevReceta() {
-  const { ingredientes, setReceta } = useContext(SaborwebContext);
+  const { ingredientes, setReceta, recetas, setRecetas } = useContext(SaborwebContext);
   const api = useApi();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -137,18 +137,69 @@ export default function NuevReceta() {
 
     setLoading(true);
     try {
-      let imagenUrl;
+      let imagenUrl = null;
 
       if (imagen) {
         try {
+          console.log("Uploading image:", imagen.name);
           const imagenData = await api.subirImagen(imagen);
-          console.log("Imagen subida", imagenData);
-          if (imagenData && imagenData.url) {
-            imagenUrl = imagenData.url;
-            console.log("URL de la imagen", imagenUrl);
+          console.log("Image uploaded successfully:", imagenData);
+          // Try multiple shapes in the upload response to find an usable image URL/path
+          const extractImageUrl = (obj) => {
+            if (!obj) return null;
+            // direct common fields
+            const candidates = [
+              obj.url,
+              obj.path,
+              obj.ruta,
+              obj.nombre,
+              obj.data && obj.data.url,
+              obj.data && obj.data.path,
+              obj.data && obj.data.ruta,
+              obj.data && obj.data.nombre,
+            ];
+
+            for (const c of candidates) {
+              if (typeof c === 'string' && c.length > 5) return c;
+            }
+
+            // Deep search: look for any string that looks like a storage path or an http url or ends with image ext
+            const queue = [obj];
+            while (queue.length) {
+              const current = queue.shift();
+              if (!current || typeof current !== 'object') continue;
+              for (const key of Object.keys(current)) {
+                const val = current[key];
+                if (typeof val === 'string') {
+                  const lower = val.toLowerCase();
+                  if (lower.includes('/storage') || lower.startsWith('http') || lower.match(/\.(png|jpe?g|gif|webp)$/)) {
+                    return val;
+                  }
+                } else if (typeof val === 'object') {
+                  queue.push(val);
+                }
+              }
+            }
+            return null;
+          };
+
+          const candidate = extractImageUrl(imagenData);
+          if (candidate) {
+            imagenUrl = candidate;
+            console.log('Image URL (extracted):', imagenUrl);
+          } else {
+            console.warn('Image upload response (no url found):', imagenData);
+            setError(true);
+            setErrorMessage('Error: la respuesta de subida no contiene una URL válida. Inténtalo de nuevo.');
+            setLoading(false);
+            return;
           }
         } catch (error) {
-          console.error("Error al subir imagen:", error);
+          console.error("Error uploading image:", error);
+          setError(true);
+          setErrorMessage(error.message || "Error uploading image. Try again.");
+          setLoading(false);
+          return;
         }
       }
 
@@ -166,23 +217,39 @@ export default function NuevReceta() {
       };
 
       if (imagenUrl) {
+        // Set both keys to be compatible with different backend naming conventions
+        nuevaReceta.imagen = imagenUrl;
         nuevaReceta.imagen_url = imagenUrl;
       }
 
+      console.log("Creating recipe:", nuevaReceta);
       const data = await api.crearReceta(nuevaReceta);
-      console.log("Receta creada", data);
-      console.log("Receta creada", nuevaReceta);
+      console.log("Recipe created successfully:", data);
 
       setOpenSnackbar(true);
 
       setTimeout(() => {
-        setReceta(data.data);
+        // backend might return the created object at different paths
+        const created = (data && data.data) ? data.data : data;
+        // If backend did not persist the image field, inject the uploaded image URL so UI shows it immediately
+        if (imagenUrl && (!created.imagen && !created.imagen_url && !created.imagenUrl)) {
+          created.imagen = imagenUrl;
+          created.imagen_url = imagenUrl;
+        }
+
+        setReceta(created);
+        // Also prepend to the global recetas list so lists show the new recipe instantly
+        try {
+          setRecetas(prev => prev ? [created, ...prev] : [created]);
+        } catch (e) {
+          console.warn('No se pudo actualizar lista global de recetas:', e);
+        }
         navigate(`/recipe-detail`);
       }, 1500);
     } catch (error) {
-      console.error("Error al guardar la receta:", error);
+      console.error("Error saving recipe:", error);
       setError(true);
-    setErrorMessage(error.message || t('recipes.errorSavingRecipe'));
+      setErrorMessage(error.message || t('recipes.errorSavingRecipe'));
     } finally {
       setLoading(false);
     }
@@ -249,7 +316,25 @@ export default function NuevReceta() {
   const handleImagenChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedFormats.includes(file.type)) {
+        setError(true);
+        setErrorMessage('Invalid image format. Please use PNG, JPG, GIF, or WEBP.');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setError(true);
+        setErrorMessage('Image is too large. Maximum size is 5MB.');
+        return;
+      }
+
       setImagen(file);
+      setError(false);
+      setErrorMessage("");
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -696,16 +781,22 @@ export default function NuevReceta() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              borderRadius: 2,
-              border: '1px dashed #ccc',
-              p: 3,
-              mb: 2
+              borderRadius: 3,
+              border: '2px dashed rgba(29, 112, 184, 0.3)',
+              p: 4,
+              mb: 2,
+              transition: 'all 0.3s ease',
+              backgroundColor: '#f9fcff',
+              '&:hover': {
+                borderColor: '#1D70B8',
+                backgroundColor: '#f0f8ff'
+              }
             }}>
               {!imagenPreview ? (
                 <>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp"
                     style={{ display: 'none' }}
                     ref={fileInputRef}
                     onChange={handleImagenChange}
@@ -714,19 +805,23 @@ export default function NuevReceta() {
                     onClick={handleImagenClick}
                     sx={{
                       mb: 2,
-                      p: 2,
-                      bgcolor: 'rgba(0, 119, 255, 0.08)',
+                      p: 2.5,
+                      bgcolor: 'rgba(29, 112, 184, 0.1)',
                       color: '#1D70B8',
-                      '&:hover': { bgcolor: 'rgba(0, 119, 255, 0.16)' }
+                      transition: 'all 0.3s ease',
+                      '&:hover': { 
+                        bgcolor: 'rgba(29, 112, 184, 0.2)',
+                        transform: 'scale(1.05)'
+                      }
                     }}
                   >
-                    <AddPhotoAlternateIcon sx={{ fontSize: 48 }} />
+                    <AddPhotoAlternateIcon sx={{ fontSize: 56 }} />
                   </IconButton>
-                  <Typography variant="body1" color="text.secondary" align="center">
+                  <Typography variant="body1" color="text.primary" align="center" sx={{ fontWeight: 600, mb: 1 }}>
                     {t('recipes.clickToAdd')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} align="center">
-                    {t('recipes.imageFormats')}
+                    PNG, JPG, JPEG, GIF, WEBP • Max 5MB
                   </Typography>
                 </>
               ) : (
@@ -734,23 +829,28 @@ export default function NuevReceta() {
                   <Box
                     component="img"
                     src={imagenPreview}
-                    alt="Vista previa de la receta"
+                    alt="Recipe preview"
                     sx={{
                       maxWidth: '100%',
-                      maxHeight: '300px',
+                      maxHeight: '350px',
                       borderRadius: 2,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      boxShadow: '0 4px 16px rgba(29, 112, 184, 0.15)',
+                      border: '2px solid rgba(29, 112, 184, 0.1)'
                     }}
                   />
-                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                  <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
                     <Button
                       variant="outlined"
                       color="error"
                       startIcon={<DeleteIcon />}
                       onClick={handleRemoveImagen}
-                      sx={{ borderRadius: 2 }}
+                      sx={{ 
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        textTransform: 'none'
+                      }}
                     >
-                      Delete
+                      Remove Image
                     </Button>
                     <Button
                       variant="outlined"
@@ -760,13 +860,16 @@ export default function NuevReceta() {
                         borderRadius: 2,
                         borderColor: '#1D70B8',
                         color: '#1D70B8',
+                        fontWeight: 600,
+                        textTransform: 'none',
                         '&:hover': {
-                          borderColor: '#1D70B8',
-                          bgcolor: 'rgba(0, 119, 255, 0.08)'
+                          borderColor: '#0059b3',
+                          bgcolor: 'rgba(29, 112, 184, 0.04)',
+                          color: '#0059b3'
                         }
                       }}
                     >
-                      Change image
+                      Change Image
                     </Button>
                   </Box>
                 </Box>
