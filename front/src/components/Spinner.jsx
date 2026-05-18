@@ -74,10 +74,10 @@ export default function Spinner() {
             </Box>
 
             <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
-                Loading recipes...
+                Cargando recetas...
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontStyle: 'italic' }}>
-                Just a moment, something smells delicious!
+                Un momento, algo huele delicioso.
             </Typography>
         </Box>
     );

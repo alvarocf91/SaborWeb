@@ -22,12 +22,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useApi } from '../context/ApiProvider';
+import { useLanguage } from '../hooks/useLanguage';
 
 export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { t } = useLanguage();
 
   const { eliminarResenia } = useApi();
 
@@ -66,7 +68,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
       await eliminarResenia(reseña.id);
 
       console.log("Reseña eliminada con éxito");
-      setSuccessMessage('Review deleted successfully');
+      setSuccessMessage(t('deleteConfirmation.deleteSuccessfully'));
 
       if (onDeleteSuccess) {
         onDeleteSuccess(reseña.id);
@@ -76,7 +78,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
 
     } catch (error) {
       console.error("Error al eliminar la reseña:", error);
-      setError(error.message || 'Error deleting the review');
+      setError(error.message || 'Error al eliminar la reseña');
     } finally {
       setLoading(false);
     }
@@ -144,11 +146,11 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Confirm deletion"}
+          {t('common.deleteConfirm')}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this review? This action cannot be undone.
+            {t('deleteConfirmation.deleteReview')}
           </DialogContentText>
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
@@ -162,7 +164,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
             disabled={loading}
             sx={{ color: "#546e7a" }}
           >
-            Cancel
+            {t('deleteConfirmation.cancel')}
           </Button>
           <Button
             onClick={confirmDelete}
@@ -177,7 +179,7 @@ export default function ReseñaCard({ reseña, idx, onDeleteSuccess }) {
             }}
             autoFocus
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {loading ? t('deleteConfirmation.deleting') : t('deleteConfirmation.delete')}
           </Button>
         </DialogActions>
       </Dialog>

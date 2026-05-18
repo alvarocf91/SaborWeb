@@ -1,23 +1,23 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
-import en from '../locales/en.json';
 import es from '../locales/es.json';
 
 export const LanguageContext = createContext();
 
-const translations = { en, es };
+const translations = { es };
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState(() => {
-        return localStorage.getItem('language') || 'es';
+        return 'es';
     });
 
     useEffect(() => {
-        localStorage.setItem('language', language);
-    }, [language]);
+        localStorage.setItem('language', 'es');
+        setLanguage('es');
+    }, []);
 
     const t = useCallback((key) => {
         const keys = key.split('.');
-        let value = translations[language];
+        let value = translations.es;
 
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {
@@ -28,10 +28,11 @@ export const LanguageProvider = ({ children }) => {
         }
 
         return value;
-    }, [language]);
+    }, []);
 
     const toggleLanguage = useCallback(() => {
-        setLanguage(prev => prev === 'en' ? 'es' : 'en');
+        setLanguage('es');
+        localStorage.setItem('language', 'es');
     }, []);
 
     const value = {

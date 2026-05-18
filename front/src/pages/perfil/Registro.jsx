@@ -104,12 +104,12 @@ export default function Registro() {
 
   async function handleRegistro() {
     if (contraseña !== confirmarContraseña) {
-      setError("Passwords do not match");
+      setError("Las contraseñas no coinciden");
       return;
     }
 
     if (!nombre || !email || !userName || !contraseña) {
-      setError("All fields are required");
+      setError("Todos los campos son obligatorios");
       return;
     }
 
@@ -129,7 +129,7 @@ export default function Registro() {
       localStorage.setItem("user", JSON.stringify(data.user));
       window.location.href = "/";
     } catch (error) {
-      setError(error.message || "Registration error");
+      setError(error.message || "Error al registrarse");
     } finally {
       setLoading(false);
     }
@@ -173,7 +173,7 @@ export default function Registro() {
                 letterSpacing: "-0.5px",
               }}
             >
-              Create Account
+              Crear cuenta
             </Typography>
 
             <Typography
@@ -181,7 +181,7 @@ export default function Registro() {
               color="text.secondary"
               sx={{ maxWidth: "85%", mx: "auto" }}
             >
-              Sign up to enjoy all the features of Saborweb
+              Regístrate para disfrutar todas las funciones de Saborweb
             </Typography>
           </Box>
 
@@ -194,7 +194,7 @@ export default function Registro() {
           <Box component="form" sx={{ mt: 2 }}>
             <StyledTextField
               fullWidth
-              label="Full Name"
+              label="Nombre completo"
               variant="outlined"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -210,7 +210,7 @@ export default function Registro() {
 
             <StyledTextField
               fullWidth
-              label="Email"
+              label="Correo electrónico"
               variant="outlined"
               type="email"
               value={email}
@@ -227,7 +227,7 @@ export default function Registro() {
 
             <StyledTextField
               fullWidth
-              label="Username"
+              label="Nombre de usuario"
               variant="outlined"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -243,7 +243,7 @@ export default function Registro() {
 
             <StyledTextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               variant="outlined"
               type={showPassword ? "text" : "password"}
               value={contraseña}
@@ -258,7 +258,7 @@ export default function Registro() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label="mostrar u ocultar contraseña"
                       onClick={handleClickShowPassword}
                       edge="end"
                     >
@@ -274,7 +274,7 @@ export default function Registro() {
 
             <StyledTextField
               fullWidth
-              label="Confirm Password"
+              label="Confirmar contraseña"
               variant="outlined"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmarContraseña}
@@ -289,7 +289,7 @@ export default function Registro() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle confirm password visibility"
+                      aria-label="mostrar u ocultar confirmación de contraseña"
                       onClick={handleClickShowConfirmPassword}
                       edge="end"
                     >
@@ -311,7 +311,7 @@ export default function Registro() {
               onClick={handleRegistro}
               disabled={loading}
             >
-              {loading ? "Processing..." : "Create account"}
+              {loading ? "Procesando..." : "Crear cuenta"}
             </StyledButton>
           </Box>
 
@@ -325,7 +325,7 @@ export default function Registro() {
                 fontWeight: "bold",
               }}
             >
-              Log in here
+              Inicia sesión aquí
             </Link>
           </Typography>
         </CardContent>

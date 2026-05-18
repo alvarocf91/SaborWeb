@@ -10,9 +10,76 @@ use App\Models\Ingrediente;
 use App\Models\Receta;
 use App\Models\TipoComida;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class RecetasApiController extends Controller
 {
+    /**
+     * Obtener URL base de la aplicación compatible con frontend
+     */
+    private function getStorageBaseUrl()
+    {
+        $request = request();
+        $basePath = str_replace('/index.php', '', $request->getBaseUrl());
+
+        return rtrim($request->getSchemeAndHttpHost() . $basePath, '/');
+    }
+
+    /**
+     * Generar URL completa y funcional de la imagen
+     */
+    private function generateImageUrl($rutaImagen)
+    {
+        if (!$rutaImagen) return null;
+
+        if (preg_match('/^https?:\/\//', $rutaImagen)) {
+            if (str_contains($rutaImagen, 'localhost') || str_contains($rutaImagen, '127.0.0.1')) {
+                $path = $this->extractPathFromUrl($rutaImagen);
+                return $path ? $this->getStorageBaseUrl() . '/storage/' . ltrim($path, '/') : $rutaImagen;
+            }
+
+            return $rutaImagen;
+        }
+
+        $path = preg_replace('#^/?(?:public/)?storage/#', '', $rutaImagen);
+        return $this->getStorageBaseUrl() . '/storage/' . ltrim($path, '/');
+    }
+
+    /**
+     * Extraer nombre de archivo de una URL para borrado
+     */
+    private function extractPathFromUrl($imageUrl)
+    {
+        if (!$imageUrl) return null;
+
+        $path = parse_url($imageUrl, PHP_URL_PATH) ?: $imageUrl;
+
+        // Extraer solo la parte después de /storage/
+        if (preg_match('/\/storage\/(.+)$/', $path, $matches)) {
+            return $matches[1];
+        }
+
+        return preg_replace('#^/?(?:public/)?storage/#', '', ltrim($path, '/'));
+    }
+
+    /**
+     * Borrar archivo de imagen anterior
+     */
+    private function deleteOldImage($imageUrl)
+    {
+        if (!$imageUrl) return;
+
+        try {
+            $path = $this->extractPathFromUrl($imageUrl);
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to delete old image: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -25,11 +92,15 @@ class RecetasApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(CrearRecetaRequest $request)
     {
         $datos = $request->validated();
 
+        // Asegurar que usuario_id viene del usuario autenticado
+        $datos['usuario_id'] = $request->user()->id ?? $request->input('usuario_id');
+
+        // NO usar imagen_url como input de string - solo procesar archivo
+        // Remover campos que no son del modelo
         $ingredientesNombres = $datos['ingredientes'] ?? [];
         $pasos = $datos['pasos'] ?? [];
         $tiposComida = $datos['tipoComida'] ?? [];
@@ -37,9 +108,13 @@ class RecetasApiController extends Controller
         unset($datos['ingredientes']);
         unset($datos['pasos']);
         unset($datos['tipoComida']);
+        unset($datos['imagen']); // Remover 'imagen' de los datos (viene como file, no como string)
 
+        // Inicialmente sin imagen_url
+        $datos['imagen_url'] = null;
         $receta = Receta::create($datos);
 
+        // Procesar ingredientes
         $ingredientesIds = [];
         foreach ($ingredientesNombres as $nombre) {
             $ingrediente = Ingrediente::firstOrCreate(['nombre' => $nombre]);
@@ -47,48 +122,57 @@ class RecetasApiController extends Controller
         }
         $receta->ingredientes()->sync($ingredientesIds);
 
+        // Procesar pasos
         if (!empty($pasos)) {
             $pasosData = [];
-
             foreach ($pasos as $paso) {
                 $pasosData[] = [
                     'receta_id' => $receta->id,
                     'paso' => $paso
                 ];
             }
-
             $receta->pasos()->createMany($pasosData);
         }
 
+        // Procesar tipos de comida
         if (!empty($tiposComida)) {
             $tiposComidaIds = [];
-
             foreach ($tiposComida as $nombreTipo) {
                 $tipoComida = TipoComida::firstOrCreate(['nombre' => $nombreTipo]);
                 $tiposComidaIds[] = $tipoComida->id;
             }
-
             $receta->tipoComida()->sync($tiposComidaIds);
         }
 
-        $receta->load(['ingredientes', 'pasos', 'tipoComida']);
-
-        // If an image file was sent along with the create request, store it and update receta
-        try {
-            if ($request->hasFile('imagen')) {
+        // Procesar imagen si existe
+        if ($request->hasFile('imagen')) {
+            try {
                 $imagen = $request->file('imagen');
-                $nombreImagen = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                
+                // Validar tipo MIME
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!in_array($imagen->getMimeType(), $allowedMimes)) {
+                    throw new \Exception('Tipo de archivo no permitido');
+                }
+
+                // Validar tamaño (5MB máximo)
+                if ($imagen->getSize() > 5 * 1024 * 1024) {
+                    throw new \Exception('El archivo es demasiado grande (máx 5MB)');
+                }
+
+                // Generar nombre único
+                $nombreImagen = time() . '_' . Str::random(8) . '.' . $imagen->getClientOriginalExtension();
                 $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
-                $baseUrl = config('app.url');
-                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
-                $receta->imagen_url = $urlImagen;
+
+                $receta->imagen_url = $rutaImagen;
                 $receta->save();
+            } catch (\Exception $e) {
+                // Log pero no romper la respuesta
+                \Log::warning('Failed to store image during receta creation: ' . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            // don't break the response for non-critical image save failures
-            \Log::warning('Failed to store image during receta creation: ' . $e->getMessage());
         }
 
+        $receta->load(['ingredientes', 'pasos', 'tipoComida']);
         return new RecetaResource($receta);
     }
 
@@ -109,85 +193,113 @@ class RecetasApiController extends Controller
     {
         $datos = $request->validated();
 
+        // NO usar imagen_url como input de string - solo procesar archivo
+        $ingredientesData = $datos['ingredientes'] ?? [];
+        $pasosData = $datos['pasos'] ?? [];
+        $tiposComidaData = $datos['tipoComida'] ?? [];
+
+        unset($datos['ingredientes']);
+        unset($datos['pasos']);
+        unset($datos['tipoComida']);
+        unset($datos['imagen']); // Remover 'imagen' de los datos
+
+        // Actualizar campos básicos (sin tocar imagen_url aquí)
         $receta->update([
             'nombre' => $datos['nombre'] ?? $receta->nombre,
+            'tipoCocina' => $datos['tipoCocina'] ?? $receta->tipoCocina,
             'dificultad' => $datos['dificultad'] ?? $receta->dificultad,
-            'imagen_url' => $datos['imagen_url'] ?? $receta->imagen_url,
             'tiempoCocinado' => $datos['tiempoCocinado'] ?? $receta->tiempoCocinado,
-            'tipoComida' => $datos['tipoComida'] ?? $receta->tipoComida
+            'porciones' => $datos['porciones'] ?? $receta->porciones,
+            'caloriasPorPorcion' => $datos['caloriasPorPorcion'] ?? $receta->caloriasPorPorcion,
         ]);
 
-        if (isset($datos['ingredientes']) && is_array($datos['ingredientes'])) {
+        // Actualizar ingredientes
+        if (!empty($ingredientesData)) {
             $ingredientesIds = [];
-
-            foreach ($datos['ingredientes'] as $ingredienteData) {
-                $nombreIngrediente = $ingredienteData['nombreIngrediente'] ?? null;
+            foreach ($ingredientesData as $ingredienteData) {
+                $nombreIngrediente = is_array($ingredienteData)
+                    ? ($ingredienteData['nombre'] ?? $ingredienteData['nombreIngrediente'] ?? null)
+                    : $ingredienteData;
 
                 if ($nombreIngrediente) {
                     $ingrediente = Ingrediente::firstOrCreate(['nombre' => $nombreIngrediente]);
                     $ingredientesIds[] = $ingrediente->id;
                 }
             }
-
             $receta->ingredientes()->sync($ingredientesIds);
         }
 
-        if (isset($datos['pasos']) && is_array($datos['pasos'])) {
+        // Actualizar pasos
+        if (!empty($pasosData)) {
             $receta->pasos()->delete();
-
-            $pasosData = [];
-            foreach ($datos['pasos'] as $pasoData) {
-                $textoPaso = $pasoData['nombrePaso'] ?? null;
+            $nuevosPasosData = [];
+            foreach ($pasosData as $pasoData) {
+                $textoPaso = is_array($pasoData)
+                    ? ($pasoData['paso'] ?? $pasoData['nombrePaso'] ?? null)
+                    : $pasoData;
 
                 if ($textoPaso) {
-                    $pasosData[] = [
+                    $nuevosPasosData[] = [
                         'receta_id' => $receta->id,
                         'paso' => $textoPaso
                     ];
                 }
             }
-
-            if (!empty($pasosData)) {
-                $receta->pasos()->createMany($pasosData);
+            if (!empty($nuevosPasosData)) {
+                $receta->pasos()->createMany($nuevosPasosData);
             }
         }
 
-        if (isset($datos['tipoComida']) && is_array($datos['tipoComida'])) {
+        // Actualizar tipos de comida
+        if (!empty($tiposComidaData)) {
             $tiposComidaIds = [];
-
-            foreach ($datos['tipoComida'] as $tipoComidaData) {
-                $nombreTipoComida = is_array($tipoComidaData) ?
-                    ($tipoComidaData['nombre'] ?? null) :
-                    $tipoComidaData;
+            foreach ($tiposComidaData as $tipoComidaData) {
+                $nombreTipoComida = is_array($tipoComidaData)
+                    ? ($tipoComidaData['nombre'] ?? null)
+                    : $tipoComidaData;
 
                 if ($nombreTipoComida) {
                     $tipoComida = TipoComida::firstOrCreate(['nombre' => $nombreTipoComida]);
                     $tiposComidaIds[] = $tipoComida->id;
                 }
             }
-
             if (!empty($tiposComidaIds)) {
                 $receta->tipoComida()->sync($tiposComidaIds);
             }
         }
 
-        $receta->load(['ingredientes', 'pasos', 'tipoComida']);
-
-        // Optional image update via multipart file
-        try {
-            if ($request->hasFile('imagen')) {
+        // Procesar imagen si es nueva
+        if ($request->hasFile('imagen')) {
+            try {
                 $imagen = $request->file('imagen');
-                $nombreImagen = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                
+                // Validar tipo MIME
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!in_array($imagen->getMimeType(), $allowedMimes)) {
+                    throw new \Exception('Tipo de archivo no permitido');
+                }
+
+                // Validar tamaño (5MB máximo)
+                if ($imagen->getSize() > 5 * 1024 * 1024) {
+                    throw new \Exception('El archivo es demasiado grande (máx 5MB)');
+                }
+
+                // Eliminar imagen antigua
+                $this->deleteOldImage($receta->imagen_url);
+
+                // Guardar imagen nueva
+                $nombreImagen = time() . '_' . Str::random(8) . '.' . $imagen->getClientOriginalExtension();
                 $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
-                $baseUrl = config('app.url');
-                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
-                $receta->imagen_url = $urlImagen;
+
+                $receta->imagen_url = $rutaImagen;
                 $receta->save();
+            } catch (\Exception $e) {
+                // Log pero no romper la respuesta
+                \Log::warning('Failed to update image during receta update: ' . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            \Log::warning('Failed to store image during receta update: ' . $e->getMessage());
         }
 
+        $receta->load(['ingredientes', 'pasos', 'tipoComida']);
         return new RecetaResource($receta);
     }
 
@@ -197,19 +309,19 @@ class RecetasApiController extends Controller
     public function destroy($id)
     {
         try {
-
             $receta = Receta::findOrFail($id);
 
+            // Eliminar archivo de imagen si existe
+            $this->deleteOldImage($receta->imagen_url);
+
+            // Eliminar relaciones
             $receta->ingredientes()->detach();
-
             $receta->reseñas()->delete();
-
             $receta->pasos()->delete();
-
             $receta->tipoComida()->detach();
 
+            // Eliminar receta
             $receta->delete();
-
 
             return response()->json(['message' => 'Receta eliminada correctamente'], 200);
         } catch (\Exception $e) {
@@ -261,25 +373,35 @@ class RecetasApiController extends Controller
     public function subirImagen(Request $request)
     {
         $request->validate([
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         try {
             if ($request->hasFile('imagen')) {
                 $imagen = $request->file('imagen');
 
-                $nombreImagen = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                // Validar tipo MIME
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!in_array($imagen->getMimeType(), $allowedMimes)) {
+                    throw new \Exception('Tipo de archivo no permitido');
+                }
 
+                // Validar tamaño (5MB máximo)
+                if ($imagen->getSize() > 5 * 1024 * 1024) {
+                    throw new \Exception('El archivo es demasiado grande (máx 5MB)');
+                }
+
+                // Generar nombre único
+                $nombreImagen = time() . '_' . Str::random(8) . '.' . $imagen->getClientOriginalExtension();
                 $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
 
-                // Generar URL completa y correcta (sin duplicar /public/)
-                $baseUrl = config('app.url');
-                $urlImagen = $baseUrl . '/storage/' . $rutaImagen;
+                $urlImagen = $this->generateImageUrl($rutaImagen);
 
                 return response()->json([
                     'mensaje' => 'Imagen subida correctamente',
                     'url' => $urlImagen,
-                    'data' => [ 'url' => $urlImagen ]
+                    'path' => $rutaImagen,
+                    'data' => ['url' => $urlImagen, 'path' => $rutaImagen]
                 ], 200);
             }
 

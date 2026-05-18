@@ -20,49 +20,35 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import { useContext, useEffect, useMemo, useState } from "react";
 import PropTypes from 'prop-types';
-import { SaborwebContext } from "../context/SaborifyProvider";
+import { SaborwebContext } from "../context/SaborwebProvider";
 import { API_BASE_URL } from '../context/ApiProvider';
+import { useLanguage } from "../hooks/useLanguage";
 
-import imagenPlaceholder1 from '../assets/imagenRecetaPlaceholder.png';
-import imagenPlaceholder2 from '../assets/imagenRecetaPlaceholder2.jpg';
-import imagenPlaceholder3 from '../assets/imagenRecetaPlaceholder3.jpg';
-import imagenPlaceholder4 from '../assets/imagenRecetaPlaceholder4.jpg';
-
-const placeholderImages = [
-    imagenPlaceholder1,
-    imagenPlaceholder2,
-    imagenPlaceholder3,
-    imagenPlaceholder4
-];
+const imagenRecetaPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'%3E%3Crect width='600' height='360' fill='%23EAF3FB'/%3E%3Ccircle cx='300' cy='150' r='48' fill='%23D6E9F8'/%3E%3Cpath d='M276 142h48v18h-48zM285 125h30v17h-30zM265 165h70v18h-70z' fill='%231D70B8'/%3E%3Ctext x='300' y='240' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%231D70B8'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 export default function RecetaCard({ receta }) {
     const { setReceta } = useContext(SaborwebContext);
-    const [imagenCargada, setImagenCargada] = useState(false);
+    const { t } = useLanguage();
     const [imagenFallo, setImagenFallo] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
 
-    const getRandomPlaceholder = useMemo(() => {
-        const seed = receta.id.toString();
-        let hash = 0;
-        for (let i = 0; i < seed.length; i++) {
-            const char = seed.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        
-        const index = Math.abs(hash) % placeholderImages.length;
-        return placeholderImages[index];
-    }, [receta.id]);
-
     // Determinar qué imagen mostrar (manejar rutas relativas devueltas por el backend)
-    const rawImage = receta.imagen || receta.imagen_url || receta.imagenUrl || null;
+    const rawImage = receta.imagen_url || receta.imagen || receta.imagenUrl || null;
     const imageCandidates = useMemo(() => {
         if (!rawImage || typeof rawImage !== 'string') return [];
+        const publicBase = API_BASE_URL.replace(/\/api\/?$/, '');
         const origin = API_BASE_URL.split('/public')[0];
         const normalized = rawImage.trim();
+        const cacheBuster = receta.imagen_cache || receta.imagenCache || null;
         const candidates = new Set();
         const add = (value) => {
-            if (value && typeof value === 'string') candidates.add(value);
+            if (value && typeof value === 'string') {
+                if (cacheBuster && !value.includes('?')) {
+                    candidates.add(`${value}?v=${cacheBuster}`);
+                } else {
+                    candidates.add(value);
+                }
+            }
         };
 
         add(normalized);
@@ -70,6 +56,12 @@ export default function RecetaCard({ receta }) {
         // Upgrade http to https when possible
         if (normalized.startsWith('http://')) {
             add(normalized.replace('http://', 'https://'));
+        }
+        if (/^https?:\/\//.test(normalized) && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) {
+            add(normalized.replace('/storage/', '/public/storage/'));
+        }
+        if (normalized.startsWith('https://') && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) {
+            add(normalized.replace('/storage/', '/public/storage/'));
         }
 
         // Handle protocol-relative URLs
@@ -84,21 +76,26 @@ export default function RecetaCard({ receta }) {
 
         // Build absolute paths for common relative formats
         if (normalized.startsWith('/storage/')) {
+            add(`${publicBase}${normalized}`);
             add(`${origin}${normalized}`);
         }
         if (normalized.startsWith('storage/')) {
+            add(`${publicBase}/${normalized}`);
             add(`${origin}/${normalized}`);
         }
         if (normalized.startsWith('/recetas/')) {
+            add(`${publicBase}/storage${normalized}`);
             add(`${origin}/storage${normalized}`);
         }
         if (normalized.startsWith('recetas/')) {
+            add(`${publicBase}/storage/${normalized}`);
             add(`${origin}/storage/${normalized}`);
         }
         if (normalized.startsWith('/')) {
             add(`${origin}${normalized}`);
         }
         if (!normalized.startsWith('http')) {
+            add(`${publicBase}/storage/${normalized}`);
             add(`${origin}/${normalized}`);
         }
 
@@ -108,20 +105,13 @@ export default function RecetaCard({ receta }) {
     useEffect(() => {
         setImageIndex(0);
         setImagenFallo(false);
-        setImagenCargada(false);
     }, [rawImage]);
 
     useEffect(() => {
-        setImagenCargada(false);
+        setImagenFallo(false);
     }, [imageIndex]);
 
-    const shouldUsePlaceholder = imageCandidates.length === 0 || imagenFallo;
-    const imagenAMostrar = shouldUsePlaceholder ? getRandomPlaceholder : imageCandidates[imageIndex];
-
-    const handleImagenCargada = () => {
-        setImagenCargada(true);
-        setImagenFallo(false);
-    };
+    const imagenAMostrar = !imagenFallo && imageCandidates.length > 0 ? imageCandidates[imageIndex] : imagenRecetaPlaceholder;
 
     const handleImagenError = () => {
         if (imageCandidates.length > 0 && imageIndex < imageCandidates.length - 1) {
@@ -129,7 +119,6 @@ export default function RecetaCard({ receta }) {
             return;
         }
         setImagenFallo(true);
-        setImagenCargada(true);
     };
 
     if (!receta || !receta.id || !receta.nombre) {
@@ -199,25 +188,24 @@ export default function RecetaCard({ receta }) {
                                     }
                                 }}
                             >
-                                Ver receta
+                                {t('recipes.view')}
                             </Button>
                         </Link>
                     </Box>
 
-                    <CardMedia
-                        component="img"
-                        height="180"
-                        image={imagenAMostrar}
-                        alt={receta.nombre}
-                        onLoad={handleImagenCargada}
-                        onError={handleImagenError}
-                        sx={{
-                            objectFit: 'cover',
-                            backgroundColor: '#f5f5f5',
-                            opacity: imagenCargada ? 1 : 0,
-                            transition: 'opacity 0.25s ease'
-                        }}
-                    />
+                    {imagenAMostrar && (
+                        <CardMedia
+                            component="img"
+                            height="180"
+                            image={imagenAMostrar}
+                            alt={receta.nombre}
+                            onError={handleImagenError}
+                            sx={{
+                                objectFit: 'cover',
+                                backgroundColor: '#f5f5f5'
+                            }}
+                        />
+                    )}
 
                     <CardContent sx={{ flexGrow: 1, p: 3 }}>
                         <Typography
@@ -235,21 +223,21 @@ export default function RecetaCard({ receta }) {
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <RestaurantIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                                 <Typography variant="body2" color="text.secondary">
-                                    Tipo de cocina: {receta.tipoCocina || 'No especificado'}
+                                    {t('recipes.cuisineType')}: {receta.tipoCocina || t('recetaCard.notSpecified')}
                                 </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
                                 <CategoryIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1, mt: 0.5 }} />
                                 <Typography variant="body2" color="text.secondary">
-                                    Tipo de comida: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : receta.tipoComida || 'No especificado'}
+                                    {t('recipes.mealType')}: {Array.isArray(receta.tipoComida) ? receta.tipoComida.join(", ") : receta.tipoComida || t('recetaCard.notSpecified')}
                                 </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <LocalDiningIcon sx={{ fontSize: '0.9rem', color: '#1D70B8', mr: 1 }} />
                                 <Typography variant="body2" color="text.secondary">
-                                    Porciones: {receta.porciones || 'No especificado'}
+                                    {t('recetaCard.servings')}: {receta.porciones || t('recetaCard.notSpecified')}
                                 </Typography>
                             </Box>
                         </Box>

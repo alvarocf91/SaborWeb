@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Container,
   Typography,
@@ -33,12 +33,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import StarIcon from '@mui/icons-material/Star';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi, API_BASE_URL } from "../../context/ApiProvider";
 import { Link } from "react-router-dom";
 import ReseñaCard from "../../components/ReseñaCard";
 import Spinner from "../../components/Spinner";
-import imagenPlaceholder from '../../assets/imagenRecetaPlaceholder.png';
+
+const imagenRecetaPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%23EAF3FB'/%3E%3Ccircle cx='600' cy='300' r='92' fill='%23D6E9F8'/%3E%3Cpath d='M552 284h96v36h-96zM570 250h60v34h-60zM530 330h140v36H530z' fill='%231D70B8'/%3E%3Ctext x='600' y='450' text-anchor='middle' font-family='Arial,sans-serif' font-size='34' font-weight='700' fill='%231D70B8'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 const StyledChip = styled(Chip)(({ theme }) => ({
   borderRadius: "50px",
@@ -130,6 +131,7 @@ export default function Receta() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [imageIndex, setImageIndex] = useState(0);
 
   const isUserLoggedIn = () => {
     const user = localStorage.getItem("user");
@@ -139,20 +141,68 @@ export default function Receta() {
 
   const isAIGenerated = receta?.IA === true;
 
-  const buildAbsolute = (raw) => {
-    if (!raw || typeof raw !== 'string') return null;
+  const extractImageUrl = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object') {
+      const direct = value.url || value.path || value.ruta || value.nombre;
+      if (typeof direct === 'string') return direct;
+    }
+    return null;
+  };
+
+  const imageCandidates = useMemo(() => {
+    const raw = extractImageUrl(receta?.imagen_url || receta?.imagen || receta?.imagenUrl);
+    if (!raw || typeof raw !== 'string') return [];
+    const publicBase = API_BASE_URL.replace(/\/api\/?$/, '');
     const origin = API_BASE_URL.split('/public')[0];
     const normalized = raw.trim();
+    const cacheBuster = receta?.imagen_cache || receta?.imagenCache || null;
+    const candidates = new Set();
+    const add = (value) => {
+      if (!value || typeof value !== 'string') return;
+      candidates.add(cacheBuster && !value.includes('?') ? `${value}?v=${cacheBuster}` : value);
+    };
 
-    if (normalized.startsWith('http://')) return normalized.replace('http://', 'https://');
-    if (normalized.startsWith('https://')) return normalized;
-    if (normalized.startsWith('/storage/')) return `${origin}${normalized}`;
-    if (normalized.startsWith('storage/')) return `${origin}/${normalized}`;
-    if (normalized.startsWith('/recetas/')) return `${origin}/storage${normalized}`;
-    if (normalized.startsWith('recetas/')) return `${origin}/storage/${normalized}`;
-    if (normalized.startsWith('/')) return `${origin}${normalized}`;
-    return `${origin}/${normalized}`;
-  };
+    add(normalized);
+    if (normalized.startsWith('http://')) add(normalized.replace('http://', 'https://'));
+    if (/^https?:\/\//.test(normalized) && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) {
+      add(normalized.replace('/storage/', '/public/storage/'));
+    }
+    if (normalized.startsWith('https://') && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) {
+      add(normalized.replace('/storage/', '/public/storage/'));
+    }
+    if (normalized.startsWith('//')) add(`https:${normalized}`);
+    if (normalized.startsWith('/storage/')) {
+      add(`${publicBase}${normalized}`);
+      add(`${origin}${normalized}`);
+    }
+    if (normalized.startsWith('storage/')) {
+      add(`${publicBase}/${normalized}`);
+      add(`${origin}/${normalized}`);
+    }
+    if (normalized.startsWith('/recetas/')) {
+      add(`${publicBase}/storage${normalized}`);
+      add(`${origin}/storage${normalized}`);
+    }
+    if (normalized.startsWith('recetas/')) {
+      add(`${publicBase}/storage/${normalized}`);
+      add(`${origin}/storage/${normalized}`);
+    }
+    if (normalized.startsWith('/')) add(`${origin}${normalized}`);
+    if (!normalized.startsWith('http') && !normalized.startsWith('/')) {
+      add(`${publicBase}/storage/${normalized}`);
+      add(`${origin}/storage/${normalized}`);
+    }
+
+    return Array.from(candidates);
+  }, [receta?.imagen_url, receta?.imagen, receta?.imagenUrl, receta?.imagen_cache, receta?.imagenCache]);
+
+  const imagenAMostrar = imageCandidates[imageIndex] || imagenRecetaPlaceholder;
+
+  useEffect(() => {
+    setImageIndex(0);
+  }, [receta?.imagen_url, receta?.imagen, receta?.imagenUrl]);
 
   useEffect(() => {
     if (user && user.id && receta && receta.usuario_id) {
@@ -229,7 +279,7 @@ export default function Receta() {
       }
     } catch (error) {
       console.error("Error al cargar la receta:", error);
-      setSnackbarMessage("Error loading recipe data");
+      setSnackbarMessage("Error al cargar los datos de la receta");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
@@ -257,6 +307,7 @@ export default function Receta() {
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
+      await loadRecetaData();
       setIsLoading(false);
     }
   };
@@ -320,7 +371,7 @@ export default function Receta() {
     const reseñasActualizadas = reseñas.filter(r => r.id !== deletedReseñaId);
     setReseñas(reseñasActualizadas);
 
-    setSnackbarMessage("Review deleted successfully");
+    setSnackbarMessage("Reseña eliminada correctamente");
     setSnackbarSeverity("success");
     setSnackbarOpen(true);
 
@@ -339,7 +390,7 @@ export default function Receta() {
       window.location.href = '/all-recipes';
     } catch (error) {
       console.error("Error al eliminar la receta:", error);
-      setSnackbarMessage("Error deleting recipe");
+      setSnackbarMessage("Error al eliminar la receta");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
@@ -393,10 +444,14 @@ export default function Receta() {
           >
             <CardMedia
               component="img"
-              image={buildAbsolute(receta.imagen || receta.imagen_url || receta.imagenUrl) || imagenPlaceholder}
+              image={imagenAMostrar}
               alt={receta.nombre}
-              onError={(e) => {
-                e.currentTarget.src = imagenPlaceholder;
+              onError={() => {
+                if (imageIndex < imageCandidates.length - 1) {
+                  setImageIndex(prev => prev + 1);
+                  return;
+                }
+                setImageIndex(imageCandidates.length);
               }}
               sx={{
                 width: "100%",
@@ -482,7 +537,7 @@ export default function Receta() {
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ mb: 2, color: "#f57c00" }}>
-                    Admin panel
+                    Panel de administración
                   </Typography>
 
                   <Box sx={{ display: "flex", gap: 2 }}>
@@ -501,7 +556,7 @@ export default function Receta() {
                           }
                         }}
                       >
-                        Edit recipe
+                        Editar receta
                       </Button>
                     </Link>
 
@@ -519,14 +574,14 @@ export default function Receta() {
                         }
                       }}
                     >
-                      Delete
+                      Eliminar
                     </Button>
                   </Box>
 
                   <Collapse in={showDeleteConfirm}>
                     <Box sx={{ mt: 2, p: 2, backgroundColor: "#EAF3FB", borderRadius: "8px" }}>
                       <Typography variant="body2" sx={{ mb: 2 }}>
-                        Are you sure you want to delete this recipe? This action cannot be undone.
+                        ¿Seguro que quieres eliminar esta receta? Esta acción no se puede deshacer.
                       </Typography>
                       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
                         <Button
@@ -535,7 +590,7 @@ export default function Receta() {
                           onClick={cancelDelete}
                           sx={{ color: "#546e7a" }}
                         >
-                          Cancel
+                          Cancelar
                         </Button>
                         <Button
                           variant="contained"
@@ -543,7 +598,7 @@ export default function Receta() {
                           onClick={confirmDelete}
                           sx={{ backgroundColor: "#d32f2f", color: "white" }}
                         >
-                          Confirm
+                          Confirmar
                         </Button>
                       </Box>
                     </Box>
@@ -566,7 +621,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Total time
+                      Tiempo total
                     </Typography>
                     <Typography
                       variant="subtitle1"
@@ -592,7 +647,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Difficulty
+                      Dificultad
                     </Typography>
                     <Typography
                       variant="subtitle1"
@@ -618,7 +673,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Meal type
+                      Tipo de comida
                     </Typography>
                     <Typography
                       variant="subtitle1"
@@ -644,7 +699,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Servings
+                      Porciones
                     </Typography>
                     <Typography
                       variant="subtitle1"
@@ -670,7 +725,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Calories/serving
+                      Calorías/porción
                     </Typography>
                     <Typography
                       variant="subtitle1"
@@ -696,7 +751,7 @@ export default function Receta() {
                       color="text.secondary"
                       sx={{ fontSize: { xs: "0.65rem", sm: "0.75rem" } }}
                     >
-                      Rating
+                      Valoración
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                       <Typography
@@ -761,7 +816,7 @@ export default function Receta() {
               {receta.descripcion && (
                 <Grid item xs={12}>
                   <StyledPaper>
-                    <SectionTitle variant="h4">Description</SectionTitle>
+                    <SectionTitle variant="h4">Descripción</SectionTitle>
                     <Typography
                       variant="body1"
                       sx={{
@@ -778,7 +833,7 @@ export default function Receta() {
 
               <Grid item xs={12} md={6} sx={{ width: "300px" }}>
                 <StyledPaper>
-                  <SectionTitle variant="h4">Ingredients</SectionTitle>
+                  <SectionTitle variant="h4">Ingredientes</SectionTitle>
                   <List sx={{ p: 0 }}>
                     {receta.ingredientes && receta.ingredientes.map((ingrediente, index) => (
                       <ListItem
@@ -810,7 +865,7 @@ export default function Receta() {
 
               <Grid item xs={12} md={6} id="tarjeta-pasos" sx={{ width: "700px" }}>
                 <StyledPaper>
-                  <SectionTitle variant="h4">Preparation</SectionTitle>
+                  <SectionTitle variant="h4">Preparación</SectionTitle>
                   <List sx={{ p: 0 }}>
                     {receta.pasos && receta.pasos.map((paso, index) => (
                       <ListItem
@@ -869,7 +924,7 @@ export default function Receta() {
                     gap: { xs: 2, sm: 0 }
                   }}>
                     <SectionTitle variant="h4">
-                      Reviews ({reseñas.length})
+                      Reseñas ({reseñas.length})
                     </SectionTitle>
 
                     <Link
@@ -901,7 +956,7 @@ export default function Receta() {
                           }
                         }}
                       >
-                        {isUserLoggedIn() ? "Write review" : "Login to write review"}
+                        {isUserLoggedIn() ? "Escribir reseña" : "Inicia sesión para escribir una reseña"}
                       </Button>
                     </Link>
                   </Box>
@@ -930,7 +985,7 @@ export default function Receta() {
                         color="text.secondary"
                         sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
                       >
-                        There are no reviews yet
+                        Todavía no hay reseñas
                       </Typography>
                       <Typography
                         variant="body2"
@@ -940,7 +995,7 @@ export default function Receta() {
                           fontSize: { xs: "0.8rem", sm: "0.875rem" }
                         }}
                       >
-                        Be the first to write a review for this recipe!
+                        Sé la primera persona en escribir una reseña para esta receta.
                       </Typography>
                     </Box>
                   </StyledPaper>
@@ -973,7 +1028,7 @@ export default function Receta() {
               }
             }}
           >
-            Back to recipes
+            Volver a recetas
           </Button>
         </Link>
       </Box>

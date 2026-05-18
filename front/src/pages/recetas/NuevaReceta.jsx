@@ -15,9 +15,8 @@ import TimerIcon from "@mui/icons-material/Timer";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { useContext } from "react";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi } from "../../context/ApiProvider";
-import imagenPlaceholder from '../../assets/imagenRecetaPlaceholder.png';
 import { useLanguage } from "../../hooks/useLanguage";
 
 export default function NuevReceta() {
@@ -139,70 +138,6 @@ export default function NuevReceta() {
     try {
       let imagenUrl = null;
 
-      if (imagen) {
-        try {
-          console.log("Uploading image:", imagen.name);
-          const imagenData = await api.subirImagen(imagen);
-          console.log("Image uploaded successfully:", imagenData);
-          // Try multiple shapes in the upload response to find an usable image URL/path
-          const extractImageUrl = (obj) => {
-            if (!obj) return null;
-            // direct common fields
-            const candidates = [
-              obj.url,
-              obj.path,
-              obj.ruta,
-              obj.nombre,
-              obj.data && obj.data.url,
-              obj.data && obj.data.path,
-              obj.data && obj.data.ruta,
-              obj.data && obj.data.nombre,
-            ];
-
-            for (const c of candidates) {
-              if (typeof c === 'string' && c.length > 5) return c;
-            }
-
-            // Deep search: look for any string that looks like a storage path or an http url or ends with image ext
-            const queue = [obj];
-            while (queue.length) {
-              const current = queue.shift();
-              if (!current || typeof current !== 'object') continue;
-              for (const key of Object.keys(current)) {
-                const val = current[key];
-                if (typeof val === 'string') {
-                  const lower = val.toLowerCase();
-                  if (lower.includes('/storage') || lower.startsWith('http') || lower.match(/\.(png|jpe?g|gif|webp)$/)) {
-                    return val;
-                  }
-                } else if (typeof val === 'object') {
-                  queue.push(val);
-                }
-              }
-            }
-            return null;
-          };
-
-          const candidate = extractImageUrl(imagenData);
-          if (candidate) {
-            imagenUrl = candidate;
-            console.log('Image URL (extracted):', imagenUrl);
-          } else {
-            console.warn('Image upload response (no url found):', imagenData);
-            setError(true);
-            setErrorMessage('Error: la respuesta de subida no contiene una URL válida. Inténtalo de nuevo.');
-            setLoading(false);
-            return;
-          }
-        } catch (error) {
-          console.error("Error uploading image:", error);
-          setError(true);
-          setErrorMessage(error.message || "Error uploading image. Try again.");
-          setLoading(false);
-          return;
-        }
-      }
-
       const nuevaReceta = {
         nombre,
         tipoCocina,
@@ -216,25 +151,19 @@ export default function NuevReceta() {
         usuario_id: user.id,
       };
 
-      if (imagenUrl) {
-        // Set both keys to be compatible with different backend naming conventions
-        nuevaReceta.imagen = imagenUrl;
-        nuevaReceta.imagen_url = imagenUrl;
-      }
-
-      console.log("Creating recipe:", nuevaReceta);
-      const data = await api.crearReceta(nuevaReceta);
-      console.log("Recipe created successfully:", data);
+      console.log("Creando receta:", nuevaReceta);
+      const data = imagen
+        ? await api.crearRecetaConImagen(nuevaReceta, imagen)
+        : await api.crearReceta(nuevaReceta);
+      console.log("Receta creada correctamente:", data);
 
       setOpenSnackbar(true);
 
       setTimeout(() => {
         // backend might return the created object at different paths
         const created = (data && data.data) ? data.data : data;
-        // If backend did not persist the image field, inject the uploaded image URL so UI shows it immediately
-        if (imagenUrl && (!created.imagen && !created.imagen_url && !created.imagenUrl)) {
-          created.imagen = imagenUrl;
-          created.imagen_url = imagenUrl;
+        if (imagen) {
+          created.imagen_cache = Date.now();
         }
 
         setReceta(created);
@@ -247,7 +176,7 @@ export default function NuevReceta() {
         navigate(`/recipe-detail`);
       }, 1500);
     } catch (error) {
-      console.error("Error saving recipe:", error);
+      console.error("Error al guardar la receta:", error);
       setError(true);
       setErrorMessage(error.message || t('recipes.errorSavingRecipe'));
     } finally {
@@ -320,7 +249,7 @@ export default function NuevReceta() {
       const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedFormats.includes(file.type)) {
         setError(true);
-        setErrorMessage('Invalid image format. Please use PNG, JPG, GIF, or WEBP.');
+        setErrorMessage('Formato de imagen no válido. Usa PNG, JPG, GIF o WEBP.');
         return;
       }
 
@@ -328,7 +257,7 @@ export default function NuevReceta() {
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         setError(true);
-        setErrorMessage('Image is too large. Maximum size is 5MB.');
+        setErrorMessage('La imagen es demasiado grande. El tamaño máximo es 5 MB.');
         return;
       }
 
@@ -433,9 +362,9 @@ export default function NuevReceta() {
                 label="Dificultad"
                 sx={{ borderRadius: 2 }}
               >
-                <MenuItem value="Easy">Fácil</MenuItem>
-                <MenuItem value="Medium">Media</MenuItem>
-                <MenuItem value="Difficult">Difícil</MenuItem>
+                <MenuItem value="Fácil">Fácil</MenuItem>
+                <MenuItem value="Media">Media</MenuItem>
+                <MenuItem value="Difícil">Difícil</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -531,7 +460,7 @@ export default function NuevReceta() {
             <TextField
               fullWidth
               required
-              label="Servings"
+              label="Porciones"
               variant="outlined"
               value={porciones}
               onChange={handleChangePorciones}
@@ -554,7 +483,7 @@ export default function NuevReceta() {
             <TextField
               fullWidth
               required
-              label="Calories per serving"
+              label="Calorías por porción"
               variant="outlined"
               value={caloriasPorPorcion}
               onChange={handleChangeCaloriasPorPorcion}
@@ -592,7 +521,7 @@ export default function NuevReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>1</Box>
-              Ingredients
+              Ingredientes
             </Typography>
 
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
@@ -704,7 +633,7 @@ export default function NuevReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>2</Box>
-              Preparation steps
+              Pasos de preparación
             </Typography>
 
             {pasos.map((paso, index) => (
@@ -723,7 +652,7 @@ export default function NuevReceta() {
                 />
                 <TextField
                   fullWidth
-                  placeholder={`Describe step ${index + 1}`}
+                  placeholder={`Describe el paso ${index + 1}`}
                   value={paso}
                   multiline
                   rows={2}
@@ -754,7 +683,7 @@ export default function NuevReceta() {
                 '&:hover': { bgcolor: 'rgba(0, 119, 255, 0.08)' }
               }}
             >
-              Add step
+              Añadir paso
             </Button>
           </CardContent>
         </Card>
@@ -774,7 +703,7 @@ export default function NuevReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>3</Box>
-              Recipe image
+              Imagen de la receta
             </Typography>
 
             <Box sx={{
@@ -821,7 +750,7 @@ export default function NuevReceta() {
                     {t('recipes.clickToAdd')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} align="center">
-                    PNG, JPG, JPEG, GIF, WEBP • Max 5MB
+                    PNG, JPG, JPEG, GIF, WEBP - Máx. 5 MB
                   </Typography>
                 </>
               ) : (
@@ -829,7 +758,7 @@ export default function NuevReceta() {
                   <Box
                     component="img"
                     src={imagenPreview}
-                    alt="Recipe preview"
+                    alt="Vista previa de la receta"
                     sx={{
                       maxWidth: '100%',
                       maxHeight: '350px',
@@ -850,7 +779,7 @@ export default function NuevReceta() {
                         textTransform: 'none'
                       }}
                     >
-                      Remove Image
+                      Quitar imagen
                     </Button>
                     <Button
                       variant="outlined"
@@ -869,7 +798,7 @@ export default function NuevReceta() {
                         }
                       }}
                     >
-                      Change Image
+                      Cambiar imagen
                     </Button>
                   </Box>
                 </Box>
@@ -890,7 +819,7 @@ export default function NuevReceta() {
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>i</Box>
-              An attractive image of your dish will help more people want to try your recipe.
+              Una imagen atractiva de tu plato ayudará a que más personas quieran probar tu receta.
             </Typography>
           </CardContent>
         </Card>
@@ -910,7 +839,7 @@ export default function NuevReceta() {
               }
             }}
           >
-            Cancel
+            Cancelar
           </Button>
 
           <Button
@@ -926,7 +855,7 @@ export default function NuevReceta() {
               px: 3
             }}
           >
-            Create Recipe
+            Crear receta
           </Button>
         </Box>
       </Paper>
@@ -952,7 +881,7 @@ export default function NuevReceta() {
             }}>
               <SaveIcon fontSize="small" />
             </Box>
-            Recipe created successfully!
+            ¡Receta creada correctamente!
           </Box>
         </Alert>
       </Snackbar>

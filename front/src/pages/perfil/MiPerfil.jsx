@@ -18,7 +18,7 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import GoogleIcon from "@mui/icons-material/Google";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi } from "../../context/ApiProvider";
 import RecetaCardMiPerfil from "../../components/RecetaCardMiPerfil";
 import Spinner from "../../components/Spinner";
@@ -283,7 +283,7 @@ export default function MiPerfil() {
             fontWeight="bold"
             sx={{ fontSize: isMobile ? '1.5rem' : '2.125rem' }}
           >
-              Edit Profile
+              Editar perfil
           </Typography>
         </Box>
       </Paper>
@@ -301,7 +301,7 @@ export default function MiPerfil() {
             <TextField
               fullWidth
               required
-              label="Name"
+              label="Nombre"
               variant="outlined"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -324,7 +324,7 @@ export default function MiPerfil() {
             <TextField
               fullWidth
               required
-              label="Username"
+              label="Nombre de usuario"
               variant="outlined"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -348,7 +348,7 @@ export default function MiPerfil() {
               fullWidth
               required
               type="email"
-              label="Email"
+              label="Correo electrónico"
               variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -403,7 +403,7 @@ export default function MiPerfil() {
                 }}>
                   <LockIcon fontSize={isMobile ? "small" : "medium"} />
                 </Box>
-  Change Password
+  Cambiar contraseña
               </Typography>
 
               <Tooltip
@@ -429,7 +429,7 @@ export default function MiPerfil() {
                       }
                     }}
                   >
-      {cambiarPassword ? "Cancel" : "Change Password"}
+      {cambiarPassword ? "Cancelar" : "Cambiar contraseña"}
                   </Button>
                 </span>
               </Tooltip>
@@ -456,7 +456,7 @@ export default function MiPerfil() {
                   color="text.secondary"
                   sx={{ fontSize: isMobile ? '0.75rem' : '0.875rem' }}
                 >
-      You have logged in with Google. Password management is handled through your Google account.
+      Has iniciado sesión con Google. La gestión de la contraseña se realiza desde tu cuenta de Google.
                 </Typography>
               </Box>
             )}
@@ -468,7 +468,7 @@ export default function MiPerfil() {
                     <TextField
                       fullWidth
                       required
-                      label="Current password"
+                      label="Contraseña actual"
                       variant="outlined"
                       type={mostrarPasswordActual ? "text" : "password"}
                       value={passwordActual}
@@ -498,7 +498,7 @@ export default function MiPerfil() {
                     <TextField
                       fullWidth
                       required
-                      label="New password"
+                      label="Nueva contraseña"
                       variant="outlined"
                       type={mostrarPasswordNueva ? "text" : "password"}
                       value={passwordNueva}
@@ -528,7 +528,7 @@ export default function MiPerfil() {
                     <TextField
                       fullWidth
                       required
-                      label="Confirm new password"
+                      label="Confirmar nueva contraseña"
                       variant="outlined"
                       type={mostrarConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
@@ -552,7 +552,7 @@ export default function MiPerfil() {
                         )
                       }}
                       error={passwordNueva !== confirmPassword && confirmPassword !== ""}
-                      helperText={passwordNueva !== confirmPassword && confirmPassword !== "" ? "Passwords do not match" : ""}
+                      helperText={passwordNueva !== confirmPassword && confirmPassword !== "" ? "Las contraseñas no coinciden" : ""}
                     />
                   </Grid>
                 </Grid>
@@ -582,7 +582,7 @@ export default function MiPerfil() {
                     flexShrink: 0,
                     mt: isMobile ? 0.2 : 0
                   }}>i</Box>
-  Password must be at least 8 characters.
+  La contraseña debe tener al menos 8 caracteres.
                 </Typography>
               </Box>
             )}
@@ -613,7 +613,7 @@ export default function MiPerfil() {
               }
             }}
           >
-            Cancel
+            Cancelar
           </Button>
 
           <Button
@@ -633,7 +633,7 @@ export default function MiPerfil() {
               }
             }}
           >
-  {loading ? "Saving..." : "Save Changes"}
+  {loading ? "Guardando..." : "Guardar cambios"}
           </Button>
         </Box>
       </Paper>
@@ -669,7 +669,7 @@ export default function MiPerfil() {
             }}>
               <RestaurantIcon fontSize={isMobile ? "small" : "medium"} />
             </Box>
-  My Recipes
+  Mis recetas
           </Typography>
 
           <Button
@@ -689,7 +689,7 @@ export default function MiPerfil() {
               }
             }}
           >
-  View all
+  Ver todas
           </Button>
         </Box>
 
@@ -716,7 +716,7 @@ export default function MiPerfil() {
               color="text.secondary"
               sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}
             >
-  You haven't created any recipes yet
+  Aún no has creado ninguna receta
             </Typography>
             <Button
               variant="contained"

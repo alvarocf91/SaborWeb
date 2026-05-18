@@ -52,7 +52,7 @@ Componentes y responsabilidades (frontend)
 ------------------------------------------
 - `src/App.jsx` — punto de entrada, enrutado y `ThemeProvider` global (MUI). Contiene wrappers `ApiProvider` y `SaborwebProvider`.
 - `src/context/ApiProvider.jsx` — funciones para interactuar con la API (autenticación, recetas, ingredientes, reseñas, favoritos).
-- `src/context/SaborifyProvider.jsx` (rebautizado a `SaborwebProvider`) — estado global de la aplicación (usuario, recetas en memoria, filtros temporales).
+- `src/context/SaborwebProvider.jsx` (rebautizado a `SaborwebProvider`) — estado global de la aplicación (usuario, recetas en memoria, filtros temporales).
 - `src/pages/*` — páginas principales: `HomePage`, `Recetas`, `Receta`, `NuevaReceta`, `MisRecetas`, `InicioSesion`, `Registro`, `Contacto`.
 - `src/components/*` — componentes reutilizables: `Header`, `Footer`, `RecetaCard`, `MisRecetasCard`, `ReseñaForm`, `Spinner`, etc.
 - `src/css/estilos.css` — estilos globales, variables CSS, tokens de diseño y utilidades.

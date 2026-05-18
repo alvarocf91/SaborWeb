@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi } from "../../context/ApiProvider";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Container,
   Typography,
@@ -20,6 +21,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export default function Ingrediente() {
   const { ingrediente, alergenoSeleccionado, recetasMasVistas } = useContext(SaborwebContext);
   const { obtenerRecetasDeIngrediente, obtenerRecetasSinAlergeno } = useApi();
+  const { t } = useLanguage();
   const [recetasRelacionadas, setRecetasRelacionadas] = useState([]);
   const [recetasSinAlergenos, setRecetasSinAlergenos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -117,7 +119,7 @@ export default function Ingrediente() {
             }
           }}
         >
-          Recipes with {ingrediente.nombre}
+          {t('ingredientDetail.recipesWith', { ingredient: ingrediente.nombre })}
         </Typography>
         <Typography
           variant="body1"
@@ -131,7 +133,7 @@ export default function Ingrediente() {
             px: { xs: 1, sm: 0 }
           }}
         >
-          Explore our selection of recipes that include {ingrediente.nombre} as a main ingredient.
+          {t('ingredientDetail.explore', { ingredient: ingrediente.nombre })}
         </Typography>
       </Box>
 
@@ -196,8 +198,8 @@ export default function Ingrediente() {
                 fontSize: { xs: '1rem', sm: '1.1rem' },
                 lineHeight: 1.6
               }}
+              dangerouslySetInnerHTML={{ __html: t('ingredientDetail.noRecipesAvailable', { ingredient: ingrediente.nombre }) }}
             >
-              We currently have no recipes available with <strong>{ingrediente.nombre}</strong>.
             </Typography>
 
             <Typography
@@ -208,7 +210,7 @@ export default function Ingrediente() {
                 lineHeight: 1.5
               }}
             >
-              We suggest you explore other ingredients or check out our most popular recipes.
+              {t('ingredientDetail.suggestExplore')}
             </Typography>
           </Paper>
 
@@ -244,7 +246,7 @@ export default function Ingrediente() {
                   }
                 }}
               >
-                Recipes you may be interested in
+                {t('ingredientDetail.recipesYouMayLike')}
               </Typography>
 
               <Grid
@@ -341,7 +343,7 @@ export default function Ingrediente() {
                   }
                 }}
               >
-                Recipes you may be interested in
+                {t('ingredientDetail.recipesYouMayLike')}
               </Typography>
 
               <Grid
@@ -395,7 +397,7 @@ export default function Ingrediente() {
               }
             }}
           >
-            Back to ingredients
+            {t('ingredientDetail.backToIngredients')}
           </Button>
         </Link>
       </Box>

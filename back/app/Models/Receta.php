@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Receta extends Model
 {
     protected $hidden = ['updated_at', 'created_at'];
-    public $timestamps = false;
+    public $timestamps = true;
     protected $fillable = [
         'nombre',
         'tipoCocina',

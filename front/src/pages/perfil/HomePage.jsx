@@ -10,7 +10,8 @@ import {
   Chip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
+import { useLanguage } from "../../hooks/useLanguage";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -187,6 +188,7 @@ const CarouselContainer = styled(Box)(({ theme }) => ({
 
 export default function HomePage() {
   const { recetasMejorValoradas, recetasMasVistas } = useContext(SaborwebContext);
+  const { t } = useLanguage();
   const theme = useTheme();
   const isXsScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -353,26 +355,26 @@ export default function HomePage() {
     {
       icon: <LocalFireDepartmentIcon sx={{ fontSize: { xs: 35, sm: 40, md: 45 } }} />,
       number: "1,250+",
-      label: "Popular Recipes",
-      description: "The most cooked by our community"
+      label: t('homePageCards.popularRecipes'),
+      description: t('homePageCards.mostCookedByCommunity')
     },
     {
       icon: <GroupIcon sx={{ fontSize: { xs: 35, sm: 40, md: 45 } }} />,
       number: "15K+",
-      label: "Home Chefs",
-      description: "Active users sharing experiences"
+      label: t('homePage.stats.homeChefs'),
+      description: t('homePage.stats.activeUsers')
     },
     {
       icon: <AccessTimeIcon sx={{ fontSize: { xs: 35, sm: 40, md: 45 } }} />,
       number: "30 min",
-      label: "Average Time",
-      description: "Quick recipes for your daily life"
+      label: t('homePage.averageTime'),
+      description: t('homePage.stats.quickRecipes')
     },
     {
       icon: <TrendingUpIcon sx={{ fontSize: { xs: 35, sm: 40, md: 45 } }} />,
       number: "4.8★",
-      label: "Average Rating",
-      description: "Quality guaranteed by the community"
+      label: t('homePage.averageRating'),
+      description: t('homePage.stats.communityQuality')
     }
   ];
 
@@ -426,7 +428,7 @@ export default function HomePage() {
               opacity: 0.85
             }}
           >
-            Welcome to Saborweb
+            {t('homePage.welcome')}
           </Typography>
           
           <Typography
@@ -444,7 +446,7 @@ export default function HomePage() {
               WebkitTextFillColor: "transparent"
             }}
           >
-            Discover Culinary Excellence
+            {t('homePage.discoverExcellence')}
           </Typography>
 
           <Typography
@@ -459,7 +461,7 @@ export default function HomePage() {
               px: { xs: 1, sm: 0 }
             }}
           >
-            Explore thousands of exquisite recipes, master culinary techniques, and join a vibrant community of food enthusiasts who celebrate the art of cooking.
+            {t('homePage.subtitle')}
           </Typography>
         </Box>
       </Box>
@@ -495,7 +497,7 @@ export default function HomePage() {
                 fontWeight: 700,
                 fontSize: { xs: "1.25rem", sm: "1.4rem", md: "1.5rem" }
               }}>
-                Detailed Recipes
+                {t('homePageCards.detailedRecipes')}
               </Typography>
             </Box>
             <Divider sx={{ mb: { xs: 1.5, sm: 2 } }} />
@@ -509,11 +511,11 @@ export default function HomePage() {
                 textAlign: { xs: "center", sm: "left" }
               }}
             >
-              Find detailed recipes with all the necessary ingredients and easy-to-follow steps to prepare delicious dishes.
+              {t('homePageCards.detailedDescription')}
             </Typography>
             <Box sx={{ mt: "auto", textAlign: { xs: "center", sm: "right" } }}>
               <Chip
-                label="Explore recipes"
+                label={t('homePageCards.exploreRecipes')}
                 size={isXsScreen ? "small" : "medium"}
                 sx={{
                   bgcolor: "rgba(29, 112, 184, 0.12)",
@@ -550,7 +552,7 @@ export default function HomePage() {
                 fontWeight: 700,
                 fontSize: { xs: "1.25rem", sm: "1.4rem", md: "1.5rem" }
               }}>
-                Allergen Filtering
+                {t('homePage.filterAllergens')}
               </Typography>
             </Box>
             <Divider sx={{ mb: { xs: 1.5, sm: 2 } }} />
@@ -564,11 +566,11 @@ export default function HomePage() {
                 textAlign: { xs: "center", sm: "left" }
               }}
             >
-              Filter ingredients by the allergens you want to avoid and find safe recipes tailored to your dietary needs.
+              {t('homePage.filterDescription')}
             </Typography>
             <Box sx={{ mt: "auto", textAlign: { xs: "center", sm: "right" } }}>
               <Chip
-                label="View ingredients"
+                label={t('homePage.viewIngredients')}
                 size={isXsScreen ? "small" : "medium"}
                 sx={{
                   bgcolor: "rgba(29, 112, 184, 0.12)",
@@ -589,7 +591,7 @@ export default function HomePage() {
         <Box sx={{ mb: { xs: 6, sm: 8, md: 10 } }} className="carrusel-recetas">
           <Box sx={{ textAlign: "center", mb: { xs: 3, sm: 4 } }}>
             <SectionTitle variant="h4">
-              Top Rated Recipes
+              {t('homePageCards.topRated')}
             </SectionTitle>
           </Box>
 
@@ -606,7 +608,7 @@ export default function HomePage() {
       <Box sx={{ mb: 15 }}>
         <Box sx={{ textAlign: "center", mb: { xs: 4, sm: 5, md: 6 } }}>
           <SectionTitle variant="h4">
-            Our Culinary Community
+            Nuestra comunidad culinaria
           </SectionTitle>
           <Typography
             variant="body1"
@@ -619,7 +621,7 @@ export default function HomePage() {
               px: { xs: 2, sm: 0 }
             }}
           >
-            Join thousands of cooking enthusiasts who share, discover, and enjoy every day.
+            Únete a miles de amantes de la cocina que comparten, descubren y disfrutan cada día.
           </Typography>
         </Box>
 
@@ -682,7 +684,7 @@ export default function HomePage() {
         <Box sx={{ mb: { xs: 4, sm: 5, md: 6 } }} className="carrusel-recetas">
           <Box sx={{ textAlign: "center", mb: { xs: 3, sm: 4 } }}>
             <SectionTitle variant="h4">
-              Most Viewed Recipes
+              {t('homePageCards.mostViewed')}
             </SectionTitle>
           </Box>
 
@@ -756,7 +758,7 @@ export default function HomePage() {
               px: { xs: 1, sm: 0 }
             }}
           >
-            Dive into thousands of meticulously curated recipes, learn from expert techniques, and become part of a passionate culinary community. Your next masterpiece awaits.
+            {t('homePageCards.finalCTA')}
           </Typography>
         </Box>
       </Box>

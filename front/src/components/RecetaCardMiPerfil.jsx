@@ -2,7 +2,6 @@ import {
     Typography, Button, Box, Card, Rating, Chip
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import imagenPlaceholder from '../assets/imagenRecetaPlaceholder.png';
 
 export default function RecetaCardMiPerfil({ receta, handleVerReceta }) {
     return (
@@ -25,17 +24,19 @@ export default function RecetaCardMiPerfil({ receta, handleVerReceta }) {
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                <Box
-                    component="img"
-                    src={receta.imagen || imagenPlaceholder}
-                    alt={receta.nombre}
-                    onError={(e) => { e.currentTarget.src = imagenPlaceholder; }}
-                    sx={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
-                    }}
-                />
+                {receta.imagen && (
+                    <Box
+                        component="img"
+                        src={receta.imagen}
+                        alt={receta.nombre}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        sx={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }}
+                    />
+                )}
             </Box>
 
             <Box sx={{

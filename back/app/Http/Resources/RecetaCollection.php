@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\RecetaResource;
 
 class RecetaCollection extends ResourceCollection
 {
@@ -14,6 +15,6 @@ class RecetaCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return RecetaResource::collection($this->collection)->resolve();
     }
 }

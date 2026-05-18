@@ -14,15 +14,21 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ImageIcon from "@mui/icons-material/Image";
 import TimerIcon from "@mui/icons-material/Timer";
 import { useContext } from "react";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi, API_BASE_URL } from "../../context/ApiProvider";
 import { useLanguage } from "../../hooks/useLanguage";
 
 export default function EditarReceta() {
   const { receta, setReceta, ingredientes } = useContext(SaborwebContext);
   const api = useApi();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const normalizarDificultad = (valor) => ({
+    Easy: 'Fácil',
+    Medium: 'Media',
+    Difficult: 'Difícil',
+  }[valor] || valor || "");
 
   useEffect(() => {
     if (!receta || !receta.id) {
@@ -32,7 +38,7 @@ export default function EditarReceta() {
 
   const [nombre, setNombre] = useState(receta?.nombre || "");
   const [tipoCocina, setTipoCocina] = useState(receta?.tipoCocina || "");
-  const [dificultad, setDificultad] = useState(receta?.dificultad || "");
+  const [dificultad, setDificultad] = useState(normalizarDificultad(receta?.dificultad));
   const [tiempoCocinado, setTiempoCocinado] = useState(receta?.tiempoCocinado?.toString() || "");
   const [tiposComidaDisponibles, setTiposComidaDisponibles] = useState([]);
   const [tiposComidaSeleccionados, setTiposComidaSeleccionados] = useState(receta?.tipoComida || []);
@@ -42,15 +48,20 @@ export default function EditarReceta() {
   const [imagen, setImagen] = useState(null);
   const buildAbsolute = (raw) => {
     if (!raw || typeof raw !== 'string') return null;
+    const publicBase = API_BASE_URL.replace(/\/api\/?$/, '');
     const origin = API_BASE_URL.split('/public')[0];
     if (raw.startsWith('http://')) return raw.replace('http://', 'https://');
-    if (raw.startsWith('https://')) return raw;
-    if (raw.startsWith('/storage/')) return `${origin}${raw}`;
-    if (raw.startsWith('storage/')) return `${origin}/${raw}`;
-    if (raw.startsWith('/recetas/')) return `${origin}/storage${raw}`;
-    if (raw.startsWith('recetas/')) return `${origin}/storage/${raw}`;
+    if (raw.startsWith('https://')) {
+      return raw.includes('/storage/') && !raw.includes('/public/storage/')
+        ? raw.replace('/storage/', '/public/storage/')
+        : raw;
+    }
+    if (raw.startsWith('/storage/')) return `${publicBase}${raw}`;
+    if (raw.startsWith('storage/')) return `${publicBase}/${raw}`;
+    if (raw.startsWith('/recetas/')) return `${publicBase}/storage${raw}`;
+    if (raw.startsWith('recetas/')) return `${publicBase}/storage/${raw}`;
     if (raw.startsWith('/')) return `${origin}${raw}`;
-    return `${origin}/${raw}`;
+    return `${publicBase}/storage/${raw}`;
   };
 
   const [imagenPreview, setImagenPreview] = useState(buildAbsolute(receta?.imagen_url) || buildAbsolute(receta?.imagen) || null);
@@ -166,88 +177,44 @@ export default function EditarReceta() {
 
     setLoading(true);
     try {
-      let imagenUrl = receta.imagen_url;
-
-      if (imagen) {
-        try {
-          const imagenData = await api.subirImagen(imagen);
-          console.log("Imagen subida", imagenData);
-          const extractImageUrl = (obj) => {
-            if (!obj) return null;
-            const candidates = [
-              obj.url,
-              obj.path,
-              obj.ruta,
-              obj.nombre,
-              obj.data && obj.data.url,
-              obj.data && obj.data.path,
-              obj.data && obj.data.ruta,
-              obj.data && obj.data.nombre,
-            ];
-
-            for (const c of candidates) {
-              if (typeof c === 'string' && c.length > 5) return c;
-            }
-
-            const queue = [obj];
-            while (queue.length) {
-              const current = queue.shift();
-              if (!current || typeof current !== 'object') continue;
-              for (const key of Object.keys(current)) {
-                const val = current[key];
-                if (typeof val === 'string') {
-                  const lower = val.toLowerCase();
-                  if (lower.includes('/storage') || lower.startsWith('http') || lower.match(/\.(png|jpe?g|gif|webp)$/)) {
-                    return val;
-                  }
-                } else if (typeof val === 'object') {
-                  queue.push(val);
-                }
-              }
-            }
-            return null;
-          };
-
-          const candidate = extractImageUrl(imagenData);
-          if (candidate) {
-            imagenUrl = candidate;
-            console.log("URL de la imagen", imagenUrl);
-          } else {
-            throw new Error('Respuesta de imagen invalida');
-          }
-        } catch (error) {
-          console.error("Error al subir imagen:", error);
-          setError(true);
-        setErrorMessage("Error subiendo la imagen. Intenta de nuevo.");
-          setLoading(false);
-          return;
-        }
-      }
-
       const recetaActualizada = {
-        ...receta,
         nombre,
         tipoCocina,
         dificultad,
         tiempoCocinado: parseInt(tiempoCocinado, 10),
+        porciones: receta.porciones || 1,
+        caloriasPorPorcion: receta.caloriasPorPorcion || 0,
+        usuario_id: receta.usuario_id,
         tipoComida: tiposComidaSeleccionados,
-        ingredientes: ingredientesUser.map(ingrediente => ({
-          id: ingrediente.id,
-          nombreIngrediente: ingrediente.nombre
-        })),
-        pasos: pasos.filter(p => p.trim()).map(paso => ({ nombrePaso: paso })),
-        imagen_url: imagenUrl,
+        ingredientes: ingredientesUser.map(ingrediente => ingrediente.nombre),
+        pasos: pasos.filter(p => p.trim()),
       };
-      
-      const data = await api.actualizarReceta(receta.id, recetaActualizada);
+
+      const data = imagen
+        ? await api.actualizarRecetaConImagen(receta.id, recetaActualizada, imagen)
+        : await api.actualizarReceta(receta.id, recetaActualizada);
       console.log("Receta actualizada", data);
 
       setOpenSnackbar(true);
 
       setTimeout(() => {
-        setReceta(data.data);
+        const updated = data && data.data ? data.data : data;
+        if (imagen) {
+          updated.imagen_cache = Date.now();
+        }
+        setReceta(updated);
         navigate(`/recipe-detail`);
       }, 1500);
+
+      // Force refresh from backend to get the persisted image URL
+      try {
+        const refreshed = await api.obtenerRecetaPorId(receta.id);
+        if (refreshed && refreshed.data && refreshed.data.length > 0) {
+          setReceta(refreshed.data[0]);
+        }
+      } catch (e) {
+        console.warn('No se pudo refrescar la receta tras actualizar:', e);
+      }
 
       console.log("Receta actualizada:", recetaActualizada);
     } catch (error) {
@@ -314,7 +281,9 @@ export default function EditarReceta() {
   };
 
   const handleImagenClick = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleImagenChange = (event) => {
@@ -375,7 +344,7 @@ export default function EditarReceta() {
         }}>
           <RestaurantMenuIcon sx={{ fontSize: 36, mr: 2 }} />
           <Typography variant="h4" fontWeight="bold">
-  Edit Recipe
+            {t('editRecipe.title')}
           </Typography>
         </Box>
       </Paper>
@@ -393,7 +362,7 @@ export default function EditarReceta() {
             <TextField
               fullWidth
               required
-              label="Recipe name"
+              label={t('editRecipe.recipeName')}
               variant="outlined"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -407,7 +376,7 @@ export default function EditarReceta() {
               required
                 label="Nombre de la receta"
               variant="outlined"
-  placeholder="E.g.: Italian, Mexican, Homemade..."
+              placeholder={t('editRecipe.cuisineTypePlaceholder')}
               value={tipoCocina}
               onChange={(e) => setTipoCocina(e.target.value)}
               InputProps={{ sx: { borderRadius: 2 } }}
@@ -425,9 +394,9 @@ export default function EditarReceta() {
                 label="Dificultad"
                 sx={{ borderRadius: 2 }}
               >
-                <MenuItem value="Easy">Fácil</MenuItem>
-                <MenuItem value="Medium">Media</MenuItem>
-                <MenuItem value="Difficult">Difícil</MenuItem>
+                <MenuItem value="Fácil">Fácil</MenuItem>
+                <MenuItem value="Media">Media</MenuItem>
+                <MenuItem value="Difícil">Difícil</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -537,7 +506,7 @@ export default function EditarReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>1</Box>
-              Ingredients
+              {t('editRecipe.ingredients')}
             </Typography>
 
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
@@ -584,7 +553,7 @@ export default function EditarReceta() {
                   }
                 }}
               >
-                Add
+                {t('common.add')}
               </Button>
             </Box>
 
@@ -649,7 +618,7 @@ export default function EditarReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>2</Box>
-  Preparation steps
+              {t('editRecipe.steps')}
             </Typography>
 
             {pasos.map((paso, index) => (
@@ -699,7 +668,7 @@ export default function EditarReceta() {
                 '&:hover': { bgcolor: 'rgba(29, 112, 184, 0.08)' }
               }}
             >
-  Add step
+              {t('editRecipe.addStep')}
             </Button>
           </CardContent>
         </Card>
@@ -719,7 +688,7 @@ export default function EditarReceta() {
                 mr: 1.5,
                 fontSize: 18
               }}>3</Box>
-  Recipe image
+  Imagen de la receta
             </Typography>
 
             <Box sx={{
@@ -731,15 +700,15 @@ export default function EditarReceta() {
               p: 3,
               mb: 2
             }}>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                ref={fileInputRef}
+                onChange={handleImagenChange}
+              />
               {!imagenPreview ? (
                 <>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    ref={fileInputRef}
-                    onChange={handleImagenChange}
-                  />
                   <IconButton
                     onClick={handleImagenClick}
                     sx={{
@@ -796,7 +765,7 @@ export default function EditarReceta() {
                         }
                       }}
                     >
-  Change image
+                      {t('editRecipe.changeImage')}
                     </Button>
                   </Box>
                 </Box>
@@ -817,7 +786,7 @@ export default function EditarReceta() {
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>i</Box>
-  An attractive image of your dish will help more people want to try your recipe.
+  Una imagen atractiva de tu plato ayudará a que más personas quieran probar tu receta.
             </Typography>
           </CardContent>
         </Card>
@@ -837,7 +806,7 @@ export default function EditarReceta() {
               }
             }}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
 
           <Button
@@ -854,7 +823,7 @@ export default function EditarReceta() {
               px: 3
             }}
           >
-  {loading ? 'Saving...' : 'Save changes'}
+            {loading ? t('editRecipe.saving') : t('editRecipe.saveChanges')}
           </Button>
         </Box>
       </Paper>
@@ -879,7 +848,7 @@ export default function EditarReceta() {
             }}>
               <SaveIcon fontSize="small" />
             </Box>
-      Recipe edited successfully!
+            {t('editRecipe.successMessage')}
           </Box>
         </Alert>
       </Snackbar>

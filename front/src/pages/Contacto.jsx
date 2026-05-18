@@ -192,6 +192,27 @@ export default function Contacto() {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
+              required
+              label="Correo electrónico"
+              variant="outlined"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tu@email.com"
+              InputProps={{
+                sx: { borderRadius: 2 },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon sx={{ color: '#1D70B8' }} />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
               label="Teléfono"
               variant="outlined"
               value={telefono}
@@ -265,7 +286,7 @@ export default function Contacto() {
               InputProps={{
                 sx: { borderRadius: 2 }
               }}
-              helperText={`${mensaje.length}/1000 characters`}
+              helperText={`${mensaje.length}/1000 caracteres`}
               inputProps={{ maxLength: 1000 }}
             />
 

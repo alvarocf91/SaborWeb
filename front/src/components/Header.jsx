@@ -1,7 +1,7 @@
-// LanguageSwitcher removed to force Spanish across the site
 import { useLanguage } from "../hooks/useLanguage";
 import { useState, useEffect, useContext, useRef } from "react";
-import { SaborwebContext } from "../context/SaborifyProvider";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { SaborwebContext } from "../context/SaborwebProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -163,12 +163,12 @@ export default function Header() {
 
   const navItems = [
     {
-      text: "Recipes",
+      text: "Recetas",
       icon: <RestaurantIcon />,
       path: "/all-recipes"
     },
     {
-      text: "Ingredients",
+      text: "Ingredientes",
       icon: <KitchenIcon />,
       path: "/all-ingredients"
     }
@@ -176,17 +176,17 @@ export default function Header() {
 
   const userMenuItems = [
     {
-      text: "See my profile",
+      text: "Ver mi perfil",
       icon: <AccountCircleIcon />,
       path: "/my-profile"
     },
     {
-      text: "My recipes",
+      text: "Mis recetas",
       icon: <MyRecipesIcon />,
       path: "/my-recipes"
     },
     {
-      text: "Favorite recipes",
+      text: "Recetas favoritas",
       icon: <FavoriteIcon />,
       path: "/favorite-recipes"
     }
@@ -203,7 +203,15 @@ export default function Header() {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: { xs: "wrap", md: "nowrap" },
+            rowGap: { xs: 1, md: 0 }
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
               {!loading && (
@@ -213,7 +221,7 @@ export default function Header() {
           </Box>
 
           {!isMobile && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 4, mx: 4, flexGrow: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 3, mx: 3, flexGrow: 1 }}>
               {navItems.map((item) => (
                 <Link 
                   to={item.path} 
@@ -256,6 +264,7 @@ export default function Header() {
 
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <LanguageSwitcher />
               {mostrarBuscador && (
                 <Box sx={{ position: "relative", minWidth: "340px" }}>
                   <Paper
@@ -451,7 +460,7 @@ export default function Header() {
                         <LogoutIcon />
                       </ListItemIcon>
                       <ListItemText 
-                        primary="Sign Out"
+                        primary="Cerrar sesión"
                         primaryTypographyProps={{
                           style: {
                             fontWeight: 500,
@@ -486,6 +495,20 @@ export default function Header() {
                     {t('header.login')}
                   </Button>
                 </Link>
+              )}
+            </Box>
+          )}
+
+          {isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              {mostrarBuscador && (
+                <IconButton
+                  size="large"
+                  onClick={toggleSearch}
+                  sx={{ color: "#666" }}
+                >
+                  {showSearch ? <CloseIcon /> : <SearchIcon />}
+                </IconButton>
               )}
               <IconButton
                 size="large"
@@ -582,7 +605,7 @@ export default function Header() {
                 )}
                 {query && filteredResults.length === 0 && (
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: 'center', py: 2 }}>
-                    No results found
+                    No se encontraron resultados
                   </Typography>
                 )}
               </Box>

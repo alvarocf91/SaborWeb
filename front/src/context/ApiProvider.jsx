@@ -2,7 +2,7 @@ import { createContext, useContext, useCallback } from 'react';
 
 const ApiContext = createContext();
 
-export const API_BASE_URL = 'https://saulal25.iesmontenaranco.com:8000/public/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 export const useApi = () => {
     const context = useContext(ApiContext);
@@ -154,12 +154,74 @@ export const ApiProvider = ({ children }) => {
         }
     }, []);
 
+    const crearRecetaConImagen = useCallback(async (recetaData, imagenFile) => {
+        try {
+            const formData = new FormData();
+            Object.entries(recetaData).forEach(([key, value]) => {
+                if (value === undefined || value === null) return;
+                if (Array.isArray(value)) {
+                    value.forEach((item) => formData.append(`${key}[]`, item));
+                } else {
+                    formData.append(key, value);
+                }
+            });
+
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+
+            const token = localStorage.getItem('token');
+            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+            const response = await fetch(`${API_BASE_URL}/recetas`, {
+                method: 'POST',
+                headers,
+                body: formData,
+            });
+
+            return await handleApiResponse(response);
+        } catch (error) {
+            handleApiError(error, 'Error al crear la receta');
+        }
+    }, []);
+
     const actualizarReceta = useCallback(async (id, recetaData) => {
         try {
             const response = await fetch(`${API_BASE_URL}/recetas/${id}`, {
                 method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(recetaData),
+            });
+            return await handleApiResponse(response);
+        } catch (error) {
+            handleApiError(error, 'Error al actualizar la receta');
+        }
+    }, []);
+
+    const actualizarRecetaConImagen = useCallback(async (id, recetaData, imagenFile) => {
+        try {
+            const formData = new FormData();
+            formData.append('_method', 'PUT');
+            Object.entries(recetaData).forEach(([key, value]) => {
+                if (value === undefined || value === null) return;
+                if (Array.isArray(value)) {
+                    value.forEach((item) => formData.append(`${key}[]`, item));
+                } else {
+                    formData.append(key, value);
+                }
+            });
+
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+
+            const token = localStorage.getItem('token');
+            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+            const response = await fetch(`${API_BASE_URL}/recetas/${id}`, {
+                method: 'POST',
+                headers,
+                body: formData,
             });
             return await handleApiResponse(response);
         } catch (error) {
@@ -248,13 +310,13 @@ export const ApiProvider = ({ children }) => {
             // Validate file type
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
             if (!allowedTypes.includes(imagenFile.type)) {
-                throw new Error(`Invalid image format. Allowed formats: PNG, JPG, GIF, WEBP`);
+                throw new Error(`Formato de imagen no válido. Formatos permitidos: PNG, JPG, GIF, WEBP`);
             }
 
             // Validate file size (max 5MB)
             const maxSize = 5 * 1024 * 1024; // 5MB
             if (imagenFile.size > maxSize) {
-                throw new Error('Image file is too large. Maximum size is 5MB');
+                throw new Error('La imagen es demasiado grande. El tamaño máximo es 5 MB');
             }
 
             const formData = new FormData();
@@ -273,15 +335,15 @@ export const ApiProvider = ({ children }) => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Error uploading image: ${response.statusText}`);
+                throw new Error(errorData.message || `Error al subir la imagen: ${response.statusText}`);
             }
 
             const data = await response.json();
-            console.log('Image uploaded successfully:', data);
+            console.log('Imagen subida correctamente:', data);
             return data;
         } catch (error) {
             console.error('Image upload error:', error);
-            handleApiError(error, 'Error uploading image');
+            handleApiError(error, 'Error al subir la imagen');
         }
     }, []);
 
@@ -414,7 +476,9 @@ export const ApiProvider = ({ children }) => {
         obtenerRecetas,
         obtenerRecetaPorId,
         crearReceta,
+        crearRecetaConImagen,
         actualizarReceta,
+        actualizarRecetaConImagen,
         eliminarReceta,
         obtenerRecetasMejorValoradas,
         obtenerRecetasSinAlergeno,

@@ -47,7 +47,7 @@ export default function Footer() {
               <img src={Logo} alt="LogoSaborweb" style={{ width: isMobile ? "180px" : "220px" }} />
             </Link>
             <Typography variant="body2" sx={{ mt: 2, color: "#666", maxWidth: "90%" }}>
-              {t('footer.copyright')}
+              Recetas, ingredientes y comunidad para cocinar con más inspiración.
             </Typography>
             
             <Box sx={{ display: "flex", gap: 1, mt: 3 }}>
@@ -222,7 +222,7 @@ export default function Footer() {
               textAlign: { xs: "center", md: "left" } 
             }}
           >
-            © {new Date().getFullYear()} Saborweb. {t('footer.copyright')}
+            {t('footer.copyright')}
           </Typography>
           
           <Box 

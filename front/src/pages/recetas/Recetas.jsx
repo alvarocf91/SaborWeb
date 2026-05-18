@@ -11,7 +11,7 @@ import {
     InputLabel,
     Paper,
 } from "@mui/material";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi } from "../../context/ApiProvider";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
@@ -49,6 +49,23 @@ export default function Recetas() {
         cargarAlergenos();
     }, []);
 
+    useEffect(() => {
+        const handleFocus = () => {
+            if (selectedDificultad) {
+                fetchRecetasConApi(obtenerRecetasPorDificultad, selectedDificultad);
+                return;
+            }
+            if (selectedAlergeno) {
+                fetchRecetasConApi(obtenerRecetasSinAlergeno, selectedAlergeno);
+                return;
+            }
+            cargaRecetas();
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [selectedDificultad, selectedAlergeno]);
+
     const cargarAlergenos = async () => {
         try {
             setError(null);
@@ -64,7 +81,7 @@ export default function Recetas() {
             }
         } catch (error) {
             console.error("Error al cargar alérgenos:", error);
-            setError("Error loading allergens");
+            setError("Error al cargar los alérgenos");
             setAlergenos([]);
         }
     };
@@ -83,11 +100,11 @@ export default function Recetas() {
             } else {
                 console.error("Respuesta inválida del backend", result);
                 setRecetas([]);
-                setError("No recipes found");
+                setError("No se encontraron recetas");
             }
         } catch (error) {
             console.error("Error al cargar recetas:", error);
-            setError(error.message || "Error loading recipes");
+            setError(error.message || "Error al cargar las recetas");
             setRecetas([]);
         } finally {
             setLoading(false);
@@ -146,7 +163,7 @@ export default function Recetas() {
                         onClick={handleResetFilters}
                         sx={{ mt: 2 }}
                     >
-                        Try again
+                        Intentar de nuevo
                     </Button>
                 </Box>
             );
@@ -206,7 +223,7 @@ export default function Recetas() {
                             }
                         }}
                     >
-                        Explore Culinary Creations
+                        Explora creaciones culinarias
                     </Typography>
                     <Typography
                         variant="body1"
@@ -219,7 +236,7 @@ export default function Recetas() {
                             lineHeight: 1.7
                         }}
                     >
-                        Discover a curated collection of recipes from our community. Filter by difficulty, preparation time, and dietary preferences to find your perfect dish.
+                        Descubre una colección de recetas de nuestra comunidad. Filtra por dificultad, tiempo de preparación y preferencias alimentarias para encontrar tu plato perfecto.
                     </Typography>
                 </Box>
             </Box>
@@ -260,7 +277,7 @@ export default function Recetas() {
                             },
                         }}
                     >
-                        All
+                        Todas
                     </Button>
 
                     <Button
@@ -287,7 +304,7 @@ export default function Recetas() {
                             },
                         }}
                     >
-                        More Time
+                        Más tiempo
                     </Button>
 
                     <Button
@@ -314,17 +331,17 @@ export default function Recetas() {
                             },
                         }}
                     >
-                        Less Time
+                        Menos tiempo
                     </Button>
 
                     <FormControl size="small" sx={{ minWidth: 180 }}>
                         <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
                             <Box display="flex" alignItems="center">
-                                <TuneIcon sx={{ fontSize: 18, mr: 1 }} /> Difficulty
+                                <TuneIcon sx={{ fontSize: 18, mr: 1 }} /> Dificultad
                             </Box>
                         </InputLabel>
                         <Select
-                            label="Difficulty"
+                            label="Dificultad"
                             value={selectedDificultad}
                             onChange={handleDificultadChange}
                             disabled={loading}
@@ -354,11 +371,11 @@ export default function Recetas() {
                     <FormControl size="small" sx={{ minWidth: 180 }} id="alergenos-select">
                         <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
                             <Box display="flex" alignItems="center">
-                                <NoFoodIcon sx={{ fontSize: 18, mr: 1 }} /> Without allergens
+                                <NoFoodIcon sx={{ fontSize: 18, mr: 1 }} /> Sin alérgenos
                             </Box>
                         </InputLabel>
                         <Select
-                            label="Without allergens"
+                            label="Sin alérgenos"
                             value={selectedAlergeno}
                             onChange={handleAlergenoChange}
                             disabled={loading}
@@ -395,7 +412,7 @@ export default function Recetas() {
                 <Grid container spacing={4} justifyContent="center">
                     {recetas.length === 0 && !error ? (
                         <Typography variant="h6" color="text.secondary">
-                            No recipes found.
+                            No se encontraron recetas.
                         </Typography>
                     ) : (
                         recetas.map((receta) => (
@@ -432,7 +449,7 @@ export default function Recetas() {
                             },
                         }}
                     >
-                        Create new recipe
+                        Crear nueva receta
                     </Button>
                 </Link>
             )}

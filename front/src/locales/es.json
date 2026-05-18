@@ -12,7 +12,7 @@
     "searchIngredients": "Buscar ingredientes..."
   },
   "footer": {
-    "copyright": "© 2025 Saborweb. Todos los derechos reservados.",
+    "copyright": "© 2026 Saborweb. Todos los derechos reservados.",
     "about": "Acerca de",
     "contact": "Contacto",
     "privacy": "Política de Privacidad"
@@ -93,7 +93,52 @@
     "addReview": "Agregar Reseña",
     "writeYourReview": "Escribe tu reseña",
     "submit": "Enviar",
-    "noReviews": "Sin reseñas aún"
+    "noReviews": "Sin reseñas aún",
+    "whatDidYouThink": "¿Qué te pareció esta receta?",
+    "ratingDescriptions": {
+      "1": "¡No me gustó nada!",
+      "2": "Está bien",
+      "3": "Es buena",
+      "4": "¡Me gustó mucho!",
+      "5": "¡Excelente! ¡De las mejores!"
+    }
+  },
+  "recetaCard": {
+    "servings": "Porciones",
+    "notSpecified": "No especificado",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "addToFavorites": "Agregar a Favoritos",
+    "removeFromFavorites": "Quitar de Favoritos"
+  },
+  "homePage": {
+    "welcome": "Bienvenido a Saborweb",
+    "discoverExcellence": "Descubre la Excelencia Culinaria",
+    "subtitle": "Explora miles de deliciosas recetas compartidas por chefs caseros de todo el mundo. Encuentra inspiración, comparte tus creaciones y conecta con una apasionada comunidad de amantes de la comida.",
+    "exploreRecipes": "Explorar Recetas",
+    "filterAllergens": "Filtrado de Alérgenos",
+    "filterDescription": "Filtra ingredientes por los alérgenos que quieras evitar y encuentra recetas seguras adaptadas a tus necesidades dietéticas.",
+    "viewIngredients": "Ver Ingredientes",
+    "stats": {
+      "activeUsers": "Usuarios activos compartiendo experiencias",
+      "quickRecipes": "Recetas rápidas para tu vida diaria",
+      "communityQuality": "Calidad garantizada por la comunidad"
+    },
+    "homeChefs": "Chefs Caseros",
+    "averageTime": "Tiempo Promedio",
+    "averageRating": "Calificación Promedio"
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "Nos encantaría saber de ti. Envíanos un mensaje y responderemos lo antes posible.",
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "sendMessage": "Enviar mensaje",
+    "sending": "Enviando...",
+    "messageSent": "¡Mensaje enviado exitosamente!",
+    "fillAllFields": "Por favor completa todos los campos"
   },
   "profile": {
     "myProfile": "Mi Perfil",
@@ -131,12 +176,74 @@
     "close": "Cerrar",
     "language": "Idioma",
     "spanish": "Español",
-    "english": "English",
+    "english": "Inglés",
     "translateToSpanish": "Traducir al español",
     "viewInEnglish": "Ver en inglés",
     "home": "Inicio",
     "contact": "Contacto",
     "about": "Acerca de",
-    "deleteConfirm": "¿Estás seguro?"
+    "deleteConfirm": "¿Estás seguro?",
+    "recipes": "Recetas",
+    "ingredients": "Ingredientes",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Atrás",
+    "noResults": "Sin resultados",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "myRecipes": {
+    "title": "Mis Recetas",
+    "subtitle": "Encuentra aquí todas las recetas que has creado. Puedes editarlas o eliminarlas según sea necesario.",
+    "noRecipes": "No tienes recetas creadas",
+    "createSome": "Crea algunas recetas para verlas aquí",
+    "loading": "Cargando tus recetas...",
+    "recipeDeletedSuccessfully": "Receta eliminada exitosamente"
+  },
+  "ingredientDetail": {
+    "recipesWith": "Recetas con {ingredient}",
+    "explore": "Explora nuestra selección de recetas que incluyen {ingredient} como ingrediente principal.",
+    "noRecipesAvailable": "Actualmente no tenemos recetas disponibles con <strong>{ingredient}</strong>.",
+    "suggestExplore": "Te sugerimos que explores otros ingredientes o consultes nuestras recetas más populares.",
+    "recipesYouMayLike": "Recetas que podrían interesarte",
+    "backToIngredients": "Volver a ingredientes"
+  },
+  "ingredientsPage": {
+    "title": "Ingredientes y Alérgenos",
+    "subtitle": "Explora nuestra base de datos integral de ingredientes organizada por categorías de alérgenos. Descubre opciones seguras adaptadas a tus necesidades y preferencias dietéticas.",
+    "viewIngredients": "Ver ingredientes",
+    "searchPlaceholder": "Buscar ingrediente...",
+    "ingredientsList": "Ingredientes ({count})",
+    "noIngredientsFound": "No se encontraron ingredientes para esta búsqueda.",
+    "allergenFiltering": "Filtrado de Alérgenos",
+    "filterDescription": "Filtra ingredientes por los alérgenos que quieras evitar y encuentra recetas seguras adaptadas a tus necesidades dietéticas."
+  },
+  "editRecipe": {
+    "title": "Editar Receta",
+    "recipeName": "Nombre de la receta",
+    "cuisineTypePlaceholder": "P.ej.: Italiana, Mexicana, Casera...",
+    "ingredients": "Ingredientes",
+    "addStep": "Agregar paso",
+    "steps": "Pasos de preparación",
+    "changeImage": "Cambiar imagen",
+    "saving": "Guardando...",
+    "saveChanges": "Guardar cambios",
+    "successMessage": "¡Receta editada exitosamente!"
+  },
+  "homePageCards": {
+    "detailedRecipes": "Recetas Detalladas",
+    "detailedDescription": "Encuentra recetas detalladas con todos los ingredientes necesarios y pasos fáciles de seguir para preparar platos deliciosos.",
+    "exploreRecipes": "Explorar recetas",
+    "topRated": "Recetas Mejor Valoradas",
+    "mostViewed": "Recetas Más Vistas",
+    "popularRecipes": "Recetas Populares",
+    "mostCookedByCommunity": "Las más cocinadas por nuestra comunidad",
+    "finalCTA": "Sumérgete en miles de recetas cuidadosamente seleccionadas, aprende de técnicas de expertos y forma parte de una apasionada comunidad culinaria. Tu próxima obra maestra te espera."
+  },
+  "deleteConfirmation": {
+    "deleteReview": "¿Estás seguro de que deseas eliminar esta reseña? Esta acción no se puede deshacer.",
+    "delete": "Eliminar",
+    "deleting": "Eliminando...",
+    "cancel": "Cancelar",
+    "deleteSuccessfully": "Reseña eliminada exitosamente"
   }
 }

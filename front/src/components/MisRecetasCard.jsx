@@ -20,12 +20,65 @@ import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { SaborwebContext } from "../context/SaborifyProvider";
-import imagenPlaceholder from '../assets/imagenRecetaPlaceholder.png';
+import { useContext, useMemo, useState } from "react";
+import { SaborwebContext } from "../context/SaborwebProvider";
+import { API_BASE_URL } from "../context/ApiProvider";
+
+const imagenRecetaPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'%3E%3Crect width='600' height='360' fill='%23EAF3FB'/%3E%3Ccircle cx='300' cy='150' r='48' fill='%23D6E9F8'/%3E%3Cpath d='M276 142h48v18h-48zM285 125h30v17h-30zM265 165h70v18h-70z' fill='%231D70B8'/%3E%3Ctext x='300' y='240' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%231D70B8'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 export default function MisRecetasCard({ receta, onRemove, onEdit }) {
     const { setReceta } = useContext(SaborwebContext);
+    const [imageIndex, setImageIndex] = useState(0);
+
+    const imageCandidates = useMemo(() => {
+        const raw = receta.imagen_url || receta.imagen || receta.imagenUrl || null;
+        if (!raw || typeof raw !== 'string') return [];
+        const publicBase = API_BASE_URL.replace(/\/api\/?$/, '');
+        const origin = API_BASE_URL.split('/public')[0];
+        const normalized = raw.trim();
+        const cacheBuster = receta.imagen_cache || receta.imagenCache || null;
+        const candidates = new Set();
+        const add = (value) => {
+            if (value && typeof value === 'string') {
+                if (cacheBuster && !value.includes('?')) {
+                    candidates.add(`${value}?v=${cacheBuster}`);
+                } else {
+                    candidates.add(value);
+                }
+            }
+        };
+
+        add(normalized);
+        if (normalized.startsWith('http://')) add(normalized.replace('http://', 'https://'));
+        if (/^https?:\/\//.test(normalized) && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) add(normalized.replace('/storage/', '/public/storage/'));
+        if (normalized.startsWith('https://') && normalized.includes('/storage/') && !normalized.includes('/public/storage/')) add(normalized.replace('/storage/', '/public/storage/'));
+        if (normalized.startsWith('//')) add(`https:${normalized}`);
+        if (normalized.startsWith('/storage/')) {
+            add(`${publicBase}${normalized}`);
+            add(`${origin}${normalized}`);
+        }
+        if (normalized.startsWith('storage/')) {
+            add(`${publicBase}/${normalized}`);
+            add(`${origin}/${normalized}`);
+        }
+        if (normalized.startsWith('/recetas/')) {
+            add(`${publicBase}/storage${normalized}`);
+            add(`${origin}/storage${normalized}`);
+        }
+        if (normalized.startsWith('recetas/')) {
+            add(`${publicBase}/storage/${normalized}`);
+            add(`${origin}/storage/${normalized}`);
+        }
+        if (normalized.startsWith('/')) add(`${origin}${normalized}`);
+        if (!normalized.startsWith('http')) {
+            add(`${publicBase}/storage/${normalized}`);
+            add(`${origin}/${normalized}`);
+        }
+
+        return Array.from(candidates);
+    }, [receta.imagen, receta.imagen_url, receta.imagenUrl]);
+
+    const imagenAMostrar = imageCandidates[imageIndex] || imagenRecetaPlaceholder;
 
     return (
         <motion.div
@@ -49,17 +102,22 @@ export default function MisRecetasCard({ receta, onRemove, onEdit }) {
             >
                 <Box className="media-overlay" />
 
-                <CardMedia
-                    component="img"
-                    height="180"
-                    image={receta.imagen || imagenPlaceholder}
-                    alt={receta.nombre}
-                    sx={{ objectFit: 'cover' }}
-                    onError={(e) => {
-                        e.currentTarget.src = imagenPlaceholder;
-                        e.currentTarget.alt = "Imagen no disponible";
-                    }}
-                />
+                {imagenAMostrar && (
+                    <CardMedia
+                        component="img"
+                        height="180"
+                        image={imagenAMostrar}
+                        alt={receta.nombre}
+                        sx={{ objectFit: 'cover' }}
+                        onError={() => {
+                            if (imageIndex < imageCandidates.length - 1) {
+                                setImageIndex(prev => prev + 1);
+                                return;
+                            }
+                            setImageIndex(imageCandidates.length);
+                        }}
+                    />
+                )}
 
                 <CardContent sx={{ flexGrow: 1, p: 3 }}>
                     <Typography

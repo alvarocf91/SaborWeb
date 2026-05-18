@@ -19,6 +19,7 @@ import StarIcon from '@mui/icons-material/Star';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../context/ApiProvider';
+import { useLanguage } from '../hooks/useLanguage';
 import PropTypes from 'prop-types';
 
 export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
@@ -27,6 +28,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const { t } = useLanguage();
 
     const navigate = useNavigate();
 
@@ -36,17 +38,17 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
         e.preventDefault();
 
         if (puntuacion === 0) {
-            setError('Please add a rating');
+            setError('Añade una valoración');
             return;
         }
 
         if (!comentario.trim()) {
-            setError('Please add a comment');
+            setError('Añade un comentario');
             return;
         }
 
         if (!recetaId || !usuarioId) {
-            setError('Missing required data to create the review');
+            setError('Faltan datos necesarios para crear la reseña');
             return;
         }
 
@@ -90,15 +92,8 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
     };
 
     const getRatingText = (rating) => {
-        const texts = {
-            0: 'Select a rating',
-            1: "Didn't like it at all!",
-            2: "It's okay",
-            3: "It's good",
-            4: "Really liked it!",
-            5: "Excellent! One of the best!"
-        };
-        return texts[rating] || '';
+        if (rating === 0) return 'Selecciona una valoración';
+        return t(`reviews.ratingDescriptions.${rating}`) || '';
     };
 
     return (
@@ -117,7 +112,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
             }}>
                 <StarIcon sx={{ fontSize: 36, mr: 2 }} />
                 <Typography variant="h5" fontWeight="bold">
-                    What did you think of this recipe?
+                    {t('reviews.whatDidYouThink')}
                 </Typography>
             </Box>
 
@@ -156,7 +151,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                     mr: 1.5,
                                     fontSize: 18
                                 }}>1</Box>
-                                Your rating
+                                Tu valoración
                             </Typography>
 
                             <Rating
@@ -211,25 +206,25 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                     mr: 1.5,
                                     fontSize: 18
                                 }}>2</Box>
-                                Your comment
+                                Tu comentario
                             </Typography>
 
                             <TextField
-                                label="Share your experience"
-                                placeholder="What did you think of this recipe? Did you adapt it? Any advice for other cooks?"
+                                label="Comparte tu experiencia"
+                                placeholder="¿Qué te pareció esta receta? ¿La adaptaste? ¿Algún consejo para otros cocineros?"
                                 multiline
                                 rows={4}
                                 value={comentario}
                                 onChange={(e) => {
                                     setComentario(e.target.value);
-                                    if (e.target.value.trim() && error?.includes('comment')) {
+                                    if (e.target.value.trim() && error?.includes('comentario')) {
                                         setError(null);
                                     }
                                 }}
                                 variant="outlined"
                                 fullWidth
                                 disabled={loading}
-                                error={error?.includes('comment')}
+                                error={error?.includes('comentario')}
                                 InputProps={{
                                     sx: { borderRadius: 2 },
                                     startAdornment: (
@@ -259,7 +254,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                     fontSize: 14,
                                     fontWeight: 'bold'
                                 }}>i</Box>
-                                Your opinion is valuable to the community. Be constructive and detailed!
+                                Tu opinión es valiosa para la comunidad. Sé constructivo y aporta detalles.
                             </Typography>
                         </Box>
 
@@ -283,7 +278,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                                     fontSize: '1rem'
                                 }}
                             >
-                                {loading ? 'Sending...' : 'Post Review'}
+                                {loading ? 'Enviando...' : 'Publicar reseña'}
                             </Button>
                         </Box>
                     </form>
@@ -329,7 +324,7 @@ export default function ReseñaForm({ recetaId, usuarioId, onReseñaCreated }) {
                         }}>
                             <StarIcon fontSize="small" />
                         </Box>
-                        Review posted successfully!
+                        ¡Reseña publicada correctamente!
                     </Box>
                 </Alert>
             </Snackbar>

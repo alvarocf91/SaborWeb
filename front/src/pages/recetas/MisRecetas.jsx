@@ -6,12 +6,15 @@ import {
     Box,
     Paper,
     Snackbar,
-    Alert
+    Alert,
+    Button
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import AddIcon from "@mui/icons-material/Add";
 import MisRecetasCard from "../../components/MisRecetasCard";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import { useApi } from "../../context/ApiProvider";
+import { useLanguage } from "../../hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 
@@ -24,6 +27,7 @@ export default function MisRecetas() {
         severity: "success"
     });
 
+    const { t } = useLanguage();
     const [user] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem("user"));
@@ -39,6 +43,15 @@ export default function MisRecetas() {
 
     useEffect(() => {
         cargarRecetas();
+    }, []);
+
+    useEffect(() => {
+        const handleFocus = () => {
+            cargarRecetas();
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
     }, []);
 
     const cargarRecetas = async () => {
@@ -65,7 +78,7 @@ export default function MisRecetas() {
             setMisRecetas([]);
             setSnackbar({
                 open: true,
-                message: `Error loading recipes: ${error.message}`,
+                message: `Error al cargar las recetas: ${error.message}`,
                 severity: "error"
             });
         } finally {
@@ -79,14 +92,14 @@ export default function MisRecetas() {
             setMisRecetas(prevRecetas => prevRecetas.filter(receta => receta.id !== id));
             setSnackbar({
                 open: true,
-                message: "Recipe deleted successfully",
+                message: "Receta eliminada correctamente",
                 severity: "success"
             });
         } catch (error) {
             console.error("Error al eliminar receta:", error);
             setSnackbar({
                 open: true,
-                message: `Error deleting recipe: ${error.message}`,
+                message: `Error al eliminar la receta: ${error.message}`,
                 severity: "error"
             });
         }
@@ -109,7 +122,7 @@ export default function MisRecetas() {
                 setLoading(false);
                 setSnackbar({
                     open: true,
-                    message: "Loading time exceeded. Try reloading the page.",
+                    message: "Se ha superado el tiempo de carga. Intenta recargar la página.",
                     severity: "warning"
                 });
             }
@@ -123,7 +136,7 @@ export default function MisRecetas() {
             <Container maxWidth="lg" sx={{ mt: 4, p: 3, textAlign: 'center' }}>
                 <Spinner />
                 <Typography variant="body2" sx={{ mt: 2 }}>
-                    Loading your recipes...
+                    {t('myRecipes.loading')}
                 </Typography>
             </Container>
         );
@@ -153,7 +166,7 @@ export default function MisRecetas() {
                         }
                     }}
                 >
-                    My Recipes
+                    {t('myRecipes.title')}
                 </Typography>
                 <Typography
                     variant="body1"
@@ -165,8 +178,24 @@ export default function MisRecetas() {
                         fontSize: '1.1rem'
                     }}
                 >
-                    Find here all the recipes you have created. You can edit or delete them as needed.
+                    {t('myRecipes.subtitle')}
                 </Typography>
+                <Box sx={{ mt: 3 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => navigation('/create-recipe')}
+                        sx={{
+                            borderRadius: 3,
+                            px: 3,
+                            py: 1.2,
+                            backgroundColor: '#1D70B8',
+                            '&:hover': { backgroundColor: '#1D70B8' }
+                        }}
+                    >
+                        {t('recipes.create')}
+                    </Button>
+                </Box>
             </Box>
 
             {misRecetas.length === 0 ? (
@@ -181,16 +210,16 @@ export default function MisRecetas() {
                 >
                     <FavoriteBorderIcon sx={{ fontSize: 60, color: "#bdbdbd", mb: 2 }} />
                     <Typography variant="h6" gutterBottom>
-                        You have no created recipes
+                        {t('myRecipes.noRecipes')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Create some recipes to see them here
+                        {t('myRecipes.createSome')}
                     </Typography>
                 </Paper>
             ) : (
-                <Grid container spacing={4} justifyContent="center">
+                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
                     {misRecetas.map((receta) => (
-                        <Grid item xs={12} sm={6} md={3} display="flex" justifyContent="center" key={receta.id}>
+                        <Grid item xs={6} sm={6} md={3} display="flex" justifyContent="center" key={receta.id}>
                             <MisRecetasCard
                                 receta={receta}
                                 onRemove={handleRemoveReceta}

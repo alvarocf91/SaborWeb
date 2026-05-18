@@ -20,11 +20,30 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { SaborwebContext } from "../context/SaborifyProvider";
-import imagenPlaceholder from '../assets/imagenRecetaPlaceholder.png';
+import { SaborwebContext } from "../context/SaborwebProvider";
+import { API_BASE_URL } from "../context/ApiProvider";
+
+const imagenRecetaPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='360' viewBox='0 0 600 360'%3E%3Crect width='600' height='360' fill='%23EAF3FB'/%3E%3Ccircle cx='300' cy='150' r='48' fill='%23D6E9F8'/%3E%3Cpath d='M276 142h48v18h-48zM285 125h30v17h-30zM265 165h70v18h-70z' fill='%231D70B8'/%3E%3Ctext x='300' y='240' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%231D70B8'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
 export default function FavRecetaCard({ receta, onRemove }) {
     const { setReceta } = useContext(SaborwebContext);
+    const rawImage = receta.imagen_url || receta.imagen || receta.imagenUrl || "";
+    const publicBase = API_BASE_URL.replace(/\/api\/?$/, '');
+    const resolveImageUrl = (value) => {
+        if (!value || typeof value !== "string") return imagenRecetaPlaceholder;
+        const normalized = value.trim().replace(/^http:\/\//, "https://");
+        if (normalized.startsWith("https://")) {
+            return normalized.includes("/storage/") && !normalized.includes("/public/storage/")
+                ? normalized.replace("/storage/", "/public/storage/")
+                : normalized;
+        }
+        if (normalized.startsWith("/storage/")) return `${publicBase}${normalized}`;
+        if (normalized.startsWith("storage/")) return `${publicBase}/${normalized}`;
+        if (normalized.startsWith("/recetas/")) return `${publicBase}/storage${normalized}`;
+        if (normalized.startsWith("recetas/")) return `${publicBase}/storage/${normalized}`;
+        return `${publicBase}/storage/${normalized}`;
+    };
+    const imageUrl = resolveImageUrl(rawImage);
 
     return (
         <motion.div
@@ -115,7 +134,7 @@ export default function FavRecetaCard({ receta, onRemove }) {
                                     }
                                 }}
                             >
-                                Remove
+                                Quitar
                             </Button>
                         }
                     </Box>
@@ -124,11 +143,10 @@ export default function FavRecetaCard({ receta, onRemove }) {
                 <CardMedia
                     component="img"
                     height="180"
-                    image={receta.imagen || imagenPlaceholder}
+                    image={imageUrl || imagenRecetaPlaceholder}
                     alt={receta.nombre}
                     onError={(e) => {
-                        e.currentTarget.src = imagenPlaceholder;
-                        e.currentTarget.alt = "Imagen no disponible";
+                        e.currentTarget.src = imagenRecetaPlaceholder;
                     }}
                 />
 

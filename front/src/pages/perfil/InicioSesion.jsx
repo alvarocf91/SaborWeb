@@ -161,7 +161,7 @@ export default function InicioSesion() {
                 letterSpacing: "-0.5px",
               }}
             >
-              Welcome back
+              Bienvenido de nuevo
             </Typography>
 
             <Typography
@@ -169,7 +169,7 @@ export default function InicioSesion() {
               color="text.secondary"
               sx={{ maxWidth: "85%", mx: "auto" }}
             >
-              Log in to discover new recipes and flavors
+              Inicia sesión para descubrir nuevas recetas y sabores
             </Typography>
           </Box>
 
@@ -182,7 +182,7 @@ export default function InicioSesion() {
           <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
             <StyledTextField
               fullWidth
-              label="Email"
+              label="Correo electrónico"
               variant="outlined"
               type="email"
               required
@@ -200,7 +200,7 @@ export default function InicioSesion() {
 
             <StyledTextField
               fullWidth
-              label="Password"
+              label="Contraseña"
               variant="outlined"
               type={showPassword ? "text" : "password"}
               required
@@ -216,7 +216,7 @@ export default function InicioSesion() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label="mostrar u ocultar contraseña"
                       onClick={handleClickShowPassword}
                       edge="end"
                     >
@@ -236,14 +236,14 @@ export default function InicioSesion() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Processing..." : "Log In"}
+              {loading ? "Procesando..." : "Iniciar sesión"}
             </StyledButton>
 
             <Divider sx={{ my: 3 }} />
           </Box>
 
           <Typography variant="body2" align="center" sx={{ mt: 3.5 }}>
-            Don't have an account?{" "}
+            ¿No tienes una cuenta?{" "}
             <Link
               to="/sign-up"
               style={{
@@ -252,7 +252,7 @@ export default function InicioSesion() {
                 fontWeight: "bold",
               }}
             >
-              Sign up here
+              Regístrate aquí
             </Link>
           </Typography>
         </CardContent>

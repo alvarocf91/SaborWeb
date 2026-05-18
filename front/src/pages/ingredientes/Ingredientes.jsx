@@ -1,5 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
-import { SaborwebContext } from "../../context/SaborifyProvider";
+import { useLanguage } from "../../hooks/useLanguage";
+import { SaborwebContext } from "../../context/SaborwebProvider";
 import {
   Container,
   Card,
@@ -32,6 +33,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Ingredientes() {
   const { ingredientesAlergenos, setIngrediente, setAlergenoSeleccionado } = useContext(SaborwebContext);
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [selectedAlergeno, setSelectedAlergeno] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -121,7 +123,7 @@ export default function Ingredientes() {
               }
             }}
           >
-            Ingredients & Allergens
+            {t('ingredientsPage.title')}
           </Typography>
           <Typography
             variant="body1"
@@ -135,7 +137,7 @@ export default function Ingredientes() {
               px: { xs: 1, sm: 0 }
             }}
           >
-            Explore our comprehensive ingredient database organized by allergen categories. Discover safe choices tailored to your dietary needs and preferences.
+            {t('ingredientsPage.subtitle')}
           </Typography>
         </Box>
       </Box>
@@ -298,7 +300,7 @@ export default function Ingredientes() {
                     }
                   }}
                 >
-                  View ingredients
+                  {t('ingredientsPage.viewIngredients')}
                 </Button>
               </Box>
             </Card>
@@ -391,7 +393,7 @@ export default function Ingredientes() {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search ingredient..."
+            placeholder={t('ingredientsPage.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
@@ -432,7 +434,7 @@ export default function Ingredientes() {
             }}
           >
             <RestaurantIcon sx={{ mr: 1, color: '#1D70B8' }} />
-            Ingredients ({filteredIngredientes.length})
+            {t('ingredientsPage.ingredientsList', { count: filteredIngredientes.length })}
           </Typography>
 
           {filteredIngredientes?.length > 0 ? (
@@ -493,7 +495,7 @@ export default function Ingredientes() {
                   fontWeight: 500
                 }}
               >
-                No ingredients found for this search.
+                {t('ingredientsPage.noIngredientsFound')}
               </Typography>
             </Box>
           )}
