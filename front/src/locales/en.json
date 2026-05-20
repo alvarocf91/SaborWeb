@@ -195,6 +195,8 @@
     "recipes": "Recipes",
     "ingredients": "Ingredients",
     "edit": "Edit",
+    "add": "Add",
+    "cancel": "Cancel",
     "delete": "Delete",
     "back": "Back",
     "loading": "Loading...",
@@ -222,7 +224,7 @@
     "subtitle": "Explore our comprehensive ingredient database organized by allergen categories. Discover safe choices tailored to your dietary needs and preferences.",
     "viewIngredients": "View ingredients",
     "searchPlaceholder": "Search ingredient...",
-    "ingredientsList": "Ingredients ({count})",
+    "ingredientsList": "Ingredients",
     "noIngredientsFound": "No ingredients found for this search.",
     "allergenFiltering": "Allergen Filtering",
     "filterDescription": "Filter ingredients by the allergens you want to avoid and find safe recipes tailored to your dietary needs."

@@ -361,7 +361,7 @@ export default function HomePage() {
     {
       icon: <GroupIcon sx={{ fontSize: { xs: 35, sm: 40, md: 45 } }} />,
       number: "15K+",
-      label: t('homePage.stats.homeChefs'),
+      label: t('Usuarios Activos'),
       description: t('homePage.stats.activeUsers')
     },
     {
@@ -744,7 +744,7 @@ export default function HomePage() {
               lineHeight: 1.2
             }}
           >
-            Ready to Transform Your Kitchen?
+            ¿Listo para ser tu propio chef?
           </Typography>
           <Typography
             variant="body1"

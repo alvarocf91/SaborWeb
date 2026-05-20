@@ -83,9 +83,27 @@ class RecetasApiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $recetas = Receta::all();
+        $recetas = Receta::query()
+            ->when($request->filled('dificultad'), function ($query) use ($request) {
+                $query->where('dificultad', $request->query('dificultad'));
+            })
+            ->when($request->filled('alergeno'), function ($query) use ($request) {
+                $query->whereDoesntHave('ingredientes', function ($query) use ($request) {
+                    $query->whereHas('alergenos', function ($query) use ($request) {
+                        $query->where('nombre', $request->query('alergeno'));
+                    });
+                });
+            })
+            ->when($request->query('orden') === 'masTiempo', function ($query) {
+                $query->orderBy('tiempoCocinado', 'desc');
+            })
+            ->when($request->query('orden') === 'menosTiempo', function ($query) {
+                $query->orderBy('tiempoCocinado', 'asc');
+            })
+            ->get();
+
         return new RecetaCollection($recetas);
     }
 

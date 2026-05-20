@@ -15,7 +15,7 @@ export const LanguageProvider = ({ children }) => {
         setLanguage('es');
     }, []);
 
-    const t = useCallback((key) => {
+    const t = useCallback((key, params = {}) => {
         const keys = key.split('.');
         let value = translations.es;
 
@@ -27,7 +27,13 @@ export const LanguageProvider = ({ children }) => {
             }
         }
 
-        return value;
+        if (typeof value !== 'string') {
+            return value;
+        }
+
+        return Object.entries(params).reduce((text, [param, replacement]) => {
+            return text.replaceAll(`{${param}}`, replacement ?? '');
+        }, value);
     }, []);
 
     const toggleLanguage = useCallback(() => {

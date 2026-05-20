@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
     Container,
     Typography,
@@ -8,7 +8,6 @@ import {
     MenuItem,
     Select,
     FormControl,
-    InputLabel,
     Paper,
 } from "@mui/material";
 import { SaborwebContext } from "../../context/SaborwebProvider";
@@ -21,17 +20,12 @@ import TimerOffIcon from "@mui/icons-material/TimerOff";
 import TuneIcon from "@mui/icons-material/Tune";
 import NoFoodIcon from "@mui/icons-material/NoFood";
 import RecetaCard from "../../components/RecetaCard";
-import Spinner from "../../components/Spinner";
 
 export default function Recetas() {
     const { recetas, setRecetas, cargaRecetas, dificultades } = useContext(SaborwebContext);
     const {
         obtenerAlergenos,
         obtenerRecetas,
-        obtenerRecetasPorDificultad,
-        obtenerRecetasSinAlergeno,
-        obtenerRecetasMasTiempo,
-        obtenerRecetasMenosTiempo
     } = useApi();
 
     const [loading, setLoading] = useState(false);
@@ -40,31 +34,78 @@ export default function Recetas() {
 
     const [selectedDificultad, setSelectedDificultad] = useState("");
     const [selectedAlergeno, setSelectedAlergeno] = useState("");
+    const [selectedOrden, setSelectedOrden] = useState("");
 
     const user = JSON.parse(localStorage.getItem("user"));
     const puedeCrearReceta = user && (user.role === "user" || user.role === "admin");
+
+    const filterButtonSx = (active = false) => ({
+        minHeight: 42,
+        textTransform: "none",
+        fontWeight: 700,
+        borderRadius: 2,
+        px: 2.25,
+        color: active ? "#ffffff" : "#1D70B8",
+        backgroundColor: active ? "#1D70B8" : "#ffffff",
+        border: "1px solid rgba(29, 112, 184, 0.22)",
+        boxShadow: active ? "0 8px 18px rgba(29, 112, 184, 0.22)" : "none",
+        "&:hover": {
+            backgroundColor: active ? "#155f9f" : "#F3F8FC",
+            borderColor: "#1D70B8",
+            boxShadow: active ? "0 10px 22px rgba(29, 112, 184, 0.25)" : "0 4px 12px rgba(29, 112, 184, 0.10)",
+        },
+        "&.Mui-disabled": {
+            color: active ? "#ffffff" : "rgba(29, 112, 184, 0.55)",
+            backgroundColor: active ? "#1D70B8" : "#ffffff",
+            opacity: 0.65,
+        }
+    });
+
+    const selectSx = (active = false) => ({
+        minHeight: 42,
+        backgroundColor: active ? "#EAF3FB" : "#ffffff",
+        borderRadius: 2,
+        fontWeight: 700,
+        color: "#174C7C",
+        ".MuiSelect-select": {
+            py: 1.15,
+            display: "flex",
+            alignItems: "center",
+        },
+        ".MuiOutlinedInput-notchedOutline": {
+            borderColor: active ? "#1D70B8" : "rgba(29, 112, 184, 0.22)",
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#1D70B8",
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#1D70B8",
+            borderWidth: 1.5,
+        },
+    });
+
+    const renderSelectValue = (icon, fallback) => (value) => (
+        <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 0 }}>
+            {icon}
+            <Typography
+                component="span"
+                sx={{
+                    fontSize: "0.92rem",
+                    fontWeight: 700,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                }}
+            >
+                {value || fallback}
+            </Typography>
+        </Box>
+    );
 
     useEffect(() => {
         cargaRecetas();
         cargarAlergenos();
     }, []);
-
-    useEffect(() => {
-        const handleFocus = () => {
-            if (selectedDificultad) {
-                fetchRecetasConApi(obtenerRecetasPorDificultad, selectedDificultad);
-                return;
-            }
-            if (selectedAlergeno) {
-                fetchRecetasConApi(obtenerRecetasSinAlergeno, selectedAlergeno);
-                return;
-            }
-            cargaRecetas();
-        };
-
-        window.addEventListener('focus', handleFocus);
-        return () => window.removeEventListener('focus', handleFocus);
-    }, [selectedDificultad, selectedAlergeno]);
 
     const cargarAlergenos = async () => {
         try {
@@ -86,7 +127,7 @@ export default function Recetas() {
         }
     };
 
-    const fetchRecetasConApi = async (apiFunction, ...params) => {
+    const fetchRecetasConApi = useCallback(async (apiFunction, ...params) => {
         setLoading(true);
         setError(null);
 
@@ -109,39 +150,60 @@ export default function Recetas() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [setRecetas]);
+
+    const fetchRecetasFiltradas = useCallback((filtros) => {
+        return fetchRecetasConApi(obtenerRecetas, filtros);
+    }, [fetchRecetasConApi, obtenerRecetas]);
+
+    const buildFiltros = useCallback((overrides = {}) => ({
+        dificultad: selectedDificultad,
+        alergeno: selectedAlergeno,
+        orden: selectedOrden,
+        ...overrides,
+    }), [selectedAlergeno, selectedDificultad, selectedOrden]);
+
+    useEffect(() => {
+        const handleFocus = () => {
+            fetchRecetasFiltradas(buildFiltros());
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [buildFiltros, fetchRecetasFiltradas]);
 
     const handleDificultadChange = (event) => {
         const dificultad = event.target.value;
         setSelectedDificultad(dificultad);
-        setSelectedAlergeno("");
-        fetchRecetasConApi(obtenerRecetasPorDificultad, dificultad);
+        fetchRecetasFiltradas(buildFiltros({ dificultad }));
     };
 
     const handleAlergenoChange = (event) => {
         const alergeno = event.target.value;
         setSelectedAlergeno(alergeno);
-        setSelectedDificultad("");
-        fetchRecetasConApi(obtenerRecetasSinAlergeno, alergeno);
+        fetchRecetasFiltradas(buildFiltros({ alergeno }));
     };
 
     const handleResetFilters = () => {
         setSelectedDificultad("");
         setSelectedAlergeno("");
-        fetchRecetasConApi(obtenerRecetas);
+        setSelectedOrden("");
+        fetchRecetasFiltradas({});
     };
 
     const handleMasTiempo = () => {
-        setSelectedDificultad("");
-        setSelectedAlergeno("");
-        fetchRecetasConApi(obtenerRecetasMasTiempo);
+        const orden = selectedOrden === "masTiempo" ? "" : "masTiempo";
+        setSelectedOrden(orden);
+        fetchRecetasFiltradas(buildFiltros({ orden }));
     };
 
     const handleMenosTiempo = () => {
-        setSelectedDificultad("");
-        setSelectedAlergeno("");
-        fetchRecetasConApi(obtenerRecetasMenosTiempo);
+        const orden = selectedOrden === "menosTiempo" ? "" : "menosTiempo";
+        setSelectedOrden(orden);
+        fetchRecetasFiltradas(buildFiltros({ orden }));
     };
+
+    const hasActiveFilters = selectedDificultad || selectedAlergeno || selectedOrden;
 
     const renderErrorMessage = () => {
         if (error) {
@@ -245,64 +307,65 @@ export default function Recetas() {
             <Paper
                 elevation={0}
                 sx={{
-                    p: { xs: 3, sm: 4, md: 5 },
+                    p: { xs: 2, sm: 2.5, md: 3 },
                     mb: 5,
-                    borderRadius: 4,
-                    backgroundColor: "#ffffff",
-                    border: "1px solid rgba(29, 112, 184, 0.08)",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5)",
+                    borderRadius: 3,
+                    backgroundColor: "rgba(255, 255, 255, 0.92)",
+                    border: "1px solid rgba(29, 112, 184, 0.12)",
+                    boxShadow: "0 10px 28px rgba(24, 78, 119, 0.07)",
                 }}
             >
-                <Box display="flex" alignItems="center" justifyContent="center" gap={2} flexWrap="wrap">
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 2,
+                        mb: 2,
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <Box display="flex" alignItems="center" gap={1.2}>
+                        <TuneIcon sx={{ color: "#1D70B8", fontSize: 22 }} />
+                        <Typography sx={{ color: "#17324D", fontWeight: 800 }}>
+                            Filtros
+                        </Typography>
+                        {loading && (
+                            <Typography variant="caption" sx={{ color: "#5F7891", fontWeight: 700 }}>
+                                Actualizando...
+                            </Typography>
+                        )}
+                    </Box>
                     <Button
                         startIcon={<RestartAltIcon />}
-                        variant="contained"
-                        color="primary"
+                        variant="outlined"
                         onClick={handleResetFilters}
-                        disabled={loading}
-                        sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            borderRadius: 2.5,
-                            backgroundColor: "#1D70B8",
-                            px: 2.5,
-                            py: 1.2,
-                            fontSize: '0.9rem',
-                            boxShadow: "0 4px 12px rgba(29, 112, 184, 0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": { 
-                                backgroundColor: "#0059b3",
-                                boxShadow: "0 6px 20px rgba(29, 112, 184, 0.4)",
-                                transform: "translateY(-2px)"
-                            },
-                        }}
+                        disabled={loading || !hasActiveFilters}
+                        sx={filterButtonSx(false)}
                     >
                         Todas
                     </Button>
+                </Box>
+
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                            xs: "1fr",
+                            sm: "repeat(2, minmax(0, 1fr))",
+                            md: "repeat(4, minmax(0, auto))",
+                        },
+                        gap: 1.5,
+                        alignItems: "center",
+                    }}
+                >
 
                     <Button
                         startIcon={<AccessTimeIcon />}
                         variant="outlined"
                         onClick={handleMasTiempo}
                         disabled={loading}
-                        sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            borderRadius: 2.5,
-                            color: "#1D70B8",
-                            borderColor: "#1D70B8",
-                            px: 2.5,
-                            py: 1.2,
-                            fontSize: '0.9rem',
-                            border: "1.5px solid #1D70B8",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                                backgroundColor: "rgba(29, 112, 184, 0.08)",
-                                borderColor: "#0059b3",
-                                color: "#0059b3",
-                                boxShadow: "0 4px 12px rgba(29, 112, 184, 0.15)",
-                            },
-                        }}
+                        sx={filterButtonSx(selectedOrden === "masTiempo")}
                     >
                         Más tiempo
                     </Button>
@@ -312,54 +375,26 @@ export default function Recetas() {
                         variant="outlined"
                         onClick={handleMenosTiempo}
                         disabled={loading}
-                        sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            borderRadius: 2.5,
-                            color: "#1D70B8",
-                            borderColor: "#1D70B8",
-                            px: 2.5,
-                            py: 1.2,
-                            fontSize: '0.9rem',
-                            border: "1.5px solid #1D70B8",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                                backgroundColor: "rgba(29, 112, 184, 0.08)",
-                                borderColor: "#0059b3",
-                                color: "#0059b3",
-                                boxShadow: "0 4px 12px rgba(29, 112, 184, 0.15)",
-                            },
-                        }}
+                        sx={filterButtonSx(selectedOrden === "menosTiempo")}
                     >
                         Menos tiempo
                     </Button>
 
-                    <FormControl size="small" sx={{ minWidth: 180 }}>
-                        <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
-                            <Box display="flex" alignItems="center">
-                                <TuneIcon sx={{ fontSize: 18, mr: 1 }} /> Dificultad
-                            </Box>
-                        </InputLabel>
+                    <FormControl size="small" sx={{ minWidth: { xs: "100%", md: 190 } }}>
                         <Select
-                            label="Dificultad"
+                            id="dificultad-filter"
                             value={selectedDificultad}
                             onChange={handleDificultadChange}
                             disabled={loading}
-                            sx={{
-                                backgroundColor: "#f9fcff",
-                                borderRadius: 2.5,
-                                border: "1.5px solid rgba(29, 112, 184, 0.3)",
-                                fontWeight: 500,
-                                transition: "all 0.3s ease",
-                                "&:hover": {
-                                    borderColor: "#1D70B8",
-                                    backgroundColor: "#ffffff",
-                                },
-                                "&.Mui-focused": {
-                                    borderColor: "#1D70B8",
-                                }
-                            }}
+                            displayEmpty
+                            renderValue={renderSelectValue(<TuneIcon sx={{ fontSize: 18, color: "#1D70B8" }} />, "Dificultad")}
+                            sx={selectSx(Boolean(selectedDificultad))}
                         >
+                            <MenuItem value="">
+                                <Box display="flex" alignItems="center">
+                                    <TuneIcon sx={{ fontSize: 18, mr: 1 }} /> Todas
+                                </Box>
+                            </MenuItem>
                             {dificultades.map((dificultad) => (
                                 <MenuItem value={dificultad.dificultad} key={dificultad.dificultad}>
                                     {dificultad.dificultad}
@@ -368,32 +403,21 @@ export default function Recetas() {
                         </Select>
                     </FormControl>
 
-                    <FormControl size="small" sx={{ minWidth: 180 }} id="alergenos-select">
-                        <InputLabel sx={{ color: "#1D70B8", fontWeight: 600 }}>
-                            <Box display="flex" alignItems="center">
-                                <NoFoodIcon sx={{ fontSize: 18, mr: 1 }} /> Sin alérgenos
-                            </Box>
-                        </InputLabel>
+                    <FormControl size="small" sx={{ minWidth: { xs: "100%", md: 210 } }}>
                         <Select
-                            label="Sin alérgenos"
+                            id="alergenos-filter"
                             value={selectedAlergeno}
                             onChange={handleAlergenoChange}
                             disabled={loading}
-                            sx={{
-                                backgroundColor: "#f9fcff",
-                                borderRadius: 2.5,
-                                border: "1.5px solid rgba(29, 112, 184, 0.3)",
-                                fontWeight: 500,
-                                transition: "all 0.3s ease",
-                                "&:hover": {
-                                    borderColor: "#1D70B8",
-                                    backgroundColor: "#ffffff",
-                                },
-                                "&.Mui-focused": {
-                                    borderColor: "#1D70B8",
-                                }
-                            }}
+                            displayEmpty
+                            renderValue={renderSelectValue(<NoFoodIcon sx={{ fontSize: 18, color: "#1D70B8" }} />, "Sin alérgenos")}
+                            sx={selectSx(Boolean(selectedAlergeno))}
                         >
+                            <MenuItem value="">
+                                <Box display="flex" alignItems="center">
+                                    <NoFoodIcon sx={{ fontSize: 18, mr: 1 }} /> Todos
+                                </Box>
+                            </MenuItem>
                             {alergenos.map((alergeno) => (
                                 <MenuItem value={alergeno.nombre} key={alergeno.id}>
                                     {alergeno.nombre}
@@ -406,21 +430,25 @@ export default function Recetas() {
 
             {renderErrorMessage()}
 
-            {loading ? (
-                <Spinner />
-            ) : (
-                <Grid container spacing={4} justifyContent="center">
-                    {recetas.length === 0 && !error ? (
-                        <Typography variant="h6" color="text.secondary">
-                            No se encontraron recetas.
-                        </Typography>
-                    ) : (
-                        recetas.map((receta) => (
-                            <RecetaCard receta={receta} key={receta.id} />
-                        ))
-                    )}
-                </Grid>
-            )}
+            <Grid
+                container
+                spacing={4}
+                justifyContent="center"
+                sx={{
+                    opacity: loading ? 0.58 : 1,
+                    transition: "opacity 0.2s ease",
+                }}
+            >
+                {recetas.length === 0 && !error ? (
+                    <Typography variant="h6" color="text.secondary">
+                        No se encontraron recetas.
+                    </Typography>
+                ) : (
+                    recetas.map((receta) => (
+                        <RecetaCard receta={receta} key={receta.id} />
+                    ))
+                )}
+            </Grid>
 
             {puedeCrearReceta && (
                 <Link to="/create-recipe" style={{ textDecoration: "none" }}>

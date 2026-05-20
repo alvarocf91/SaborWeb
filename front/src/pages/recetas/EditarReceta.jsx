@@ -548,7 +548,7 @@ export default function EditarReceta() {
                   bgcolor: '#1D70B8',
                   '&:hover': { bgcolor: '#1D70B8' },
                   '&.Mui-disabled': {
-                    bgcolor: '#ffccbc',
+                    bgcolor: '#E0E7EF',
                     color: 'rgba(0, 0, 0, 0.26)'
                   }
                 }}

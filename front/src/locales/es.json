@@ -186,6 +186,8 @@
     "recipes": "Recetas",
     "ingredients": "Ingredientes",
     "edit": "Editar",
+    "add": "Añadir",
+    "cancel": "Cancelar",
     "delete": "Eliminar",
     "back": "Atrás",
     "noResults": "Sin resultados",
@@ -212,7 +214,7 @@
     "subtitle": "Explora nuestra base de datos integral de ingredientes organizada por categorías de alérgenos. Descubre opciones seguras adaptadas a tus necesidades y preferencias dietéticas.",
     "viewIngredients": "Ver ingredientes",
     "searchPlaceholder": "Buscar ingrediente...",
-    "ingredientsList": "Ingredientes ({count})",
+    "ingredientsList": "Ingredientes",
     "noIngredientsFound": "No se encontraron ingredientes para esta búsqueda.",
     "allergenFiltering": "Filtrado de Alérgenos",
     "filterDescription": "Filtra ingredientes por los alérgenos que quieras evitar y encuentra recetas seguras adaptadas a tus necesidades dietéticas."
